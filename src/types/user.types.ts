@@ -41,3 +41,7 @@ export interface ITokenPayload {
   userId: string;
   roles: UserRoleEnum[];
 }
+
+export interface IRefreshTokenPayload {
+  refreshToken: string;
+}

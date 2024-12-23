@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import {
   IErrorResponse,
   CustomErrorResponse,
-} from "@/types/errorResponse.types";
+} from "../types/errorResponse.types";
 
 export const errorResponse = (
   req: Request,

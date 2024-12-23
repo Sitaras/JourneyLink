@@ -2,7 +2,12 @@ import { Request, Response } from "express";
 import { User } from "../models/user.model";
 import { Profile } from "../models/profile.model";
 import * as tokenUtils from "../utils/token.utils";
-import { IUserRegistration, IUserLogin } from "../types/user.types";
+import {
+  IUserRegistration,
+  IUserLogin,
+  IRefreshTokenPayload,
+} from "../types/user.types";
+import { verifyRefreshToken } from "../utils/token.utils";
 
 export class AuthController {
   static async register(
@@ -101,7 +106,6 @@ export class AuthController {
 
       res.success(
         {
-          ...req.body,
           tokens: {
             accessToken,
             refreshToken,
@@ -109,6 +113,73 @@ export class AuthController {
         },
         "Successfully logged in"
       );
+    } catch (error) {
+      res.error("An error occurred", 500);
+    }
+  }
+
+  static async refreshToken(
+    req: Request<{}, {}, IRefreshTokenPayload>,
+    res: Response
+  ): Promise<void> {
+    try {
+      const { refreshToken } = req.body;
+
+      const user = await User.findOne({
+        "refreshTokens.token": refreshToken,
+      });
+
+      if (!user) {
+        res.error("Unauthorized", 401);
+        return;
+      }
+
+      try {
+        const decoded = verifyRefreshToken(refreshToken);
+
+        if (
+          typeof decoded === "string" ||
+          (user._id as string).toString() !== decoded.userId
+        ) {
+          res.error("Unauthorized", 401);
+          return;
+        }
+
+        user.refreshTokens = user.refreshTokens.filter((token) => {
+          const tokenAge = Date.now() - token.createdAt.getTime();
+          return tokenAge < 7 * 24 * 60 * 60 * 1000; // 7 days
+        });
+
+        const tokenPayload = {
+          userId: user._id as string,
+          roles: user.roles,
+        };
+
+        const newAccessToken = tokenUtils.generateAccessToken(tokenPayload);
+        const newRefreshToken = tokenUtils.generateRefreshToken(tokenPayload);
+
+        user.refreshTokens = user.refreshTokens.filter(
+          (token) => token.token !== refreshToken
+        );
+
+        user.refreshTokens.push({
+          token: newRefreshToken,
+          createdAt: new Date(),
+        });
+
+        await user.save();
+
+        res.success(
+          {
+            accessToken: newAccessToken,
+            refreshToken: newRefreshToken,
+          },
+          "Tokens refreshed successfully"
+        );
+      } catch (error) {
+        res.error("Unauthorized", 401);
+        return;
+      }
     } catch (error) {
       res.error("An error occurred", 500);
     }

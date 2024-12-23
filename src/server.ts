@@ -2,8 +2,8 @@ import express, { urlencoded, json } from "express";
 import cors from "cors";
 import { connectDB } from "./db/connectDB";
 import { config } from "./config/config";
-import { successResponse } from "./middlewares/successResponse.middleware";
-import { errorResponse } from "./middlewares/errorResponse.middleware";
+import { successResponse } from "./middleware/successResponse.middleware";
+import { errorResponse } from "./middleware/errorResponse.middleware";
 import { authRoutes } from "./routes/auth.routes";
 
 const app = express();
