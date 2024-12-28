@@ -1,0 +1,22 @@
+.header {
+  position: sticky;
+  top: 0;
+
+  background-color: hsl(var(--background));
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  
+  width: 100%;
+
+  height: auto;
+  padding: 0.5rem;
+}
+
+@media (min-width: 37.5rem) {
+  .header {
+    padding: 0.5rem 1rem;
+  }
+}

@@ -1,0 +1,27 @@
+.container {
+  display: flex;
+  justify-content: center;
+  max-width: var(--max-width);
+  margin: auto;
+  padding: calc(var(--header-width) + var(--gutter)) var(--gutter) var(--gutter);
+}
+
+@media (min-width: 75rem) {
+  .container {
+    justify-content: flex-start;
+  }
+}
+
+@media (min-width: 37.5rem) {
+  .container {
+    padding: calc(var(--header-width) + var(--gutter))
+      calc(var(--gutter) + var(--gutter)) var(--gutter);
+  }
+}
+
+.column {
+  padding: var(--gutter) 0;
+  flex: 1;
+  width: 100%;
+  max-width: 45.625rem;
+}

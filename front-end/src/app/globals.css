@@ -2,12 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
 body {
   font-family: Arial, Helvetica, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -29,6 +23,22 @@ a {
   html {
     color-scheme: dark;
   }
+}
+
+:root {
+  /* Useful sizes */
+  --gutter: 1rem;
+  --max-width: 75rem;
+  --header-height: 4rem;
+  --sidebar-width: 18.875rem;
+  --single-sidebar-width: 25.375rem;
+  --content-max-width: 35.25rem;
+
+  --phone-max: 37.4375rem;
+  --tablet-portrait-min: 37.5rem;
+  --tablet-landscape-min: 56.25rem;
+  --desktop-min: 75rem;
+  --big-desktop-min: 112.5rem;
 }
 
 @layer base {

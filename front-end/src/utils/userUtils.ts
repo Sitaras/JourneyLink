@@ -1,0 +1,10 @@
+import { jwtDecode } from "jwt-decode";
+import { ITokenPayload } from "@/types/user.types";
+
+export const decodeToken = (token: string) => {
+  const { userId, roles } = jwtDecode<ITokenPayload>(token);
+  return {
+    userId,
+    roles,
+  };
+};

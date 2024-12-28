@@ -1,9 +1,9 @@
-import styles from "./page.module.css";
+
 import { Button } from "@/components/ui/button";
 
 export default function Home() {
   return (
-    <div className={styles.page}>
+    <div className="flex flex-col items-center">
       <Button>journeyLink</Button>
     </div>
   );
