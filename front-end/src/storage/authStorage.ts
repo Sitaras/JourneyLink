@@ -1,18 +1,22 @@
 import storage from "./storage";
 
-const TOKEN_KEY = "token";
+const TOKEN_KEY = "access_token";
 const REFRESHTOKEN_KEY = "refresh_token";
 const USER_ID = "user_id";
 
-const getToken = () => {
+const getAccessToken = () => {
   return storage.getItem({ key: TOKEN_KEY });
 };
 
-const setToken = ({ token }: { token: string }) => {
-  return storage.setItem({ key: TOKEN_KEY, value: token, expiresInDays: 365 });
+const setAccessToken = ({ accessToken }: { accessToken: string }) => {
+  return storage.setItem({
+    key: TOKEN_KEY,
+    value: accessToken,
+    expiresInDays: 365,
+  });
 };
 
-const removeToken = () => {
+const removeAccessToken = () => {
   return storage.removeItem({ key: TOKEN_KEY });
 };
 
@@ -32,7 +36,6 @@ const removeRefreshToken = () => {
   return storage.removeItem({ key: REFRESHTOKEN_KEY });
 };
 
-
 const removeUserId = () => {
   return storage.removeItem({
     key: USER_ID,
@@ -41,17 +44,17 @@ const removeUserId = () => {
 };
 
 const clearAuthTokens = () => {
-  removeToken();
+  removeAccessToken();
   removeRefreshToken();
   removeUserId();
 };
 
 const authStorage = {
-  getToken,
+  getAccessToken,
   getRefreshToken,
-  setToken,
+  setAccessToken,
   setRefreshToken,
-  removeToken,
+  removeAccessToken,
   removeRefreshToken,
   clearAuthTokens,
   keys: { USER_ID, TOKEN_KEY, REFRESHTOKEN_KEY },

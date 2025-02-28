@@ -4,7 +4,7 @@ import authStorage from "@/storage/authStorage";
 
 export async function middleware(request: NextRequest) {
 
-  const authToken = authStorage.getToken();
+  const authToken = authStorage.getAccessToken();
   const isAuthRoute =
     request.nextUrl.pathname.startsWith("/home");
 

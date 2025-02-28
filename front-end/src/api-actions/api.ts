@@ -1,29 +1,21 @@
-import axios from "axios";
-import { requestInterceptor, responseInterceptor } from "./interceptors";
+import authStorage from "@/storage/authStorage";
+import wretch from "wretch";
 
-export const fetcher = (url: string) => api.get(url).then((res) => res.data);
-export const postFetcher = (url: string, params: unknown) => {
-  return api.post(url, params).then((res) => res.data);
+export const api = wretch(process.env.NEXT_PUBLIC_BASE_URL).errorType("json")
+
+export const authApi = wretch(process.env.NEXT_PUBLIC_BASE_URL)
+  .auth(`Bearer ${authStorage.getAccessToken()}`)
+  .errorType("json");
+
+export const fetcher = <IResponse>(url: string): Promise<IResponse> => {
+  return authApi.get(url).json((json) => json?.data);
 };
 
-const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URL,
-});
-
-api.interceptors.request.use(
-  function (config) {
-    return requestInterceptor(config);
-  },
-  function (error) {
-    throw error;
-  }
-);
-
-api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    return responseInterceptor(error, api);
-  }
-);
-
-export default api;
+export const postFetcher = <IBody, IResponse>(
+  url: string,
+  body: IBody
+): Promise<IResponse> =>
+  authApi
+    .url(url)
+    .post(body)
+    .json((json) => json?.data);

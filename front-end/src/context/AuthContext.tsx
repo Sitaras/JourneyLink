@@ -22,7 +22,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<IUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const token = authStorage.getToken();
+  const token = authStorage.getAccessToken();
   const { userId } = token ? decodeToken(token) : {};
 
   useEffect(() => {

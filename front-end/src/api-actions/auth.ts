@@ -1,30 +1,36 @@
 "use server";
 
-import api from "./api";
+import { api } from "./api";
+import { cookies } from "next/headers";
 
-export const refreshTokenService = (refreshToken: string) => {
-  return api.post("/auth/api/refreshToken", { refreshToken });
-};
+export const login = async (prevState: unknown, form: FormData) => {
+  const email = form.get("email") as string;
+  const password = form.get("password") as string;
 
-export const login = async (email: string, password: string) => {
   try {
-    const response = await fetch("https://your-backend.com/api/signin", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
+    const response = await api
+      .url("auth/login")
+      .post({ email, password })
+      .json((json) => json?.data);
+
+    (await cookies()).set({
+      name: "access_token",
+      value: response?.tokens?.accessToken,
+      // httpOnly: true,
+      secure: process.env.NODE_ENV !== "production",
+      sameSite: "strict",
     });
-
-    if (!response.ok) {
-      throw new Error("Failed to sign in");
-    }
-
-    return response.json();
-  } catch (error) {
-    console.error("Sign-in error:", error);
-    throw error;
+    (await cookies()).set({
+      name: "refresh_token",
+      value: response?.tokens?.refreshToken,
+      // httpOnly: true,
+      secure: process.env.NODE_ENV !== "production",
+      sameSite: "strict",
+    });
+        
+    return response;
+  } catch {
+    return { message: "Failed to sign in" };
   }
 };
 
