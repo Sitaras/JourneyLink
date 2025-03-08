@@ -1,11 +1,4 @@
-import {
-  createContext,
-  useContext,
-  useState,
-  useEffect,
-  useMemo,
-  useCallback,
-} from "react";
+import { createContext, useContext, useState, useEffect, useMemo } from "react";
 import { IUser } from "@/types/user.types";
 import authStorage from "@/storage/authStorage";
 import { decodeToken } from "@/utils/userUtils";
@@ -13,14 +6,12 @@ import { decodeToken } from "@/utils/userUtils";
 interface AuthContextType {
   user: IUser | null;
   isLoading: boolean;
-  login: (user: IUser) => void;
-  logout: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user, setUser] = useState<IUser | null>(null);
+  const [user] = useState<IUser | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const token = authStorage.getAccessToken();
   const { userId } = token ? decodeToken(token) : {};
@@ -47,16 +38,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     //   });
   }, [userId]);
 
-  const login = useCallback(() => {}, []);
-
-  const logout = useCallback(() => {
-    setUser(null);
-  }, []);
-
-  const value = useMemo(
-    () => ({ user, isLoading, login, logout }),
-    [user, isLoading, login, logout]
-  );
+  const value = useMemo(() => ({ user, isLoading }), [user, isLoading]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
