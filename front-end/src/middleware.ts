@@ -1,18 +1,25 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import authStorage from "@/storage/authStorage";
+import { routes,protectedRoutes, publicRoutes } from "./data/routes";
+import { cookies } from "next/headers";
 
 export async function middleware(request: NextRequest) {
+  const path = request.nextUrl.pathname;
+  const isPublicRoute = publicRoutes.includes(path);
+  const isProtectedRoute = protectedRoutes.includes(path);
 
-  const authToken = authStorage.getAccessToken();
-  const isAuthRoute =
-    request.nextUrl.pathname.startsWith("/home");
+  const cookie = (await cookies()).get("access_token")?.value;
 
-  if (isAuthRoute && !authToken) {
-    // Redirect to login if accessing protected route without auth
-    const loginUrl = new URL("/login", request.url);
-    loginUrl.searchParams.set("from", request.nextUrl.pathname);
-    return NextResponse.redirect(loginUrl);
+  if (isProtectedRoute && !cookie) {
+    return NextResponse.redirect(new URL(routes.login, request.nextUrl));
+  }
+
+  if (
+    isPublicRoute &&
+    cookie &&
+    !request.nextUrl.pathname.startsWith(routes.home)
+  ) {
+    return NextResponse.redirect(new URL(routes.home, request.nextUrl));
   }
 
   return NextResponse.next();

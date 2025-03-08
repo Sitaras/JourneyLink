@@ -1,13 +1,21 @@
 const routes = {
-  home: '/',
-  login: '/login',
-  register: '/register',
-  settings: '/settings',
-  support: '/support',
-  terms: '/terms-of-use',
-  cookies: '/cookies',
-  forgotPassword: 'forgot-password',
-  resetPassword: 'reset-password',
+  home: "/",
+  login: "/login",
+  register: "/register",
+  settings: "/settings",
+  support: "/support",
+  terms: "/terms-of-use",
+  cookies: "/cookies",
+  forgotPassword: "forgot-password",
+  resetPassword: "reset-password",
 };
 
-export { routes };
+const protectedRoutes = [routes.home, routes.settings];
+const publicRoutes = [
+  routes.login,
+  routes.register,
+  routes.forgotPassword,
+  routes.resetPassword,
+];
+
+export { routes, protectedRoutes, publicRoutes };
