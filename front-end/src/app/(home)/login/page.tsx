@@ -10,21 +10,24 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { login } from "@/api-actions/auth";
+import { loginSchema } from "@/schemas/auth/loginSchema";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Input } from "@/components/ui/input";
-import { loginSchema } from "@/api-actions/auth-validation";
-import { Label } from "@/components/ui/label";
+import { CustomInput } from "@/components/ui/Inputs/CustomInput";
 
 // FYI https://dev.to/emmanuel_xs/how-to-use-react-hook-form-with-useactionstate-hook-in-nextjs15-1hja
 
-export default function LoginPage() {
+export const LoginPage = () => {
   const [formState, formAction, pending] = useActionState(login, null);
 
   const formRef = useRef<HTMLFormElement>(null);
 
-  const { register, handleSubmit } = useForm<z.output<typeof loginSchema>>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<z.output<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "john.doe@example.com",
@@ -52,18 +55,24 @@ export default function LoginPage() {
               })(evt);
             }}
             className="flex flex-col gap-4 w-full"
+            noValidate
           >
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" required {...register("email")} />
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
+            <CustomInput
+              name="email"
+              label="Email"
+              type="email"
+              register={register}
+              errors={errors}
+            />
+            <CustomInput
+              name="password"
+              label="Password"
               type="password"
-              required
-              {...register("password")}
+              register={register}
+              errors={errors}
             />
             <Button className="w-full" type="submit" loading={pending}>
-              Log in
+              Submit
             </Button>
             <p aria-live="polite">{formState?.message}</p>
           </form>
@@ -71,4 +80,6 @@ export default function LoginPage() {
       </Card>
     </div>
   );
-}
+};
+
+export default LoginPage;

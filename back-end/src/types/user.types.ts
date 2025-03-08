@@ -29,7 +29,7 @@ export interface IUserRegistration {
   phoneNumber: string;
   firstName: string;
   lastName: string;
-  dateOfBirth: Date;
+  dateOfBirth: string;
 }
 
 export interface IUserLogin {

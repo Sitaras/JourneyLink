@@ -3,6 +3,7 @@ import {
   IErrorResponse,
   CustomErrorResponse,
 } from "../types/errorResponse.types";
+import { StatusCodes } from "http-status-codes";
 
 export const errorResponse = (
   req: Request,
@@ -11,7 +12,7 @@ export const errorResponse = (
 ): void => {
   (res as CustomErrorResponse).error = (
     message: string,
-    statusCode: number = 400,
+    statusCode: number = StatusCodes.BAD_REQUEST,
     error?: any
   ): void => {
     const errorResponse: IErrorResponse = {

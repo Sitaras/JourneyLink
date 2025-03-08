@@ -22,6 +22,10 @@ const profileSchema = new Schema<IProfileDocument>(
       type: Date,
       required: true,
     },
+    email: {
+      type: String,
+      required: true,
+    },
     avatar: {
       type: String,
     },

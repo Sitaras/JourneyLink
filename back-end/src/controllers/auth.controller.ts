@@ -25,18 +25,6 @@ export class AuthController {
         dateOfBirth,
       } = req.body;
 
-      if (
-        !email ||
-        !password ||
-        !verifyPassword ||
-        !firstName ||
-        !lastName ||
-        !dateOfBirth
-      ) {
-        res.error("All fields are required");
-        return;
-      }
-
       if (password !== verifyPassword) {
         res.error("Passwords do not match");
         return;
@@ -62,6 +50,7 @@ export class AuthController {
         firstName,
         lastName,
         dateOfBirth,
+        email,
       });
 
       user.profile = profile._id as any;

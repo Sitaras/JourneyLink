@@ -2,6 +2,7 @@
 
 import { api } from "./api";
 import { cookies } from "next/headers";
+import { formatToUTC } from "@/utils/dateUtils";
 
 export const login = async (prevState: unknown, form: FormData) => {
   const email = form.get("email") as string;
@@ -27,32 +28,43 @@ export const login = async (prevState: unknown, form: FormData) => {
       secure: process.env.NODE_ENV !== "production",
       sameSite: "strict",
     });
-        
+
     return response;
   } catch {
-    return { message: "Failed to sign in" };
+    return { message: "loginFailed" };
   }
 };
 
-export const register = async (email: string, password: string) => {
+export const register = async (prevState: unknown, form: FormData) => {
+
+  const email = form.get("email") as string;
+  const firstName = form.get("firstName") as string;
+  const lastName = form.get("lastName") as string;
+  const phoneNumber = form.get("phoneNumber") as string;
+  const dateOfBirth = form.get("dateOfBirth") as string;
+  const password = form.get("password") as string;
+  const verifyPassword = form.get("verifyPassword") as string;
+
+  const dateOfBirthDateISOstring = formatToUTC(dateOfBirth);
+
   try {
-    const response = await fetch("https://your-backend.com/api/register", {
-      method: "POST",
-      credentials: "include",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
+    const response = await api
+      .url("auth/register")
+      .post({
+        email,
+        firstName,
+        lastName,
+        phoneNumber,
+        dateOfBirth: dateOfBirthDateISOstring,
+        password,
+        verifyPassword,
+      })
+      .json((json) => json?.data);
 
-    if (!response.ok) {
-      throw new Error("Failed to sign up");
-    }
-
-    return response.json();
+    return response;
   } catch (error) {
-    console.error("Sign-up error:", error);
-    throw error;
+    console.error("Register error:", error);
+    return { message: "registerFailed" };
   }
 };
 

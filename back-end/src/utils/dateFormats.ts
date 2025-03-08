@@ -1,0 +1,26 @@
+export enum DateFormats {
+  YEAR = "yyyy",
+  MONTH_NAME = "MMMM",
+  DAY_NAME = "EEEE",
+  DAY_NAME_SHORT = "EEE",
+  DATE_NUMBER = "d",
+  TIME = "HH:mm",
+  LOG = "yyyyMMddHHmmss",
+  FILE = "ddMMyy",
+  DATE_DASH = "dd-MM-yyyy",
+  DATE_DASH_REVERSE = "yyyy-MM-dd",
+  FULL = "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
+
+  DATE_SLASH_FORMAT = "dd/MM/yyyy",
+  DATE_SLASH_SHORT_FORMAT = "dd/MM/yy",
+  DATE_TIME_SLASH_FORMAT = "dd/MM/yyyy HH:mm",
+  DATE_WITH_DAY = "EEEE dd/MM/yyyy",
+  DAY_MONTH_NO_PAD = "d/M",
+  DAY_MONTH_NO_DAY_PAD = "d/MM",
+  DAY_MONTH = "dd/MM",
+  DATE_TIME_NO_YEAR = "dd/MM HH:mm",
+
+  DATE_FULL_MONTH_FORMAT = "d MMMM yyyy",
+  DAY_FULL_MONTH = "d MMMM",
+  FULL_MONTH_YEAR = "MMMM yyyy",
+}

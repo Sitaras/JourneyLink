@@ -5,6 +5,7 @@ export interface IProfile extends Document {
   firstName: string;
   lastName: string;
   dateOfBirth: Date;
+  email: string;
   avatar?: string;
   bio?: string;
   socials?: {
