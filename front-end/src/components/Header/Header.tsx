@@ -7,7 +7,7 @@ import styles from "./Header.module.css";
 const Header = () => {
   return (
     <header className={styles.header}>
-      <Link href="/">JourneyLink</Link>
+      <Link href="/">Share the Ride</Link>
       <UserNav className="ml-auto" />
     </header>
   );

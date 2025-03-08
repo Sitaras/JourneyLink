@@ -56,6 +56,28 @@ export const register = async (email: string, password: string) => {
   }
 };
 
+export const settings = async (email: string, password: string) => {
+  try {
+    const response = await fetch("https://your-backend.com/api/profile", {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ email, password }),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to sign up");
+    }
+
+    return response.json();
+  } catch (error) {
+    console.error("Sign-up error:", error);
+    throw error;
+  }
+};
+
 export const getUserInfo = async () => {
   try {
     const response = await fetch("https://your-backend.com/api/user", {

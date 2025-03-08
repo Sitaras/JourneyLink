@@ -35,8 +35,8 @@ const UserNav = ({ className }: { className?: string }) => {
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Menu</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Settings</DropdownMenuItem>
-        <DropdownMenuItem>Support</DropdownMenuItem>
+        <DropdownMenuItem><Link href="/settings">Settings</Link></DropdownMenuItem>
+        <DropdownMenuItem><Link href="/support">Support</Link></DropdownMenuItem>
         <DropdownMenuSeparator />
         {user ? (
           <DropdownMenuItem>
