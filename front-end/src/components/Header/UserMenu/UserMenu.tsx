@@ -1,6 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
-import Image from "next/image";
+import { AiOutlineMenu } from "react-icons/ai"; // Importing menu icon from react-icons
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,7 +12,7 @@ import {
 import Link from "next/link";
 import { cn } from "@/lib/utils";
 
-const UserNav = ({ className }: { className?: string }) => {
+const UserMenu = ({ className }: { className?: string }) => {
   const user = null;
 
   return (
@@ -23,13 +23,8 @@ const UserNav = ({ className }: { className?: string }) => {
           size="icon"
           className={cn("overflow-hidden rounded-full", className)}
         >
-          <Image
-            src={"/placeholder-user.jpg"}
-            width={36}
-            height={36}
-            alt="Avatar"
-            className="overflow-hidden rounded-full"
-          />
+          {/* Replace the Image with a Menu Icon Button */}
+          <AiOutlineMenu size={24} />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
@@ -63,4 +58,4 @@ const UserNav = ({ className }: { className?: string }) => {
   );
 };
 
-export default UserNav;
+export default UserMenu;
