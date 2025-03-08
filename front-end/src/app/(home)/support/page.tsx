@@ -1,9 +1,20 @@
 "use client";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { HelpCircle, Mail } from "lucide-react";
 
 export default function SupportPage() {
@@ -29,17 +40,17 @@ export default function SupportPage() {
           </Button>
         </div>
       </Card>
-      
+
       <Dialog open={faqOpen} onOpenChange={setFaqOpen}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Frequently Asked Questions</DialogTitle>
+            <DialogDescription>How can I reset my password?</DialogDescription>
             <DialogDescription>
-              <ul className="list-disc pl-5 space-y-2">
-                <li>How can I reset my password?</li>
-                <li>Where can I update my account information?</li>
-                <li>How do I contact customer support?</li>
-              </ul>
+              Where can I update my account information?
+            </DialogDescription>
+            <DialogDescription>
+              How do I contact customer support?
             </DialogDescription>
           </DialogHeader>
         </DialogContent>
@@ -49,10 +60,10 @@ export default function SupportPage() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Contact Us</DialogTitle>
+            <DialogDescription>Email: support@example.com</DialogDescription>
+            <DialogDescription>Phone: +1 234 567 890</DialogDescription>
             <DialogDescription>
-              <p>Email: support@example.com</p>
-              <p>Phone: +1 234 567 890</p>
-              <p>Live Chat: Available 9 AM - 6 PM</p>
+              Live Chat: Available 9 AM - 6 PM
             </DialogDescription>
           </DialogHeader>
         </DialogContent>

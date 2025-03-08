@@ -10,6 +10,7 @@ export enum DateFormats {
   DATE_DASH = "dd-MM-yyyy",
   DATE_DASH_REVERSE = "yyyy-MM-dd",
   FULL = "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
+  LONG_LOCALIZED_DATE = "PPP",
 
   DATE_SLASH_FORMAT = "dd/MM/yyyy",
   DATE_SLASH_SHORT_FORMAT = "dd/MM/yy",

@@ -9,6 +9,7 @@ interface CustomInputProps extends React.ComponentProps<"input"> {
   errors?: FieldErrors;
   label?: string;
   type?: string;
+  labelClassName?: string;
   name: string;
   required?: boolean;
 }
@@ -20,11 +21,16 @@ const CustomInput = ({
   type = "text",
   name,
   required = true,
+  labelClassName,
   ...rest
 }: CustomInputProps) => {
   return (
     <>
-      {label && <Label htmlFor={name}>{label}</Label>}
+      {label && (
+        <Label htmlFor={name} className={labelClassName}>
+          {label}
+        </Label>
+      )}
       <Input
         id={name}
         type={type}

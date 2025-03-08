@@ -3,6 +3,8 @@ export enum DateFormats {
   MONTH_NAME = "MMMM",
   DAY_NAME = "EEEE",
   DAY_NAME_SHORT = "EEE",
+  LONG_LOCALIZED_DATE = "PPP",
+
   DATE_NUMBER = "d",
   TIME = "HH:mm",
   LOG = "yyyyMMddHHmmss",
