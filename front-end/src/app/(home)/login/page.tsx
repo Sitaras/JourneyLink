@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useRef, startTransition } from "react";
+import { useActionState, useRef, startTransition, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,11 +15,22 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { CustomInput } from "@/components/ui/Inputs/CustomInput";
+import { useRouter } from "next/navigation";
+import { routes } from "@/data/routes";
 
 // FYI https://dev.to/emmanuel_xs/how-to-use-react-hook-form-with-useactionstate-hook-in-nextjs15-1hja
 
 export const LoginPage = () => {
-  const [formState, formAction, pending] = useActionState(login, null);
+  const router = useRouter();
+  const [formState, formAction, pending] = useActionState(login, {
+    success: false,
+  });
+
+  useEffect(() => {
+    if (formState.success) {
+      router.push(routes.home);
+    }
+  }, [formState.success, router]);
 
   const formRef = useRef<HTMLFormElement>(null);
 

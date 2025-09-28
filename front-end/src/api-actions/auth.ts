@@ -17,26 +17,23 @@ export const login = async (prevState: unknown, form: FormData) => {
     (await cookies()).set({
       name: "access_token",
       value: response?.tokens?.accessToken,
-      // httpOnly: true,
       secure: process.env.NODE_ENV !== "production",
       sameSite: "strict",
     });
     (await cookies()).set({
       name: "refresh_token",
       value: response?.tokens?.refreshToken,
-      // httpOnly: true,
       secure: process.env.NODE_ENV !== "production",
       sameSite: "strict",
     });
 
-    return response;
-  } catch {
-    return { message: "loginFailed" };
+    return { success: true, ...response };
+  } catch (error) {
+    return { success: false, message: "loginFailed", error };
   }
 };
 
 export const register = async (prevState: unknown, form: FormData) => {
-
   const email = form.get("email") as string;
   const firstName = form.get("firstName") as string;
   const lastName = form.get("lastName") as string;
@@ -61,10 +58,9 @@ export const register = async (prevState: unknown, form: FormData) => {
       })
       .json((json) => json?.data);
 
-    return response;
+    return { success: true, ...response };
   } catch (error) {
-    console.error("Register error:", error);
-    return { message: "registerFailed" };
+    return { success: false, message: "registeredFailed", error };
   }
 };
 

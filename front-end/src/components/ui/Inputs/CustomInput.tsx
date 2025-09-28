@@ -2,6 +2,7 @@ import * as React from "react";
 import { Input } from "../input";
 import { Label } from "../label";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
+import { cn } from "@/lib/utils";
 
 interface CustomInputProps extends React.ComponentProps<"input"> {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -9,9 +10,10 @@ interface CustomInputProps extends React.ComponentProps<"input"> {
   errors?: FieldErrors;
   label?: string;
   type?: string;
-  labelClassName?: string;
   name: string;
   required?: boolean;
+  labelClassName?: string;
+  containerClassname?: string;
 }
 
 const CustomInput = ({
@@ -22,10 +24,11 @@ const CustomInput = ({
   name,
   required = true,
   labelClassName,
+  containerClassname,
   ...rest
 }: CustomInputProps) => {
   return (
-    <>
+    <div className={cn("flex flex-col space-y-2", containerClassname)}>
       {label && (
         <Label htmlFor={name} className={labelClassName}>
           {label}
@@ -39,7 +42,7 @@ const CustomInput = ({
         {...register?.(name)}
         {...rest}
       />
-    </>
+    </div>
   );
 };
 
