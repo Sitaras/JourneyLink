@@ -1,11 +1,18 @@
 import authStorage from "@/storage/authStorage";
 import wretch from "wretch";
 
-export const api = wretch(process.env.NEXT_PUBLIC_BASE_URL).errorType("json")
+export const api = wretch(process.env.NEXT_PUBLIC_BASE_URL)
+  .errorType("json")
+  .catcherFallback((err) => {
+    throw err.json;
+  });
 
 export const authApi = wretch(process.env.NEXT_PUBLIC_BASE_URL)
   .auth(`Bearer ${authStorage.getAccessToken()}`)
-  .errorType("json");
+  .errorType("json")
+  .catcherFallback((err) => {
+    throw err.json;
+  });
 
 export const fetcher = <IResponse>(url: string): Promise<IResponse> => {
   return authApi.get(url).json((json) => json?.data);

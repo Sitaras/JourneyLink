@@ -72,13 +72,13 @@ export class AuthController {
 
       const user = await User.findOne({ email });
       if (!user) {
-        res.error("Invalid credentials");
+        res.error("INVALID_CREDENTIALS");
         return;
       }
 
       const isValidPassword = await user.comparePassword(password);
       if (!isValidPassword) {
-        res.error("Invalid credentials");
+        res.error("INVALID_CREDENTIALS");
         return;
       }
 
