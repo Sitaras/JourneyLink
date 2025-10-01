@@ -24,13 +24,11 @@ const userSchema = new Schema<IUserDocument>({
     required: true,
     unique: true,
   },
-  roles: [
-    {
-      type: String,
-      enum: UserRoleEnum,
-      default: UserRoleEnum.PASSENGER,
-    },
-  ],
+  roles: {
+    type: [String],
+    enum: Object.values(UserRoleEnum),
+    default: [UserRoleEnum.PASSENGER],
+  },
   isPhoneVerified: {
     type: Boolean,
     default: false,

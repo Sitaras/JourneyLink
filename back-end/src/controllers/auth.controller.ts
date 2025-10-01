@@ -43,7 +43,7 @@ export class AuthController {
       const user = new User({
         email,
         password,
-        phoneNumber,
+        phoneNumber
       });
 
       const profile = new Profile({
