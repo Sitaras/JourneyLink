@@ -1,0 +1,35 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+    paths:
+      - 'back-end/**'
+  pull_request:
+    branches: [ "main" ]
+    paths:
+      - 'back-end/**'
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout repo
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Log in to Docker Hub
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKER_USERNAME }}
+          password: ${{ secrets.DOCKER_PASSWORD }}
+
+      # Build and push the image
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: ./back-end
+          push: true
+          tags: ${{ secrets.DOCKER_USERNAME }}/journeylink:1.0.0
