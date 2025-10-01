@@ -4,6 +4,7 @@ import { limiter } from "../middleware/limiter.middleware";
 import { validateData } from "../middleware/validationMiddleware";
 import { registerSchema } from "../schemas/auth/registerSchema";
 import { loginSchema } from "../schemas/auth/loginSchema";
+import { authenticateToken } from "../middleware/auth.middleware";
 // import multer from "multer";
 
 const router = Router();
@@ -13,6 +14,6 @@ router.post("/register", validateData(registerSchema), AuthController.register);
 router.post("/refresh-token", limiter, AuthController.refreshToken);
 
 // Protected routes
-// router.get("/profile", authenticateToken, AuthController.getProfile);
+router.get("/userInfo", authenticateToken, AuthController.getUserInfo);
 
 export const authRoutes = router;

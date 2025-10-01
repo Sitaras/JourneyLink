@@ -8,6 +8,7 @@ import {
   IRefreshTokenPayload,
 } from "../types/user.types";
 import { verifyRefreshToken } from "../utils/token.utils";
+import { AuthRequest } from "@/middleware/auth.middleware";
 
 export class AuthController {
   static async register(
@@ -173,4 +174,33 @@ export class AuthController {
       res.error("An error occurred", 500);
     }
   }
+
+  static async getUserInfo(
+    req: AuthRequest,
+    res: Response
+  ) {
+    try {
+
+      const userId = (req as any).user?.userId;
+      if (!userId) {
+        res.status(401).json({ message: "Unauthorized" });
+        return;
+      }
+
+      const user = await User.findById(userId).select("-password");
+      if (!user) {
+        res.status(404).json({ message: "User not found" });
+        return;
+      }
+
+      res.json({
+        status: "success",
+        data: user,
+      });
+    } catch (error) {
+      res.status(500).json({ message: "Server error" });
+      return;
+    }
+  }
+
 }
