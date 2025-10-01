@@ -1,6 +1,5 @@
 "use client";
 
-import { useActionState, useRef, startTransition, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,28 +16,39 @@ import { z } from "zod";
 import { CustomInput } from "@/components/ui/Inputs/CustomInput";
 import { useRouter } from "next/navigation";
 import { routes } from "@/data/routes";
+import { useMutation } from "@tanstack/react-query";
 
 // FYI https://dev.to/emmanuel_xs/how-to-use-react-hook-form-with-useactionstate-hook-in-nextjs15-1hja
 
+type LoginFormValues = z.infer<typeof loginSchema>;
+
 export const LoginPage = () => {
   const router = useRouter();
-  const [formState, formAction, pending] = useActionState(login, {
-    success: false,
+
+  const mutation = useMutation({
+    mutationFn: async (data: LoginFormValues) => {
+      const formData = new FormData();
+      formData.append("email", data.email);
+      formData.append("password", data.password);
+      return login({ success: false }, formData);
+    },
+    onSuccess: (result) => {
+      console.log(result);
+      if (result.success) {
+        router.push(routes.login);
+      }
+    },
   });
 
-  useEffect(() => {
-    if (formState.success) {
-      router.push(routes.home);
-    }
-  }, [formState.success, router]);
-
-  const formRef = useRef<HTMLFormElement>(null);
+  const onSubmit = (data: LoginFormValues) => {
+    mutation.mutate(data);
+  };
 
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<z.output<typeof loginSchema>>({
+  } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
       email: "john.doe@example.com",
@@ -55,16 +65,7 @@ export const LoginPage = () => {
         </CardHeader>
         <CardFooter>
           <form
-            ref={formRef}
-            action={formAction}
-            onSubmit={(evt) => {
-              evt.preventDefault();
-              handleSubmit(() => {
-                startTransition(() =>
-                  formAction(new FormData(formRef.current!))
-                );
-              })(evt);
-            }}
+            onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-4 w-full"
             noValidate
           >
@@ -82,10 +83,19 @@ export const LoginPage = () => {
               register={register}
               errors={errors}
             />
-            <Button className="w-full" type="submit" loading={pending}>
+            <Button
+              className="w-full"
+              type="submit"
+              loading={mutation.isPending}
+            >
               Submit
             </Button>
-            <p aria-live="polite">{formState?.message}</p>
+
+            {mutation.isError && (
+              <p className=" text-center text-red-500">
+                {mutation?.error?.message || "Something went wrong"}
+              </p>
+            )}
           </form>
         </CardFooter>
       </Card>

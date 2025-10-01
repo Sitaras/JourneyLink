@@ -28,8 +28,8 @@ export const login = async (prevState: unknown, form: FormData) => {
     });
 
     return { success: true, ...response };
-  } catch (error) {
-    return { success: false, message: "loginFailed", error };
+  } catch (error: any) {
+    throw error?.message;
   }
 };
 
@@ -58,9 +58,9 @@ export const register = async (prevState: unknown, form: FormData) => {
       })
       .json((json) => json?.data);
 
-    return { success: true, ...response };
-  } catch (error) {
-    return { success: false, message: "registeredFailed", error };
+    return response;
+  } catch (error: any) {
+    throw error?.message;
   }
 };
 
