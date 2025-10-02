@@ -1,44 +1,46 @@
-import { createContext, useContext, useState, useEffect, useMemo } from "react";
+import { createContext, useContext, useMemo } from "react";
 import { IUser } from "@/types/user.types";
-import authStorage from "@/storage/authStorage";
-import { decodeToken } from "@/utils/userUtils";
+import { useQuery } from "@tanstack/react-query";
+import { getUserInfo } from "@/api-actions/auth";
 
 interface AuthContextType {
-  user: IUser | null;
+  user: IUser | any;
   isLoading: boolean;
+  error: any;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-  const [user] = useState<IUser | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const token = authStorage.getAccessToken();
-  const { userId } = token ? decodeToken(token) : {};
+export const AuthProvider = ({
+  hasAccessToken,
+  children,
+}: {
+  hasAccessToken: boolean;
+  children: React.ReactNode;
+}) => {
 
-  useEffect(() => {
-    if (!userId) {
-      return;
-    }
+  const {
+    data: user,
+    isLoading,
+    error,
+  } = useQuery({
+    queryKey: ["api/user"],
+    queryFn: getUserInfo,
+    enabled: hasAccessToken,
 
-    setIsLoading(true);
+    staleTime: Infinity,
+    gcTime: Infinity,
+    refetchOnMount: false,
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
+  });
 
-    // getAccountInfo(userId)
-    //   .then((accountRes) => {
-    //     const { data: user } = accountRes || {};
-    //     if (user) {
-    //       setUser(user);
+  console.log(user);
 
-    //       return user;
-    //     }
-    //   })
-    //   .catch()
-    //   .finally(() => {
-    //     setIsLoading(false);
-    //   });
-  }, [userId]);
-
-  const value = useMemo(() => ({ user, isLoading }), [user, isLoading]);
+  const value = useMemo(
+    () => ({ user, isLoading, error }),
+    [user, isLoading, error]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

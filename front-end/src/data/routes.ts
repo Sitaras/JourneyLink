@@ -6,8 +6,8 @@ const routes = {
   support: "/support",
   terms: "/terms-of-use",
   cookies: "/cookies",
-  forgotPassword: "forgot-password",
-  resetPassword: "reset-password",
+  forgotPassword: "/forgot-password",
+  resetPassword: "/reset-password",
 };
 
 const protectedRoutes = [routes.home, routes.settings];

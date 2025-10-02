@@ -33,7 +33,6 @@ export const LoginPage = () => {
       return login({ success: false }, formData);
     },
     onSuccess: (result) => {
-      console.log(result);
       if (result.success) {
         router.push(routes.login);
       }

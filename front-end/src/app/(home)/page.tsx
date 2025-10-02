@@ -1,6 +1,22 @@
+import {
+  QueryClient,
+  dehydrate,
+  HydrationBoundary,
+} from "@tanstack/react-query";
+import { getUserInfo } from "@/api-actions/auth";
+import HomeForm from "@/components/HomeForm/HomeForm";
 
-import HomePage from "@/components/Home-Page";
+export default async function Home() {
+  const queryClient = new QueryClient();
 
-export default function Home() {
-  return <HomePage />;
+  await queryClient.prefetchQuery({
+    queryKey: ["api/user"],
+    queryFn: getUserInfo,
+  });
+
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <HomeForm />
+    </HydrationBoundary>
+  );
 }

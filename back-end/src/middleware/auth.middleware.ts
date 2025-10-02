@@ -29,7 +29,7 @@ export const authenticateToken = async (
       req.user = decoded as ITokenPayload;
       next();
     } catch (err) {
-      res.status(403).json({
+      res.status(401).json({
         status: "error",
         message: "Invalid or expired access token",
       });

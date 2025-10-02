@@ -1,8 +1,8 @@
 "use server";
 
-import { api } from "./api";
-import { cookies } from "next/headers";
+import { api, fetcher, refreshTokenService } from "./api";
 import { formatToUTC } from "@/utils/dateUtils";
+import { authStorage } from "./authStorage";
 
 export const login = async (prevState: unknown, form: FormData) => {
   const email = form.get("email") as string;
@@ -14,17 +14,11 @@ export const login = async (prevState: unknown, form: FormData) => {
       .post({ email, password })
       .json((json) => json?.data);
 
-    (await cookies()).set({
-      name: "access_token",
-      value: response?.tokens?.accessToken,
-      secure: process.env.NODE_ENV !== "production",
-      sameSite: "strict",
+    await authStorage.setToken({
+      token: response?.tokens?.accessToken,
     });
-    (await cookies()).set({
-      name: "refresh_token",
-      value: response?.tokens?.refreshToken,
-      secure: process.env.NODE_ENV !== "production",
-      sameSite: "strict",
+    await authStorage.setRefreshToken({
+      refreshToken: response?.tokens?.refreshToken,
     });
 
     return { success: true, ...response };
@@ -66,19 +60,11 @@ export const register = async (prevState: unknown, form: FormData) => {
 
 export const getUserInfo = async () => {
   try {
-    const response = await fetch("https://your-backend.com/api/user", {
-      method: "GET",
-      credentials: "include",
-    });
+    const response = fetcher("auth/userInfo");
 
-    if (!response.ok) {
-      throw new Error("Failed to get user info");
-    }
-
-    return response.json();
-  } catch (error) {
-    console.error("User info error:", error);
-    throw error;
+    return response;
+  } catch (error: any) {
+    throw error?.message;
   }
 };
 
@@ -96,4 +82,28 @@ export const logout = async () => {
     console.error("Sign-out error:", error);
     throw error;
   }
+};
+
+export const refreshTokens = async () => {
+  const refreshToken = await authStorage.getRefreshToken();
+  if (!refreshToken) throw new Error("no_refresh_token");
+
+  const res = await refreshTokenService(refreshToken);
+  const { accessToken: newToken, refreshToken: newRefreshToken } = res || {};
+
+  if (!newRefreshToken || !newToken) {
+    await authStorage.clearAuthTokens();
+    throw new Error("refresh_failed");
+  }
+
+  await authStorage.setToken({
+    token: newToken,
+  });
+
+  await authStorage.setRefreshToken({
+    refreshToken: newRefreshToken,
+  });
+
+
+  return newToken;
 };

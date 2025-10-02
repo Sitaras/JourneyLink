@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import Providers from "./providers";
+import { authStorage } from "@/api-actions/authStorage";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,12 +25,14 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const token = authStorage.getAccessToken();
+
   return (
     <html lang="en">
       <body
         className={`flex min-h-screen w-full flex-col ${geistSans.variable} ${geistMono.variable}`}
       >
-        {children}
+        <Providers hasAccessToken={Boolean(token)}>{children}</Providers>
       </body>
     </html>
   );

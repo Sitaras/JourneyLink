@@ -6,52 +6,64 @@ interface IUserDocument extends IUser, Document {
   comparePassword(password: string): Promise<boolean>;
 }
 
-const userSchema = new Schema<IUserDocument>({
-  email: {
-    type: String,
-    required: true,
-    unique: true,
-    lowercase: true,
-    trim: true,
-  },
-  password: {
-    type: String,
-    required: true,
-    minlength: 8,
-  },
-  phoneNumber: {
-    type: String,
-    required: true,
-    unique: true,
-  },
-  roles: {
-    type: [String],
-    enum: Object.values(UserRoleEnum),
-    default: [UserRoleEnum.PASSENGER],
-  },
-  isPhoneVerified: {
-    type: Boolean,
-    default: false,
-  },
-  isEmailVerified: {
-    type: Boolean,
-    default: false,
-  },
-  refreshTokens: [
-    {
-      token: String,
-      createdAt: { type: Date, default: Date.now },
+const userSchema = new Schema<IUserDocument>(
+  {
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
     },
-  ],
-  profile: {
-    type: Schema.Types.ObjectId,
-    ref: "Profile",
+    password: {
+      type: String,
+      required: true,
+      minlength: 8,
+      select: false,
+    },
+    phoneNumber: {
+      type: String,
+      required: true,
+      unique: true,
+    },
+    roles: {
+      type: [String],
+      enum: Object.values(UserRoleEnum),
+      default: [UserRoleEnum.PASSENGER],
+    },
+    isPhoneVerified: {
+      type: Boolean,
+      default: false,
+    },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    refreshTokens: {
+      type: [
+        {
+          token: String,
+          createdAt: { type: Date, default: Date.now },
+        },
+      ],
+      select: false,
+    },
+    profile: {
+      type: Schema.Types.ObjectId,
+      ref: "Profile",
+      select: false,
+    },
+    createdAt: {
+      type: Date,
+      default: Date.now,
+      select: false,
+    },
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  {
+    versionKey: false,
+    id: false,
+  }
+);
 
 userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
