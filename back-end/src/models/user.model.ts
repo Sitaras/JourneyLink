@@ -19,7 +19,6 @@ const userSchema = new Schema<IUserDocument>(
       type: String,
       required: true,
       minlength: 8,
-      select: false,
     },
     phoneNumber: {
       type: String,
@@ -46,12 +45,10 @@ const userSchema = new Schema<IUserDocument>(
           createdAt: { type: Date, default: Date.now },
         },
       ],
-      select: false,
     },
     profile: {
       type: Schema.Types.ObjectId,
       ref: "Profile",
-      select: false,
     },
     createdAt: {
       type: Date,
@@ -59,10 +56,6 @@ const userSchema = new Schema<IUserDocument>(
       select: false,
     },
   },
-  {
-    versionKey: false,
-    id: false,
-  }
 );
 
 userSchema.pre("save", async function (next) {

@@ -1,7 +1,7 @@
 import { createContext, useContext, useMemo } from "react";
 import { IUser } from "@/types/user.types";
 import { useQuery } from "@tanstack/react-query";
-import { getUserInfo } from "@/api-actions/auth";
+import { getUserInfo } from "@/api-actions/user";
 
 interface AuthContextType {
   user: IUser | any;
@@ -34,8 +34,6 @@ export const AuthProvider = ({
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
-
-  console.log(user);
 
   const value = useMemo(
     () => ({ user, isLoading, error }),

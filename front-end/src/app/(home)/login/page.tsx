@@ -17,6 +17,7 @@ import { CustomInput } from "@/components/ui/Inputs/CustomInput";
 import { useRouter } from "next/navigation";
 import { routes } from "@/data/routes";
 import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 // FYI https://dev.to/emmanuel_xs/how-to-use-react-hook-form-with-useactionstate-hook-in-nextjs15-1hja
 
@@ -25,35 +26,30 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 export const LoginPage = () => {
   const router = useRouter();
 
-  const mutation = useMutation({
-    mutationFn: async (data: LoginFormValues) => {
-      const formData = new FormData();
-      formData.append("email", data.email);
-      formData.append("password", data.password);
-      return login({ success: false }, formData);
-    },
-    onSuccess: (result) => {
-      if (result.success) {
-        router.push(routes.login);
-      }
-    },
-  });
-
-  const onSubmit = (data: LoginFormValues) => {
-    mutation.mutate(data);
-  };
-
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
-    defaultValues: {
-      email: "john.doe@example.com",
-      password: "SecurePass123!",
+  });
+
+  const mutation = useMutation({
+    mutationFn: async (data: LoginFormValues) => {
+      return login({ success: false }, data);
+    },
+    onSuccess: () => {
+      router.push(routes.login);
+      toast.success("Welcome back!");
+    },
+    onError: (err: Error) => {
+      toast.error(err.message);
     },
   });
+
+  const onSubmit = (data: LoginFormValues) => {
+    mutation.mutate(data);
+  };
 
   return (
     <div className="min-h-screen flex justify-center items-start md:items-center p-8">
@@ -74,12 +70,14 @@ export const LoginPage = () => {
               type="email"
               register={register}
               errors={errors}
+              autoComplete="username"
             />
             <CustomInput
               name="password"
               label="Password"
               type="password"
               register={register}
+              autoComplete="current-password"
               errors={errors}
             />
             <Button
@@ -89,12 +87,6 @@ export const LoginPage = () => {
             >
               Submit
             </Button>
-
-            {mutation.isError && (
-              <p className=" text-center text-red-500">
-                {mutation?.error?.message || "Something went wrong"}
-              </p>
-            )}
           </form>
         </CardFooter>
       </Card>

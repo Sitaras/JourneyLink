@@ -8,8 +8,6 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { useActionState, useRef, startTransition } from "react";
-
 import { register } from "@/api-actions/auth";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,11 +15,12 @@ import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { registerSchema } from "@/schemas/auth/registerSchema";
 import { CustomInput } from "@/components/ui/Inputs/CustomInput";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+
+type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export const RegisterPage = () => {
-  const [formState, formAction, pending] = useActionState(register, null);
-
-  const formRef = useRef<HTMLFormElement>(null);
 
   const {
     register: _register,
@@ -30,6 +29,22 @@ export const RegisterPage = () => {
   } = useForm<z.output<typeof registerSchema>>({
     resolver: zodResolver(registerSchema),
   });
+
+  const mutation = useMutation({
+    mutationFn: async (data: RegisterFormValues) => {
+      return register({ success: false }, data);
+    },
+    onSuccess: () => {
+      toast.success("Registered successfully");
+    },
+    onError: (err: Error) => {
+      toast.error(err.message);
+    },
+  });
+
+  const onSubmit = (data: RegisterFormValues) => {
+    mutation.mutate(data);
+  };
 
   return (
     <div className="min-h-screen flex justify-center items-start md:items-center p-8">
@@ -40,16 +55,7 @@ export const RegisterPage = () => {
         </CardHeader>
         <CardFooter>
           <form
-            ref={formRef}
-            action={formAction}
-            onSubmit={(evt) => {
-              evt.preventDefault();
-              handleSubmit(() => {
-                startTransition(() =>
-                  formAction(new FormData(formRef.current!))
-                );
-              })(evt);
-            }}
+            onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-4 w-full"
             noValidate
           >
@@ -59,6 +65,7 @@ export const RegisterPage = () => {
               type="email"
               register={_register}
               errors={errors}
+              autoComplete="username"
             />
             <CustomInput
               name="firstName"
@@ -92,6 +99,7 @@ export const RegisterPage = () => {
               type="password"
               errors={errors}
               register={_register}
+              autoComplete="new-password"
             />
             <CustomInput
               label="Verify password"
@@ -99,11 +107,15 @@ export const RegisterPage = () => {
               type="password"
               errors={errors}
               register={_register}
+              autoComplete="new-password"
             />
-            <Button className="w-full" type="submit" loading={pending}>
+            <Button
+              className="w-full"
+              type="submit"
+              loading={mutation.isPending}
+            >
               Submit
             </Button>
-            <p aria-live="polite">{formState?.message}</p>
           </form>
         </CardFooter>
       </Card>

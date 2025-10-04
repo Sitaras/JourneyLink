@@ -66,7 +66,7 @@ export function DatePicker<
   captionLayout = "dropdown",
 }: DatePickerProps<TFieldValues, TName>) {
   return (
-    <div className={cn("flex flex-col space-y-2", className)}>
+    <div className={cn("max-lg:w-full flex flex-col space-y-2", className)}>
       {label && <Label className={labelClassName}>{label}</Label>}
       <Controller
         control={control}
@@ -77,7 +77,7 @@ export function DatePicker<
               <Button
                 variant="outline"
                 className={cn(
-                  "w-[240px] pl-3 text-left font-normal",
+                  "w-[240px] max-lg:w-full pl-3 text-left font-normal",
                   !field.value && "text-muted-foreground",
                   error && "border-red-500",
                   buttonClassName

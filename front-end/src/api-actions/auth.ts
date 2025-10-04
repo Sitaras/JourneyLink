@@ -1,17 +1,20 @@
 "use server";
 
-import { api, fetcher, refreshTokenService } from "./api";
+import { api, refreshTokenService } from "./api";
 import { formatToUTC } from "@/utils/dateUtils";
 import { authStorage } from "./authStorage";
+import { registerSchema } from "@/schemas/auth/registerSchema";
+import z from "zod";
+import { loginSchema } from "@/schemas/auth/loginSchema";
 
-export const login = async (prevState: unknown, form: FormData) => {
-  const email = form.get("email") as string;
-  const password = form.get("password") as string;
+type LoginFormValues = z.infer<typeof loginSchema>;
+
+export const login = async (prevState: unknown, body: LoginFormValues) => {
 
   try {
     const response = await api
       .url("auth/login")
-      .post({ email, password })
+      .post(body)
       .json((json) => json?.data);
 
     await authStorage.setToken({
@@ -21,46 +24,28 @@ export const login = async (prevState: unknown, form: FormData) => {
       refreshToken: response?.tokens?.refreshToken,
     });
 
-    return { success: true, ...response };
-  } catch (error: any) {
-    throw error?.message;
-  }
-};
-
-export const register = async (prevState: unknown, form: FormData) => {
-  const email = form.get("email") as string;
-  const firstName = form.get("firstName") as string;
-  const lastName = form.get("lastName") as string;
-  const phoneNumber = form.get("phoneNumber") as string;
-  const dateOfBirth = form.get("dateOfBirth") as string;
-  const password = form.get("password") as string;
-  const verifyPassword = form.get("verifyPassword") as string;
-
-  const dateOfBirthDateISOstring = formatToUTC(dateOfBirth);
-
-  try {
-    const response = await api
-      .url("auth/register")
-      .post({
-        email,
-        firstName,
-        lastName,
-        phoneNumber,
-        dateOfBirth: dateOfBirthDateISOstring,
-        password,
-        verifyPassword,
-      })
-      .json((json) => json?.data);
-
     return response;
   } catch (error: any) {
     throw error?.message;
   }
 };
 
-export const getUserInfo = async () => {
+type RegisterFormValues = z.infer<typeof registerSchema>;
+
+export const register = async (
+  prevState: unknown,
+  body: RegisterFormValues
+) => {
+  const dateOfBirthDateISOstring = formatToUTC(body.dateOfBirth);
+
   try {
-    const response = fetcher("auth/userInfo");
+    const response = await api
+      .url("auth/register")
+      .post({
+        ...body,
+        dateOfBirth: dateOfBirthDateISOstring,
+      })
+      .json((json) => json?.data);
 
     return response;
   } catch (error: any) {
@@ -103,7 +88,6 @@ export const refreshTokens = async () => {
   await authStorage.setRefreshToken({
     refreshToken: newRefreshToken,
   });
-
 
   return newToken;
 };

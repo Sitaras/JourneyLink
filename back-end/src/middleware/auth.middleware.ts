@@ -17,22 +17,16 @@ export const authenticateToken = async (
     const token = authHeader?.split(" ")[1];
 
     if (!token) {
-      res.status(401).json({
-        status: "error",
-        message: "Access token is required",
-      });
+      res.error("Unauthorized", 401);
       return;
     }
-
+    
     try {
       const decoded = jwt.verify(token, config.jwt.accessToken.secret);
       req.user = decoded as ITokenPayload;
       next();
     } catch (err) {
-      res.status(401).json({
-        status: "error",
-        message: "Invalid or expired access token",
-      });
+      res.error("Unauthorized", 401);
     }
   } catch (error) {
     next(error);
