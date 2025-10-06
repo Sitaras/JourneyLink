@@ -19,6 +19,6 @@ export interface IRefreshResponse {
 }
 
 export interface IUser {
-  id: string;
   role: UserRoleEnum;
+  profile?: any;
 }

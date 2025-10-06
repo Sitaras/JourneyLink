@@ -7,9 +7,13 @@ export class UserController {
     try {
       const userId = req.user?.userId;
 
-      const user = await User.findById(userId).select(
-        "-password -refreshTokens -profile -__v"
-      );
+      const user = await User.findById(userId)
+        .select("-password -refreshTokens -__v -_id")
+        .populate({
+          path: "profile",
+          select: "-__v -createdAt -updatedAt -_id"
+        });
+
       if (!user) {
         res.error("Not found", 404);
         return;

@@ -47,7 +47,7 @@ export const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-start md:items-center p-8">
+    <div className="h-full flex-1 flex justify-center items-center">
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle className="text-2xl">Register</CardTitle>
@@ -55,11 +55,13 @@ export const RegisterPage = () => {
         </CardHeader>
         <CardFooter>
           <form
+            id="signup"
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-4 w-full"
             noValidate
           >
             <CustomInput
+              id="email"
               name="email"
               label="Email"
               type="email"
@@ -94,6 +96,7 @@ export const RegisterPage = () => {
               register={_register}
             />
             <CustomInput
+              id="new-password"
               label="Password"
               name="password"
               type="password"
@@ -102,6 +105,7 @@ export const RegisterPage = () => {
               autoComplete="new-password"
             />
             <CustomInput
+              id="verifyPassword"
               label="Verify password"
               name="verifyPassword"
               type="password"

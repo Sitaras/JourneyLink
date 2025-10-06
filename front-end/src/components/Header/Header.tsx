@@ -15,7 +15,7 @@ const Header = () => {
   return (
     <header className={styles.header}>
       <div className={styles.logo}>
-        <Link href="/">Share the Ride</Link>
+        <Link href="/">JourneyLink</Link>
       </div>
       <nav className={styles.nav} style={{marginRight:"1.5%"}}>
         <DropdownMenu>

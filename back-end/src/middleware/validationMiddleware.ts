@@ -2,16 +2,26 @@ import { Request, Response, NextFunction } from "express";
 import { z, ZodError } from "zod";
 import { StatusCodes } from "http-status-codes";
 
-export const validateData = (schema: z.ZodObject<any, any>) => {
+type ValidationTarget = "body" | "query" | "params";
+
+export const validateData = (
+  schema: z.ZodSchema<any>,
+  target: ValidationTarget = "body"
+) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
-      schema.parse(req.body);
+      const validated = schema.parse(req[target]);
+      req[target] = validated;
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        const errorMessages = error.errors.map((issue: any) => ({
-          message: `${issue.path.join(".")} is ${issue.message}`,
-        }));
+        const errorMessages = error.errors.map((issue) => {
+          const field = issue.path.join(".");
+          return {
+            field,
+            message: issue.message,
+          };
+        });
         res
           .status(StatusCodes.BAD_REQUEST)
           .json({ error: "Invalid data", details: errorMessages });

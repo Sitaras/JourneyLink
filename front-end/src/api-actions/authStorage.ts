@@ -26,6 +26,9 @@ export const authStorage = {
   removeToken: async () => {
     (await cookies()).delete("access_token");
   },
+  removeRefreshToken: async () => {
+    (await cookies()).delete("refresh_token");
+  },
   clearAuthTokens: async () => {
     (await cookies()).delete("access_token");
     (await cookies()).delete("refresh_token");

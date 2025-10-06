@@ -39,7 +39,7 @@ export const LoginPage = () => {
       return login({ success: false }, data);
     },
     onSuccess: () => {
-      router.push(routes.login);
+      router.replace(routes.home);
       toast.success("Welcome back!");
     },
     onError: (err: Error) => {
@@ -52,7 +52,7 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex justify-center items-start md:items-center p-8">
+    <div className="h-full flex-1 flex justify-center items-center">
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle className="text-2xl">Login</CardTitle>
@@ -60,11 +60,13 @@ export const LoginPage = () => {
         </CardHeader>
         <CardFooter>
           <form
+            id="login"
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-4 w-full"
             noValidate
           >
             <CustomInput
+              id="email"
               name="email"
               label="Email"
               type="email"
@@ -73,6 +75,7 @@ export const LoginPage = () => {
               autoComplete="username"
             />
             <CustomInput
+              id="password"
               name="password"
               label="Password"
               type="password"
