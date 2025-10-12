@@ -75,6 +75,7 @@ export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
 const defaultNavigationLinks: NavbarNavItem[] = [
   { href: routes.home, label: "Home" },
   { href: routes.settings, label: "Settings", protected: true },
+  { href: routes.createRoute, label: "Create route", protected: true },
 ];
 
 export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(

@@ -3,6 +3,7 @@ const routes = {
   login: "/login",
   register: "/register",
   settings: "/settings",
+  createRoute: "/create-route",
   support: "/support",
   terms: "/terms-of-use",
   cookies: "/cookies",
@@ -10,7 +11,7 @@ const routes = {
   resetPassword: "/reset-password",
 };
 
-const protectedRoutes = [routes.settings];
+const protectedRoutes = [routes.settings, routes.createRoute];
 const authRoutes = [
   routes.login,
   routes.register,
@@ -18,6 +19,5 @@ const authRoutes = [
   routes.resetPassword,
 ];
 const publicRoutes = [routes.home, ...authRoutes];
-
 
 export { routes, protectedRoutes, authRoutes, publicRoutes };
