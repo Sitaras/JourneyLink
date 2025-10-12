@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { routes, protectedRoutes, publicRoutes } from "./data/routes";
+import { routes, protectedRoutes,authRoutes } from "./data/routes";
 import { cookies } from "next/headers";
 import { decodeToken } from "./utils/userUtils";
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
-  const isPublicRoute = publicRoutes.includes(path);
+  const isAuthRoute = authRoutes.includes(path);
   const isProtectedRoute = protectedRoutes.includes(path);
 
   const cookie = (await cookies()).get("access_token")?.value;
@@ -16,7 +16,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(new URL(routes.login, request.nextUrl));
   }
 
-  if (isPublicRoute && cookie && userId) {
+  if (isAuthRoute && cookie && userId) {
     return NextResponse.redirect(new URL(routes.home, request.nextUrl));
   }
 

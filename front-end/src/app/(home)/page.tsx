@@ -3,7 +3,7 @@ import {
   dehydrate,
   HydrationBoundary,
 } from "@tanstack/react-query";
-import HomeForm from "@/components/HomeForm/HomeForm";
+import HomePage from "@/components/HomePage/HomePage";
 
 export default async function Home() {
   const queryClient = new QueryClient();
@@ -17,7 +17,7 @@ export default async function Home() {
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <HomeForm />
+      <HomePage />
     </HydrationBoundary>
   );
 }

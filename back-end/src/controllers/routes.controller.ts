@@ -19,8 +19,9 @@ export class RoutesController {
   ) => {
     try {
       const {
-        originCity,
-        destinationCity,
+        // maybe used with fuzzy search
+        // originCity,
+        // destinationCity,
         originLat,
         originLng,
         originRadius = 50, // Default 50km radius
@@ -136,12 +137,25 @@ export class RoutesController {
           from: "users",
           localField: "driver",
           foreignField: "_id",
-          as: "driverInfo",
+          as: "driverUser",
         },
       });
 
       pipeline.push({
-        $unwind: { path: "$driverInfo", preserveNullAndEmptyArrays: true },
+        $unwind: { path: "$driverUser", preserveNullAndEmptyArrays: true },
+      });
+
+      pipeline.push({
+        $lookup: {
+          from: "profiles",
+          localField: "driverUser.profile",
+          foreignField: "_id",
+          as: "driverProfile",
+        },
+      });
+
+      pipeline.push({
+        $unwind: { path: "$driverProfile", preserveNullAndEmptyArrays: true },
       });
 
       pipeline.push({
@@ -158,12 +172,10 @@ export class RoutesController {
           additionalInfo: 1,
           originDistance: 1,
           driver: {
-            _id: "$driverInfo._id",
-            name: "$driverInfo.name",
-            email: "$driverInfo.email",
-            phone: "$driverInfo.phone",
-            rating: "$driverInfo.rating",
-            avatar: "$driverInfo.avatar",
+            firstName: "$driverProfile.firstName",
+            lastName: "$driverProfile.lastName",
+            avatar: "$driverProfile.avatar",
+            rating: "$driverProfile.rating",
           },
           createdAt: 1,
         },
@@ -197,31 +209,11 @@ export class RoutesController {
       const total = countResult.length > 0 ? countResult[0].total : 0;
       return res.success(
         {
-          success: true,
           count: routes.length,
           total,
           page: parseInt(page as any),
           pages: Math.ceil(total / parseInt(limit as any)),
           data: routes,
-          filters: {
-            originCity,
-            destinationCity,
-            originLocation:
-              originLat && originLng
-                ? { lat: originLat, lng: originLng, radius: originRadius }
-                : null,
-            destinationLocation:
-              destinationLat && destinationLng
-                ? {
-                    lat: destinationLat,
-                    lng: destinationLng,
-                    radius: destinationRadius,
-                  }
-                : null,
-            departureDate,
-            minSeats,
-            maxPrice,
-          },
         },
         "",
         StatusCodes.OK

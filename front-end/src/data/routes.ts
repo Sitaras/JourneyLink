@@ -10,12 +10,14 @@ const routes = {
   resetPassword: "/reset-password",
 };
 
-const protectedRoutes = [routes.home, routes.settings];
-const publicRoutes = [
+const protectedRoutes = [routes.settings];
+const authRoutes = [
   routes.login,
   routes.register,
   routes.forgotPassword,
   routes.resetPassword,
 ];
+const publicRoutes = [routes.home, ...authRoutes];
 
-export { routes, protectedRoutes, publicRoutes };
+
+export { routes, protectedRoutes, authRoutes, publicRoutes };

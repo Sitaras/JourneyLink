@@ -255,3 +255,37 @@ export const isEqual = (
 
 export const minDate = (datesArray: (string | number | Date)[]) =>
   min(datesArray);
+
+export const parseDateFlexible = (
+  date: string | number | Date
+): Date | null => {
+  if (date instanceof Date && isValid(date)) return date;
+
+  if (typeof date === "number") return fromUnixTime(date);
+
+  let parsed = parseISO(date as string);
+  if (isValid(parsed)) return parsed;
+
+  const formatsToTry = [
+    "dd/MM/yyyy",
+    "MM/dd/yyyy",
+    "yyyy-MM-dd",
+    "dd-MM-yyyy",
+    "dd.MM.yyyy",
+    "yyyy/MM/dd",
+    "MMM dd, yyyy",
+    "dd MMM yyyy",
+    "MMM d yyyy",
+    "d MMM yyyy",
+    "EEE, dd MMM yyyy",
+    "EEE MMM dd yyyy",
+    "yyyyMMdd",
+  ];
+
+  for (const fmt of formatsToTry) {
+    parsed = parse(date as string, fmt, new Date());
+    if (isValid(parsed)) return parsed;
+  }
+
+  return null;
+};

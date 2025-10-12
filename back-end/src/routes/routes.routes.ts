@@ -37,9 +37,8 @@ router.delete(
 );
 
 /**
- * @route   POST /api/routes
+ * @route   GET /api/routes
  * @desc    Create new route
- * @access  Private (requires authentication)
  */
 router.get(
   "/",

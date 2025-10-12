@@ -1,28 +1,22 @@
 import React, { useState } from "react";
 import { CustomAutocomplete } from "./CustomAutocomplete";
 import { useDebounce } from "@/hooks/useDebounce";
-import { useQuery } from "@tanstack/react-query";
-import { cityAutocomplete } from "@/api-actions/cityAutocomplete";
 import { CustomAutocompleteProps } from "./CustomAutocomplete";
+import useCityAutocomplete from "@/hooks/useCityAutocomplete";
 
 const CityAutoComplete = ({
+  defaultSearchInput,
   ...rest
 }: Omit<
   CustomAutocompleteProps,
   "options" | "onSearchChange" | "optionsKeyName"
->) => {
+> & { defaultSearchInput?: string }) => {
   const [searchInput, setSearchInput] = useState("");
-  const debouncedSearchInput = useDebounce<string>(searchInput, 300) || "";
+  const debouncedSearchInput =
+    useDebounce<string>(searchInput || defaultSearchInput, 300) || "";
 
-  const { data: citiesData, isLoading } = useQuery({
-    queryKey: ["citySearch", debouncedSearchInput],
-    queryFn: () => cityAutocomplete({ query: debouncedSearchInput }),
-
-    enabled: debouncedSearchInput.length > 2,
-
-    staleTime: Infinity,
-    gcTime: Infinity,
-  });
+  const { data: citiesData, isLoading } =
+    useCityAutocomplete(debouncedSearchInput);
 
   const options =
     citiesData?.map((cityInfo) => ({
