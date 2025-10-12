@@ -246,8 +246,6 @@ export class RoutesController {
 
       // TODO: check is user has the driver role
 
-      // TODO: Origin and destination cities must be different
-
       const route = await Route.create({
         driver: userId,
         origin,

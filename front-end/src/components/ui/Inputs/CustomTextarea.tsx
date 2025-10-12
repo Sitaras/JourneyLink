@@ -1,31 +1,30 @@
 import * as React from "react";
-import { Input } from "../input";
+import { Textarea } from "../textarea"; // Adjust path if needed
 import { Label } from "../label";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
 import { cn } from "@/lib/utils";
 
-export interface CustomInputProps extends React.ComponentProps<"input"> {
+export interface CustomTextareaProps extends React.ComponentProps<"textarea"> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   register?: UseFormRegister<any>;
   errors?: FieldErrors;
   label?: string;
-  type?: string;
   name: string;
   required?: boolean;
   labelClassName?: string;
   containerClassname?: string;
 }
 
-const CustomInput = ({
+const CustomTextarea = ({
   register,
   errors,
   label,
-  type = "text",
   name,
-  required = true,
+  required = false,
   labelClassName,
   containerClassname,
   ...rest
-}: CustomInputProps) => {
+}: CustomTextareaProps) => {
   return (
     <div className={cn("flex flex-col space-y-2", containerClassname)}>
       {label && (
@@ -33,18 +32,16 @@ const CustomInput = ({
           {label}
         </Label>
       )}
-      <Input
-        id={name}
-        type={type}
-        required={required}
-        errorMessage={errors?.[name]?.message as string}
-        {...register?.(name)}
-        {...rest}
-      />
+      <Textarea id={name} required={required} {...register?.(name)} {...rest} />
+      {errors?.[name]?.message && (
+        <p className="text-red-600 text-sm">
+          {errors[name]?.message as string}
+        </p>
+      )}
     </div>
   );
 };
 
-CustomInput.displayName = "CustomInput";
+CustomTextarea.displayName = "CustomTextarea";
 
-export { CustomInput };
+export { CustomTextarea };

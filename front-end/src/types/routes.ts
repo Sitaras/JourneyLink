@@ -29,7 +29,6 @@ export interface Route {
   preferences: {
     smokingAllowed: boolean;
     petsAllowed: boolean;
-    maxTwoInBack: boolean;
   };
   additionalInfo: string;
   createdAt: string;
@@ -42,3 +41,33 @@ export interface Location {
   address: string;
   coordinates: [number, number]; // [longitude, latitude]
 }
+
+export type RouteCreationResponse = {
+  id: string;
+  origin: {
+    city: string;
+    address?: string;
+    coordinates: [number, number];
+  };
+  destination: {
+    city: string;
+    address?: string;
+    coordinates: [number, number];
+  };
+  departureTime: string;
+  availableSeats: number;
+  pricePerSeat: number;
+  vehicleInfo: {
+    make: string;
+    model: string;
+    year: number;
+    licensePlate: string;
+  };
+  preferences: {
+    smoking: boolean;
+    petsAllowed: boolean;
+  };
+  additionalInfo?: string;
+  createdAt: string;
+  updatedAt: string;
+};

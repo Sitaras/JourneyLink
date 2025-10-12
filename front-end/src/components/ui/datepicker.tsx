@@ -67,7 +67,7 @@ export function DatePicker<
 }: DatePickerProps<TFieldValues, TName>) {
   return (
     <div className={cn("max-lg:w-full flex flex-col space-y-2", className)}>
-      {label && <Label className={labelClassName}>{label}</Label>}
+      {label && <Label htmlFor={name} className={labelClassName}>{label}</Label>}
       <Controller
         control={control}
         name={name}
@@ -75,6 +75,7 @@ export function DatePicker<
           <Popover>
             <PopoverTrigger asChild>
               <Button
+                id={name}
                 variant="outline"
                 className={cn(
                   "w-[240px] max-lg:w-full pl-3 text-left font-normal",

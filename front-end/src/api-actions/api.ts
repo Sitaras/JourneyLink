@@ -9,7 +9,7 @@ export const api = wretch(process.env.NEXT_PUBLIC_BASE_URL)
 
 const state = {
   isRefreshingToken: false,
-  queuedRequests: new Map<string, { req: unknown }>(),
+  queuedRequests: new Map<string, { req: any }>(),
   resolveRefreshPromise: null as ((token: string) => void) | null,
 };
 
@@ -94,15 +94,15 @@ export const getAuthApi = async () => {
             }
 
             // Replay queued requests
-            state.queuedRequests.forEach(async ({ req, resolve, reject }) => {
+            state.queuedRequests.forEach(async ({ req }) => {
               try {
                 const result = await req
                   .auth(`Bearer ${newToken}`)
                   .fetch()
-                  .json((json) => json?.data);
-                resolve(result);
+                  .json((json: { data: any }) => json?.data);
+                return result;
               } catch (err) {
-                reject(err);
+                throw err;
               }
             });
 
@@ -130,15 +130,12 @@ export const getAuthApi = async () => {
     });
 };
 
-export const fetcher = async <IResponse>(url: string): Promise<IResponse> => {
-  return (await getAuthApi()).get(url).json((json) => json?.data);
+export const fetcher = async <IResponse>(url: string) => {
+  return (await getAuthApi()).get(url).json<IResponse>((json) => json?.data);
 };
 
-export const postFetcher = async <IBody, IResponse>(
-  url: string,
-  body: IBody
-): Promise<IResponse> =>
+export const postFetcher = async <IBody, IResponse>(url: string, body: IBody) =>
   (await getAuthApi())
     .url(url)
     .post(body)
-    .json((json) => json?.data);
+    .json<IResponse>((json) => json?.data);

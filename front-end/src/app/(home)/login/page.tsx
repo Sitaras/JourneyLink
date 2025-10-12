@@ -23,7 +23,7 @@ import { toast } from "sonner";
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-export const LoginPage = () => {
+export default function LoginPage() {
   const router = useRouter();
 
   const {
@@ -95,6 +95,4 @@ export const LoginPage = () => {
       </Card>
     </div>
   );
-};
-
-export default LoginPage;
+}

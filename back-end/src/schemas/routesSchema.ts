@@ -7,8 +7,7 @@ const coordinatesSchema = z
   .refine(
     ([lng, lat]) => lng >= -180 && lng <= 180 && lat >= -90 && lat <= 90,
     { message: "Invalid coordinates format [longitude, latitude]" }
-  )
-  .optional();
+  );
 
 const locationSchema = z.object({
   city: z
@@ -33,7 +32,6 @@ const preferencesSchema = z
   .object({
     smokingAllowed: z.boolean().optional().default(false),
     petsAllowed: z.boolean().optional().default(false),
-    maxTwoInBack: z.boolean().optional().default(false),
   })
   .optional();
 

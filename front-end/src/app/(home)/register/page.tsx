@@ -20,8 +20,7 @@ import { toast } from "sonner";
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
-export const RegisterPage = () => {
-
+export default function RegisterPage() {
   const {
     register: _register,
     handleSubmit,
@@ -125,6 +124,4 @@ export const RegisterPage = () => {
       </Card>
     </div>
   );
-};
-
-export default RegisterPage;
+}

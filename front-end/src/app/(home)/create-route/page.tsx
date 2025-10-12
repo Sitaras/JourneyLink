@@ -1,59 +1,187 @@
+"use client";
+
+import { createRoute } from "@/api-actions/routes";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { DatePicker } from "@/components/ui/datepicker";
+import CityAutoComplete from "@/components/ui/Inputs/CityAutoComplete";
+import { CustomInput } from "@/components/ui/Inputs/CustomInput";
+import { createRouteSchema } from "@/schemas/home/createRouteSchema";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { FieldErrors, useForm } from "react-hook-form";
+import { toast } from "sonner";
+import { CreateRouteFormValues } from "@/schemas/home/createRouteSchema";
+import { Switch } from "@/components/ui/switch";
+import { ICreateRoutePayload } from "@/schemas/routesSchema";
+import { combineDateAndTime } from "@/utils/dateUtils";
+import { parsePrice } from "@/utils/moneysUtils";
+import Typography from "@/components/ui/typography";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-
-import { Separator } from "@/components/ui/separator";
-
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Clock8Icon } from "lucide-react";
+import { Label } from "@radix-ui/react-label";
+import { SeatsSelect } from "@/components/ui/Inputs/SeatSelect";
+import { CustomTextarea } from "@/components/ui/Inputs/CustomTextarea";
 
 export default function CreateRoute() {
+  const { register, control, handleSubmit } = useForm<CreateRouteFormValues>({
+    resolver: zodResolver(createRouteSchema),
+    defaultValues: {
+      smoking: false,
+      petsAllowed: false,
+    },
+    shouldFocusError: false,
+  });
+
+  const mutation = useMutation({
+    mutationFn: async (data: ICreateRoutePayload) => {
+      return createRoute(data);
+    },
+    onSuccess: () => {
+      toast.success("Route created successfully!");
+    },
+    onError: (err: Error) => {
+      toast.error(err.message);
+    },
+  });
+
+  const onSubmit = (data: CreateRouteFormValues) => {
+    const departureTime = combineDateAndTime(
+      data.dateTrip,
+      data.time
+    ).toISOString();
+
+    const body: ICreateRoutePayload = {
+      origin: {
+        city: data.departureLocation.name,
+        coordinates: [data.departureLocation.lng, data.departureLocation.lat],
+      },
+      destination: {
+        city: data.arrivalLocation.name,
+        coordinates: [data.arrivalLocation.lng, data.arrivalLocation.lat],
+      },
+      departureTime,
+      availableSeats: Number(data.availableSeats),
+      pricePerSeat: parsePrice(data.pricePerSeat) || 0,
+      preferences: {
+        smokingAllowed: data.smoking,
+        petsAllowed: data.petsAllowed,
+      },
+    };
+
+    mutation.mutate(body);
+  };
+
+  const fieldLabels: Record<string, string> = {
+    departureLocation: "Departure location",
+    arrivalLocation: "Arrival location",
+    dateTrip: "Travel Date",
+    time: "Time",
+    availableSeats: "Available seats",
+    pricePerSeat: "Price per seat",
+    smoking: "Smoking",
+    petsAllowed: "Pets allowed",
+    additionalInfo: "Additional info",
+  };
+
+  const onError = (errors: FieldErrors) => {
+    const firstErrorKey = Object.keys(errors)[0];
+    const firstError = errors[firstErrorKey as keyof CreateRouteFormValues];
+
+    if (firstError?.message && firstErrorKey) {
+      const fieldLabel = fieldLabels[firstErrorKey] || firstErrorKey;
+      toast.error(`${fieldLabel}: ${firstError.message}`);
+    } else {
+      toast.error("Please check the form for errors");
+    }
+  };
+
   return (
-    <div className="min-h-screen flex justify-center items-center p-6 bg-gray-100">
-      <Card className="w-full max-w-md p-6 shadow-lg rounded-2xl bg-white">
-        <CardHeader className="flex flex-col items-center text-center">
-          <Avatar className="w-20 h-20 mb-4">
-            <AvatarImage src="/user-avatar.png" alt="User Image" />
-            <AvatarFallback>User Image</AvatarFallback>
-          </Avatar>
-          <CardTitle className="text-2xl font-semibold">
-            Account Settings
-          </CardTitle>
-          <CardDescription className="text-gray-500">
-            Manage your profile and preferences
-          </CardDescription>
-        </CardHeader>
-        <Separator className="my-4" />
-        <div className="space-y-6">
-          <div>
-            <Label htmlFor="name" className="font-medium">
-              Full Name
-            </Label>
-            <Input id="name" placeholder="John Doe" className="mt-2" />
-          </div>
-          <div>
-            <Label htmlFor="email" className="font-medium">
-              Email
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="john@example.com"
-              className="mt-2"
-            />
-          </div>
+    <section className="flex justify-center w-full">
+      <div className="flex flex-col gap-6 max-w-xl w-full">
+        <div className="flex flex-col gap-1">
+          <Typography variant="h2">Offer a ride</Typography>
+          <Typography>
+            Share your journey and split the costs. Fill in the details below to
+            post your ride
+          </Typography>
         </div>
-        <Separator className="my-4" />
-        <CardFooter>
-          <Button className="w-full">Save Changes</Button>
-        </CardFooter>
-      </Card>
-    </div>
+        <form
+          id="create-route"
+          onSubmit={handleSubmit(onSubmit, onError)}
+          className="flex flex-col gap-4 w-full"
+          noValidate
+        >
+          <CityAutoComplete
+            control={control}
+            name="departureLocation"
+            label="Departure location"
+            placeholder="e.g. Athens"
+            buttonClassName="w-full"
+          />
+          <CityAutoComplete
+            control={control}
+            name="arrivalLocation"
+            label="Arrival location"
+            placeholder="e.g. Thessaloniki"
+            buttonClassName="w-full"
+          />
+          <div className="flex gap-4 w-full">
+            <DatePicker
+              control={control}
+              name="dateTrip"
+              label="Date"
+              placeholder="Select a date"
+              captionLayout="dropdown"
+              className="flex-1"
+              buttonClassName="w-full"
+            />
+
+            <div className="relative flex-1">
+              <CustomInput
+                type="time"
+                name="time"
+                id="time-picker"
+                register={register}
+                label="Time (24-h format)"
+                className="peer bg-background appearance-none pr-9 [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+              />
+              <div className="text-muted-foreground pointer-events-none absolute inset-y-10 right-0 flex items-center justify-center pr-4 peer-disabled:opacity-50">
+                <Clock8Icon className="size-4 z-10 opacity-50" />
+                <span className="sr-only">User</span>
+              </div>
+            </div>
+          </div>
+          <SeatsSelect
+            control={control}
+            name="availableSeats"
+            label="Available Seats"
+            maxSeats={4}
+            required
+          />
+          <CustomInput
+            name="pricePerSeat"
+            label="Price per seat (€)"
+            register={register}
+            required
+          />
+          <Typography className="text-sm font-medium leading-none">Preferences</Typography>
+          <div className="flex gap-4">
+            <Switch control={control} name="smoking" label="Smoking" />
+            <Switch control={control} name="petsAllowed" label="Pets allowed" />
+          </div>
+          {/* replace it with text area */}
+          <CustomTextarea
+            name="additionalInfo"
+            label="Additional info"
+            placeholder="e.g. coffee stop"
+            register={register}
+          />
+          <Button type="submit" loading={mutation.isPending}>
+            Submit
+          </Button>
+        </form>
+      </div>
+    </section>
   );
 }

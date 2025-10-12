@@ -1,10 +1,11 @@
 "use server";
-import { api } from "./api";
+import { api, postFetcher } from "./api";
 import {
   getRoutesQuerySchema,
+  ICreateRoutePayload,
   IGetRoutesQueryPayload,
 } from "@/schemas/routesSchema";
-import { RouteSearchResponse } from "@/types/routes";
+import { RouteCreationResponse, RouteSearchResponse } from "@/types/routes";
 
 export const getRoutes = async (parameters: IGetRoutesQueryPayload) => {
   const parsedParams = getRoutesQuerySchema.parse(parameters);
@@ -20,6 +21,19 @@ export const getRoutes = async (parameters: IGetRoutesQueryPayload) => {
       .url(`routes?${queryString}`)
       .get()
       .json<RouteSearchResponse>((json) => json?.data);
+
+    return response;
+  } catch (error: any) {
+    throw error?.message;
+  }
+};
+
+export const createRoute = async (body: ICreateRoutePayload) => {
+  try {
+    const response = await postFetcher<
+      ICreateRoutePayload,
+      RouteCreationResponse
+    >("routes", body);
 
     return response;
   } catch (error: any) {

@@ -30,7 +30,6 @@ const preferencesSchema = z
   .object({
     smokingAllowed: z.boolean().optional().default(false),
     petsAllowed: z.boolean().optional().default(false),
-    maxTwoInBack: z.boolean().optional().default(false),
   })
   .optional();
 

@@ -289,3 +289,12 @@ export const parseDateFlexible = (
 
   return null;
 };
+
+export function combineDateAndTime(dateTrip: Date, time: string): Date {
+  const [hours, minutes] = time.split(":").map(Number);
+
+  const combined = new Date(dateTrip);
+  combined.setHours(hours, minutes, 0, 0);
+
+  return combined;
+}
