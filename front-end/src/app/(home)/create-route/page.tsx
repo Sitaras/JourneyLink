@@ -2,7 +2,6 @@
 
 import { createRoute } from "@/api-actions/routes";
 import { Button } from "@/components/ui/button";
-import { Card, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { DatePicker } from "@/components/ui/datepicker";
 import CityAutoComplete from "@/components/ui/Inputs/CityAutoComplete";
 import { CustomInput } from "@/components/ui/Inputs/CustomInput";
@@ -17,11 +16,10 @@ import { ICreateRoutePayload } from "@/schemas/routesSchema";
 import { combineDateAndTime } from "@/utils/dateUtils";
 import { parsePrice } from "@/utils/moneysUtils";
 import Typography from "@/components/ui/typography";
-import { Input } from "@/components/ui/input";
 import { Clock8Icon } from "lucide-react";
-import { Label } from "@radix-ui/react-label";
 import { SeatsSelect } from "@/components/ui/Inputs/SeatSelect";
 import { CustomTextarea } from "@/components/ui/Inputs/CustomTextarea";
+import { onError } from "@/utils/formUtils";
 
 export default function CreateRoute() {
   const { register, control, handleSubmit } = useForm<CreateRouteFormValues>({
@@ -72,28 +70,20 @@ export default function CreateRoute() {
     mutation.mutate(body);
   };
 
-  const fieldLabels: Record<string, string> = {
-    departureLocation: "Departure location",
-    arrivalLocation: "Arrival location",
-    dateTrip: "Travel Date",
-    time: "Time",
-    availableSeats: "Available seats",
-    pricePerSeat: "Price per seat",
-    smoking: "Smoking",
-    petsAllowed: "Pets allowed",
-    additionalInfo: "Additional info",
-  };
+  const handleOnError = (errors: FieldErrors) => {
+    const fieldLabels: Record<string, string> = {
+      departureLocation: "Departure location",
+      arrivalLocation: "Arrival location",
+      dateTrip: "Travel Date",
+      time: "Time",
+      availableSeats: "Available seats",
+      pricePerSeat: "Price per seat",
+      smoking: "Smoking",
+      petsAllowed: "Pets allowed",
+      additionalInfo: "Additional info",
+    };
 
-  const onError = (errors: FieldErrors) => {
-    const firstErrorKey = Object.keys(errors)[0];
-    const firstError = errors[firstErrorKey as keyof CreateRouteFormValues];
-
-    if (firstError?.message && firstErrorKey) {
-      const fieldLabel = fieldLabels[firstErrorKey] || firstErrorKey;
-      toast.error(`${fieldLabel}: ${firstError.message}`);
-    } else {
-      toast.error("Please check the form for errors");
-    }
+    onError(fieldLabels, errors);
   };
 
   return (
@@ -108,7 +98,7 @@ export default function CreateRoute() {
         </div>
         <form
           id="create-route"
-          onSubmit={handleSubmit(onSubmit, onError)}
+          onSubmit={handleSubmit(onSubmit, handleOnError)}
           className="flex flex-col gap-4 w-full"
           noValidate
         >
@@ -165,7 +155,9 @@ export default function CreateRoute() {
             register={register}
             required
           />
-          <Typography className="text-sm font-medium leading-none">Preferences</Typography>
+          <Typography className="text-sm font-medium leading-none">
+            Preferences
+          </Typography>
           <div className="flex gap-4">
             <Switch control={control} name="smoking" label="Smoking" />
             <Switch control={control} name="petsAllowed" label="Pets allowed" />

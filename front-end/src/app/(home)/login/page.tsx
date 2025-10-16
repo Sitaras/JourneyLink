@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/card";
 import { login } from "@/api-actions/auth";
 import { loginSchema } from "@/schemas/auth/loginSchema";
-import { useForm } from "react-hook-form";
+import { FieldErrors, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { CustomInput } from "@/components/ui/Inputs/CustomInput";
@@ -18,6 +18,7 @@ import { useRouter } from "next/navigation";
 import { routes } from "@/data/routes";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { onError } from "@/utils/formUtils";
 
 // FYI https://dev.to/emmanuel_xs/how-to-use-react-hook-form-with-useactionstate-hook-in-nextjs15-1hja
 
@@ -26,20 +27,17 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 export default function LoginPage() {
   const router = useRouter();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<LoginFormValues>({
+  const { register, handleSubmit } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
 
   const mutation = useMutation({
     mutationFn: async (data: LoginFormValues) => {
-      return login({ success: false }, data);
+      return login(data);
     },
     onSuccess: () => {
       router.replace(routes.home);
+      router.refresh();
       toast.success("Welcome back!");
     },
     onError: (err: Error) => {
@@ -49,6 +47,15 @@ export default function LoginPage() {
 
   const onSubmit = (data: LoginFormValues) => {
     mutation.mutate(data);
+  };
+
+  const handleOnError = (errors: FieldErrors) => {
+    const fieldLabels: Record<string, string> = {
+      email: "Email",
+      password: "Password",
+    };
+
+    onError(fieldLabels, errors);
   };
 
   return (
@@ -61,7 +68,7 @@ export default function LoginPage() {
         <CardFooter>
           <form
             id="login"
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(onSubmit, handleOnError)}
             className="flex flex-col gap-4 w-full"
             noValidate
           >
@@ -71,7 +78,6 @@ export default function LoginPage() {
               label="Email"
               type="email"
               register={register}
-              errors={errors}
               autoComplete="username"
             />
             <CustomInput
@@ -81,7 +87,6 @@ export default function LoginPage() {
               type="password"
               register={register}
               autoComplete="current-password"
-              errors={errors}
             />
             <Button
               className="w-full"

@@ -44,9 +44,9 @@ export default function RoutesList({
               <MapPin className="w-5 h-5 text-primary" />
               {route.origin.city} → {route.destination.city}
             </CardTitle>
-            <p className="text-sm text-muted-foreground">
+            {/* <p className="text-sm text-muted-foreground">
               {route.origin.address} → {route.destination.address}
-            </p>
+            </p> */}
           </CardHeader>
 
           <CardContent className="space-y-3">
