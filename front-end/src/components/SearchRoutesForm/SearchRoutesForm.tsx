@@ -4,12 +4,12 @@ import { useForm } from "react-hook-form";
 import { DatePicker } from "@/components/ui/datepicker";
 import CityAutoComplete from "@/components/ui/Inputs/CityAutoComplete";
 import { routeSearchSchema } from "@/schemas/home/routeSearchSchema";
-import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
-import { parseDateFlexible } from "@/utils/dateUtils";
-import { useRouteSearchParams } from "@/hooks/useRouteSearchParams";
-import { usePaginationSearchParams } from "@/hooks/usePaginationSearchParams";
+import { useRouter } from "next/navigation";
+import type { z } from "zod";
+import { toast } from "sonner";
+import { useEffect } from "react";
 
 type RouteSearchFormValues = z.infer<typeof routeSearchSchema>;
 
@@ -17,35 +17,39 @@ interface SearchRoutesFormProps {
   values?: RouteSearchFormValues;
   isLoading?: boolean;
   className?: string;
+  serviceError?: string;
 }
 
 export default function SearchRoutesForm({
   values,
   isLoading,
   className,
+  serviceError,
 }: SearchRoutesFormProps) {
-  const [{ from, to, departureDate }, setSearchParams] = useRouteSearchParams();
-  const [, setPagination] = usePaginationSearchParams();
+  useEffect(() => {
+    if (serviceError) {
+      toast.error(serviceError);
+    }
+  }, [serviceError]);
+
+  const router = useRouter();
 
   const { control, handleSubmit, watch } = useForm<RouteSearchFormValues>({
     resolver: zodResolver(routeSearchSchema),
-    defaultValues: {
-      departureLocation: from ? { label: from } : undefined,
-      arrivalLocation: from ? { label: to } : undefined,
-      dateTrip: parseDateFlexible(departureDate) || undefined,
+    defaultValues: values || {
+      departureLocation: undefined,
+      arrivalLocation: undefined,
+      dateTrip: undefined,
     },
-    values,
   });
 
   const onSubmit = (data: RouteSearchFormValues) => {
-    const searchParams = {
-      from: data.departureLocation?.label || "",
-      to: data.arrivalLocation?.label || "",
-      departureDate: new Intl.DateTimeFormat("el").format(data.dateTrip),
-    };
+    const from = data.departureLocation?.label || "";
+    const to = data.arrivalLocation?.label || "";
+    const departureDate = new Intl.DateTimeFormat("el").format(data.dateTrip);
 
-    setSearchParams(searchParams);
-    setPagination({ page: null });
+    const params = new URLSearchParams({ from, to, departureDate, page: "1" });
+    router.push(`/?${params.toString()}`);
   };
 
   return (

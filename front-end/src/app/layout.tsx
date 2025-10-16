@@ -36,6 +36,7 @@ export default async function RootLayout({
       <body
         className={`flex min-h-screen w-full flex-col ${geistSans.variable} ${geistMono.variable}`}
       >
+        <Toaster richColors />
         <Providers hasAccessToken={Boolean(token)}>
           <main className={styles.page}>
             <div className={styles.container}>
@@ -44,7 +45,6 @@ export default async function RootLayout({
             </div>
           </main>
         </Providers>
-        <Toaster richColors />
       </body>
     </html>
   );
