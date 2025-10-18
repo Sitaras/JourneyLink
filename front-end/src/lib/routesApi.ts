@@ -1,4 +1,4 @@
-import { getRoutes } from "@/api-actions/routes";
+import { getRoutes, getRoute } from "@/api-actions/routes";
 import type { IGetRoutesQueryPayload } from "@/schemas/routesSchema";
 import { Route } from "@/types/routes";
 
@@ -18,11 +18,11 @@ export async function searchRoutes(
   }
 
   try {
-    const result = await getRoutes({ ...baseParams, page, limit });
+    const response = await getRoutes({ ...baseParams, page, limit });
 
     return {
-      pageData: result.data ?? [],
-      totalPages: result.pages ?? 1,
+      pageData: response.data ?? [],
+      totalPages: response.pages ?? 1,
     };
   } catch (error) {
     return {
@@ -30,5 +30,19 @@ export async function searchRoutes(
       totalPages: 1,
       error: "Failed to fetch routes",
     };
+  }
+}
+
+export async function getRouteById(id: string) {
+  if (!id) {
+    return { data: null };
+  }
+
+  try {
+    const response = await getRoute(id);
+
+    return { data: response };
+  } catch {
+    return { data: null, error: "Failed to fetch route" };
   }
 }

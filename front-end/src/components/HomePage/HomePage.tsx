@@ -70,7 +70,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   }
 
   return (
-    <div className="flex flex-col gap-8 items-center w-full">
+    <section className="flex flex-col gap-8 items-center w-full">
       <SearchRoutesForm
         values={{ departureLocation, arrivalLocation, dateTrip }}
         className="max-lg:max-w-3xl"
@@ -86,6 +86,6 @@ export default async function HomePage({ searchParams }: HomePageProps) {
           departureDate={departureDate}
         />
       )}
-    </div>
+    </section>
   );
 }
