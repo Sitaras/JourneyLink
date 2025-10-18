@@ -18,6 +18,8 @@ import { CustomInput } from "@/components/ui/Inputs/CustomInput";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { onError } from "@/utils/formUtils";
+import { DateFormats } from "@/utils/dateFormats";
+import { formatDate } from "@/utils/dateUtils";
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
@@ -57,6 +59,18 @@ export default function RegisterPage() {
 
     onError(fieldLabels, errors);
   };
+
+  const today = new Date();
+  const maxDate = new Date(
+    today.getFullYear() - 13,
+    today.getMonth(),
+    today.getDate()
+  );
+  const minDate = new Date(
+    today.getFullYear() - 80,
+    today.getMonth(),
+    today.getDate()
+  );
 
   return (
     <div className="h-full flex-1 flex justify-center items-center">
@@ -100,6 +114,8 @@ export default function RegisterPage() {
               label="Date of birth"
               name="dateOfBirth"
               type="date"
+              max={formatDate(maxDate, DateFormats.DATE_DASH_REVERSE)}
+              min={formatDate(minDate, DateFormats.DATE_DASH_REVERSE)}
               register={_register}
             />
             <CustomInput
