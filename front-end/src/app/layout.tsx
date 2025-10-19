@@ -5,6 +5,7 @@ import Providers from "./providers";
 import { authStorage } from "@/api-actions/authStorage";
 import { Toaster } from "@/components/ui/sonner";
 import { Navbar } from "@/components/Navbar/navbar";
+import Footer from "@/components/Footer/Footer";
 
 import styles from "./layout.module.css";
 
@@ -44,6 +45,7 @@ export default async function RootLayout({
               <main className={styles.main}>{children}</main>
             </div>
           </main>
+          <Footer/>
         </Providers>
       </body>
     </html>

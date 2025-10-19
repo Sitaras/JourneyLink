@@ -32,6 +32,7 @@ interface DatePickerProps<
   buttonClassName?: string;
   dateFormat?: DateFormats;
   labelClassName?: string;
+  displayIcon?: boolean;
   captionLayout?:
     | "dropdown"
     | "label"
@@ -64,10 +65,15 @@ export function DatePicker<
   error,
   labelClassName,
   captionLayout = "dropdown",
+  displayIcon = true,
 }: DatePickerProps<TFieldValues, TName>) {
   return (
     <div className={cn("max-lg:w-full flex flex-col space-y-2", className)}>
-      {label && <Label htmlFor={name} className={labelClassName}>{label}</Label>}
+      {label && (
+        <Label htmlFor={name} className={labelClassName}>
+          {label}
+        </Label>
+      )}
       <Controller
         control={control}
         name={name}
@@ -89,7 +95,9 @@ export function DatePicker<
                 ) : (
                   <span>{placeholder}</span>
                 )}
-                <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                {displayIcon && (
+                  <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
+                )}
               </Button>
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">

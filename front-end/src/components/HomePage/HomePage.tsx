@@ -4,6 +4,7 @@ import PaginationBar from "../PaginationBar/PaginationBar";
 import { parseDateFlexible } from "@/utils/dateUtils";
 import { getCityAutocomplete } from "@/lib/cityApi";
 import { searchRoutes, SearchRoutesResult } from "@/lib/routesApi";
+import Layout from "./Layout";
 
 interface HomePageProps {
   searchParams: {
@@ -14,15 +15,18 @@ interface HomePageProps {
   };
 }
 
+const LIMIT = 3;
+
 export default async function HomePage({ searchParams }: HomePageProps) {
   const from = searchParams?.from || "";
   const to = searchParams?.to || "";
   const departureDate = searchParams?.departureDate || "";
   const page = parseInt(searchParams?.page || "1", 10);
 
-  const originData = from ? await getCityAutocomplete(from) : [];
-  const destinationData =
-    to && originData?.length > 0 ? await getCityAutocomplete(to) : [];
+  const [originData, destinationData] = await Promise.all([
+    getCityAutocomplete(from),
+    getCityAutocomplete(to),
+  ]);
 
   const defaultOriginData = originData?.[0];
   const defaultDestinationData = destinationData?.[0];
@@ -64,28 +68,44 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       departureDate: dateTrip.toISOString(),
     };
 
-    const result = await searchRoutes(payload, page);
+    const result = await searchRoutes(payload, page, LIMIT);
 
     searchResult = structuredClone(result);
   }
 
+  const isInitialLoad = !from && !to && !departureDate;
+  const hasSearchParams = departureLocation && arrivalLocation && dateTrip;
+  const hasResults = searchResult.pageData && searchResult.pageData.length > 0;
+
   return (
-    <section className="flex flex-col gap-8 items-center w-full">
-      <SearchRoutesForm
-        values={{ departureLocation, arrivalLocation, dateTrip }}
-        className="max-lg:max-w-3xl"
-        serviceError={searchResult.error}
-      />
-      <RoutesList routes={searchResult.pageData} className="max-w-3xl" />
-      {searchResult.pageData && searchResult.pageData.length > 0 && (
-        <PaginationBar
-          currentPage={page}
-          totalPages={searchResult.totalPages}
-          from={from}
-          to={to}
-          departureDate={departureDate}
+    <Layout
+      isInitialLoad={isInitialLoad}
+      page={page}
+      totalPages={searchResult.totalPages}
+      limit={LIMIT}
+      hasResults={hasResults}
+      searchForm={
+        <SearchRoutesForm
+          values={{ departureLocation, arrivalLocation, dateTrip }}
+          serviceError={searchResult.error}
         />
-      )}
-    </section>
+      }
+      searchResults={
+        hasSearchParams ? (
+          <RoutesList routes={searchResult.pageData} className="max-w-3xl" />
+        ) : null
+      }
+      pagination={
+        hasResults ? (
+          <PaginationBar
+            currentPage={page}
+            totalPages={searchResult.totalPages}
+            from={from}
+            to={to}
+            departureDate={departureDate}
+          />
+        ) : null
+      }
+    />
   );
 }
