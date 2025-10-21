@@ -10,9 +10,12 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { MapPin, Calendar } from "lucide-react";
+import { MapPin, Calendar, ArrowRight, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Route } from "@/types/routes";
+import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
+import Typography from "@/components/ui/typography";
 
 interface RoutesListProps {
   routes?: Route[];
@@ -25,103 +28,123 @@ export default function RoutesList({
   isLoading,
   className,
 }: RoutesListProps) {
-  if (isLoading)
-    return (
-      <p className="text-center text-muted-foreground">Loading routes...</p>
-    );
+  const { isAuthenticated } = useAuth();
 
-  if (!routes || routes.length === 0)
+  const cardDateFormatter = new Intl.DateTimeFormat("en-GB", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
+
+  const urlDateFormatter = new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+  });
+
+  if (isLoading) {
     return (
-      <p className="text-center text-muted-foreground">No routes found.</p>
+      <div className="flex flex-col items-center justify-center py-12 gap-3">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+        <Typography className="text-muted-foreground">
+          Loading routes...
+        </Typography>
+      </div>
     );
+  }
+
+  if (!routes || routes.length === 0) {
+    return (
+      <Card className="shadow-sm w-full">
+        <CardContent className="flex flex-col items-center justify-center py-12 gap-3">
+          <MapPin className="w-12 h-12 text-muted-foreground/50" />
+          <div className="text-center">
+            <Typography className="font-semibold text-lg mb-1">
+              No routes found
+            </Typography>
+            <Typography className="text-sm text-muted-foreground">
+              Try adjusting your search criteria or check back later
+            </Typography>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
-    <div className={cn("flex flex-col gap-4 w-full ", className)}>
-      {routes?.map((route) => (
-        <Card key={route._id} className="shadow-sm hover:shadow-md transition">
-          <CardHeader>
-            <CardTitle className="text-lg font-semibold flex items-center gap-2">
-              <MapPin className="w-5 h-5 text-primary" />
-              {route.origin.city} → {route.destination.city}
-            </CardTitle>
-            <p className="text-sm text-muted-foreground">
-              {route.origin.address} → {route.destination.address}
-            </p>
-          </CardHeader>
+    <div className={cn("flex flex-col gap-4 w-full", className)}>
+      {routes.map((route) => {
+        const departureDate = new Date(route.departureTime);
 
-          <CardContent className="space-y-3">
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <Calendar className="w-4 h-4" />
-                {new Date(route.departureTime).toLocaleString("en-GB", {
-                  dateStyle: "medium",
-                  timeStyle: "short",
-                })}
-              </div>
-              <Badge variant="outline">
-                {route.remainingSeats} / {route.availableSeats} seats left
-              </Badge>
-            </div>
-
-            {/* <Separator /> */}
-
-            {/* <div className="flex flex-col gap-2 text-sm">
-              <div className="flex items-center gap-2">
-                <Car className="w-4 h-4 text-primary" />
-                <span>
-                  {route.vehicleInfo.make} {route.vehicleInfo.model} —{" "}
-                  {route.vehicleInfo.color}
+        return (
+          <Card
+            key={route._id}
+            className="shadow-sm hover:shadow-lg transition-all duration-300 border-l-4 border-l-primary/20 hover:border-l-primary"
+          >
+            <CardHeader className="pb-3">
+              <CardTitle className="flex items-center gap-3 text-xl">
+                <div className="p-2 bg-primary/10 rounded-full">
+                  <MapPin className="w-4 h-4 text-primary" />
+                </div>
+                <span className="flex items-center gap-2 flex-wrap">
+                  <span className="font-bold">{route.origin.city}</span>
+                  <ArrowRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
+                  <span className="font-bold">{route.destination.city}</span>
                 </span>
+              </CardTitle>
+              {(route.origin.address || route.destination.address) && (
+                <Typography className="text-sm text-muted-foreground ml-12">
+                  {route.origin.address && route.destination.address
+                    ? `${route.origin.address} → ${route.destination.address}`
+                    : route.origin.address || route.destination.address}
+                </Typography>
+              )}
+            </CardHeader>
+
+            <CardContent className="space-y-4 pb-4">
+              <div className="flex items-center justify-between flex-wrap gap-3">
+                <div className="flex items-center gap-2 text-sm">
+                  <Calendar className="w-4 h-4 text-primary flex-shrink-0" />
+                  <Typography className="font-medium">
+                    {cardDateFormatter.format(departureDate)}
+                  </Typography>
+                </div>
+                <Badge className="px-3 py-1">
+                  {route.remainingSeats} of {route.availableSeats} seats left
+                </Badge>
               </div>
-              <div className="flex items-center gap-2 text-muted-foreground">
-                <User className="w-4 h-4" />
-                <span>{route.driver.firstName}</span>
-              </div>
-            </div> */}
+            </CardContent>
 
             <Separator />
 
-            {/* <div className="flex flex-wrap gap-2 mt-2">
-              <Badge
-                variant={
-                  route.preferences.smokingAllowed ? "default" : "secondary"
-                }
-                className="flex items-center gap-1"
-              >
-                <Cigarette className="w-3 h-3" />
-                {route.preferences.smokingAllowed ? "Smoking" : "No Smoking"}
-              </Badge>
-              <Badge
-                variant={
-                  route.preferences.petsAllowed ? "default" : "secondary"
-                }
-                className="flex items-center gap-1"
-              >
-                <PawPrint className="w-3 h-3" />
-                {route.preferences.petsAllowed ? "Pets allowed" : "No pets"}
-              </Badge>
-              {route.preferences.maxTwoInBack && (
-                <Badge variant="secondary">Max 2 in back</Badge>
+            <CardFooter className="flex justify-between items-center pt-4">
+              <div className="flex flex-col gap-1">
+                <Typography className="text-2xl font-bold">
+                  €{route.pricePerSeat.toFixed(2)}
+                </Typography>
+                <Typography className="text-xs text-muted-foreground">
+                  per seat
+                </Typography>
+              </div>
+
+              {isAuthenticated && (
+                <Link
+                  href={`/route/${encodeURIComponent(
+                    route.origin.city
+                  )}/${encodeURIComponent(
+                    route.destination.city
+                  )}/${encodeURIComponent(
+                    urlDateFormatter.format(departureDate)
+                  )}/${encodeURIComponent(route._id)}`}
+                >
+                  <Button size="default" className="font-semibold">
+                    View Details
+                  </Button>
+                </Link>
               )}
-            </div> */}
-
-            {/* {route.additionalInfo && (
-              <p className="text-sm text-muted-foreground mt-3">
-                {route.additionalInfo}
-              </p>
-            )} */}
-          </CardContent>
-
-          <CardFooter className="flex justify-between items-center">
-            <p className="font-semibold text-lg">
-              {route.pricePerSeat.toFixed(2)} €
-            </p>
-            <Button size="sm" variant="default">
-              View Details
-            </Button>
-          </CardFooter>
-        </Card>
-      ))}
+            </CardFooter>
+          </Card>
+        );
+      })}
     </div>
   );
 }
