@@ -1,38 +1,63 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { routes, protectedRoutes,authRoutes } from "./data/routes";
+import {
+  routeConfig,
+  isProtectedRoute,
+  isAuthRoute,
+} from "./data/routes";
 import { cookies } from "next/headers";
 import { decodeToken } from "./utils/userUtils";
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
-  const isAuthRoute = authRoutes.includes(path);
-  const isProtectedRoute = protectedRoutes.includes(path);
 
-  const cookie = (await cookies()).get("access_token")?.value;
-  const { userId } = cookie ? decodeToken(cookie) : {};
+  const isAuth = isAuthRoute(path);
+  const isProtected = isProtectedRoute(path);
 
-  if (isProtectedRoute && !cookie) {
-    return NextResponse.redirect(new URL(routes.login, request.nextUrl));
+  if (!isAuth && !isProtected) {
+    return NextResponse.next();
   }
 
-  if (isAuthRoute && cookie && userId) {
-    return NextResponse.redirect(new URL(routes.home, request.nextUrl));
+  const cookieStore = await cookies();
+  const token = cookieStore.get("access_token")?.value;
+
+  let userId: string | undefined;
+
+  if (token) {
+    try {
+      const decoded = decodeToken(token);
+      userId = decoded.userId;
+    } catch (error) {
+      // Invalid token - clear it and redirect to login
+      console.error("Invalid token:", error);
+      const response = NextResponse.redirect(
+        new URL(routeConfig.protected.redirectTo, request.nextUrl)
+      );
+      response.cookies.delete("access_token");
+      return response;
+    }
+  }
+
+  const isAuthenticated = Boolean(token && userId);
+
+  if (isProtected && !isAuthenticated) {
+    const loginUrl = new URL(routeConfig.protected.redirectTo, request.nextUrl);
+    loginUrl.searchParams.set("from", path);
+    return NextResponse.redirect(loginUrl);
+  }
+
+  if (isAuth && isAuthenticated) {
+    const from = request.nextUrl.searchParams.get("from");
+    const redirectUrl =
+      from && !isAuthRoute(from) ? from : routeConfig.auth.redirectTo;
+    return NextResponse.redirect(new URL(redirectUrl, request.nextUrl));
   }
 
   return NextResponse.next();
 }
 
-// Configure which routes use the middleware
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except:
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder
-     */
-    "/((?!_next/static|_next/image|favicon.ico|public/).*)",
+    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
 };

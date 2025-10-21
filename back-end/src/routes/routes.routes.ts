@@ -53,6 +53,7 @@ router.get(
  */
 router.get(
   "/:id",
+  authenticateToken,
   validateData(mongoIdSchema, "params"),
   RoutesController.getRouteById as unknown as RequestHandler
 );

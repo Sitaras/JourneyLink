@@ -51,6 +51,7 @@ export class AuthController {
         lastName,
         dateOfBirth,
         email,
+        phoneNumber,
       });
 
       user.profile = profile._id as any;

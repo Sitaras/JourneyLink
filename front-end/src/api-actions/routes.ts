@@ -1,11 +1,15 @@
 "use server";
-import { api, postFetcher } from "./api";
+import { api, fetcher, postFetcher } from "./api";
 import {
   getRoutesQuerySchema,
   ICreateRoutePayload,
   IGetRoutesQueryPayload,
 } from "@/schemas/routesSchema";
-import { RouteCreationResponse, RouteSearchResponse } from "@/types/routes";
+import {
+  Route,
+  RouteCreationResponse,
+  RouteSearchResponse,
+} from "@/types/routes";
 
 export const getRoutes = async (parameters: IGetRoutesQueryPayload) => {
   const parsedParams = getRoutesQuerySchema.parse(parameters);
@@ -34,6 +38,16 @@ export const createRoute = async (body: ICreateRoutePayload) => {
       ICreateRoutePayload,
       RouteCreationResponse
     >("routes", body);
+
+    return response;
+  } catch (error: any) {
+    throw error?.message;
+  }
+};
+
+export const getRoute = async (id: string) => {
+  try {
+    const response = await fetcher<Route>(`routes/${id}`);
 
     return response;
   } catch (error: any) {

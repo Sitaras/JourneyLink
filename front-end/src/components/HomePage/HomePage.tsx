@@ -1,22 +1,32 @@
-"use client";
-
 import SearchRoutesForm from "@/components/SearchRoutesForm/SearchRoutesForm";
-import { useSearchRoutes } from "@/hooks/useSearchRoutes";
 import RoutesList from "../RoutesList/RoutesList";
-import useCityAutocomplete from "@/hooks/useCityAutocomplete";
-import { parseDateFlexible } from "@/utils/dateUtils";
 import PaginationBar from "../PaginationBar/PaginationBar";
-import { useRouteSearchParams } from "@/hooks/useRouteSearchParams";
+import { parseDateFlexible } from "@/utils/dateUtils";
+import { getCityAutocomplete } from "@/lib/cityApi";
+import { searchRoutes, SearchRoutesResult } from "@/lib/routesApi";
+import Layout from "./Layout";
 
-export default function HomePage() {
-  const [{ from, to, departureDate }] = useRouteSearchParams();
+interface HomePageProps {
+  searchParams: {
+    from?: string;
+    to?: string;
+    departureDate?: string;
+    page?: string;
+  };
+}
 
-  const { data: originData, isLoading: isLoadingFrom } =
-    useCityAutocomplete(from);
+const LIMIT = 3;
 
-  const { data: destinationData, isLoading: isLoadingTo } = useCityAutocomplete(
-    !isLoadingFrom ? to : ""
-  );
+export default async function HomePage({ searchParams }: HomePageProps) {
+  const from = searchParams?.from || "";
+  const to = searchParams?.to || "";
+  const departureDate = searchParams?.departureDate || "";
+  const page = parseInt(searchParams?.page || "1", 10);
+
+  const [originData, destinationData] = await Promise.all([
+    getCityAutocomplete(from),
+    getCityAutocomplete(to),
+  ]);
 
   const defaultOriginData = originData?.[0];
   const defaultDestinationData = destinationData?.[0];
@@ -43,49 +53,59 @@ export default function HomePage() {
 
   const dateTrip = parseDateFlexible(departureDate) || undefined;
 
-  const payload =
-    departureLocation && arrivalLocation && dateTrip
-      ? {
-          originLat: departureLocation.lat.toString(),
-          originLng: departureLocation.lng.toString(),
-          destinationLat: arrivalLocation.lat.toString(),
-          destinationLng: arrivalLocation.lng.toString(),
-          departureDate: dateTrip.toISOString(),
-        }
-      : undefined;
+  let searchResult: SearchRoutesResult = {
+    pageData: [],
+    totalPages: 1,
+    error: "",
+  };
 
-  const {
-    pageData,
-    page,
-    totalPages,
-    isLoading: isLoadingRoutes,
-    handlePrevious,
-    handleNext,
-  } = useSearchRoutes(payload);
+  if (departureLocation && arrivalLocation && dateTrip) {
+    const payload = {
+      originLat: departureLocation.lat.toString(),
+      originLng: departureLocation.lng.toString(),
+      destinationLat: arrivalLocation.lat.toString(),
+      destinationLng: arrivalLocation.lng.toString(),
+      departureDate: dateTrip.toISOString(),
+    };
 
-  const isLoading = isLoadingFrom || isLoadingTo || isLoadingRoutes;
+    const result = await searchRoutes(payload, page, LIMIT);
 
+    searchResult = structuredClone(result);
+  }
+
+  const isInitialLoad = !from && !to && !departureDate;
+  const hasSearchParams = departureLocation && arrivalLocation && dateTrip;
+  const hasResults = searchResult.pageData && searchResult.pageData.length > 0;
 
   return (
-    <div className="flex flex-col gap-8 items-center w-full">
-      <SearchRoutesForm
-        values={{ departureLocation, arrivalLocation, dateTrip }}
-        isLoading={isLoading}
-        className="max-lg:max-w-3xl"
-      />
-      <RoutesList
-        isLoading={isLoading}
-        routes={pageData}
-        className="max-w-3xl"
-      />
-      {pageData && pageData.length > 0 && (
-        <PaginationBar
-          currentPage={page}
-          totalPages={totalPages}
-          onPrevious={handlePrevious}
-          onNext={handleNext}
+    <Layout
+      isInitialLoad={isInitialLoad}
+      page={page}
+      totalPages={searchResult.totalPages}
+      limit={LIMIT}
+      hasResults={hasResults}
+      searchForm={
+        <SearchRoutesForm
+          values={{ departureLocation, arrivalLocation, dateTrip }}
+          serviceError={searchResult.error}
         />
-      )}
-    </div>
+      }
+      searchResults={
+        hasSearchParams ? (
+          <RoutesList routes={searchResult.pageData} className="max-w-3xl" />
+        ) : null
+      }
+      pagination={
+        hasResults ? (
+          <PaginationBar
+            currentPage={page}
+            totalPages={searchResult.totalPages}
+            from={from}
+            to={to}
+            departureDate={departureDate}
+          />
+        ) : null
+      }
+    />
   );
 }

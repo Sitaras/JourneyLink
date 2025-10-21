@@ -26,6 +26,10 @@ const profileSchema = new Schema<IProfileDocument>(
       type: String,
       required: true,
     },
+    phoneNumber: {
+      type: String,
+      required: true,
+    },
     avatar: {
       type: String,
     },
@@ -44,11 +48,6 @@ const profileSchema = new Schema<IProfileDocument>(
         type: String,
       },
     },
-    preferredLanguages: [
-      {
-        type: String,
-      },
-    ],
     verificationDocuments: {
       idCard: {
         url: String,
