@@ -15,7 +15,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { CustomInput } from "@/components/ui/Inputs/CustomInput";
 import { useRouter } from "next/navigation";
-import { routes } from "@/data/routes";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { onError } from "@/utils/formUtils";
@@ -36,7 +35,6 @@ export default function LoginPage() {
       return login(data);
     },
     onSuccess: () => {
-      router.replace(routes.home);
       router.refresh();
       toast.success("Welcome back!");
     },

@@ -8,12 +8,11 @@ export interface RouteSearchResponse {
 
 export interface Route {
   _id: string;
-  driver: {
-    _id: string;
-    firstName: string;
+  driverProfile: {
+    firstName?: string;
     lastName: string;
     avatar?: string;
-    rating?: string;
+    rating: { average: string; count: string };
   };
   origin: Location;
   destination: Location;
