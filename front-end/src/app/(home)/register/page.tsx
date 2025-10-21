@@ -9,7 +9,7 @@ import {
 } from "@/components/ui/card";
 
 import { register } from "@/api-actions/auth";
-import { useForm } from "react-hook-form";
+import { FieldErrors, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
@@ -17,21 +17,22 @@ import { registerSchema } from "@/schemas/auth/registerSchema";
 import { CustomInput } from "@/components/ui/Inputs/CustomInput";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
+import { onError } from "@/utils/formUtils";
+import { DateFormats } from "@/utils/dateFormats";
+import { formatDate } from "@/utils/dateUtils";
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export default function RegisterPage() {
-  const {
-    register: _register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<z.output<typeof registerSchema>>({
+  const { register: _register, handleSubmit } = useForm<
+    z.output<typeof registerSchema>
+  >({
     resolver: zodResolver(registerSchema),
   });
 
   const mutation = useMutation({
     mutationFn: async (data: RegisterFormValues) => {
-      return register({ success: false }, data);
+      return register(data);
     },
     onSuccess: () => {
       toast.success("Registered successfully");
@@ -45,6 +46,32 @@ export default function RegisterPage() {
     mutation.mutate(data);
   };
 
+  const handleOnError = (errors: FieldErrors) => {
+    const fieldLabels: Record<string, string> = {
+      email: "Email",
+      firstName: "First name",
+      lastName: "Last name",
+      phoneNumber: "Phone number",
+      dateOfBirth: "Date of birth",
+      password: "Password",
+      verifyPassword: "Verify password",
+    };
+
+    onError(fieldLabels, errors);
+  };
+
+  const today = new Date();
+  const maxDate = new Date(
+    today.getFullYear() - 13,
+    today.getMonth(),
+    today.getDate()
+  );
+  const minDate = new Date(
+    today.getFullYear() - 80,
+    today.getMonth(),
+    today.getDate()
+  );
+
   return (
     <div className="h-full flex-1 flex justify-center items-center">
       <Card className="w-full max-w-sm">
@@ -55,7 +82,7 @@ export default function RegisterPage() {
         <CardFooter>
           <form
             id="signup"
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(onSubmit, handleOnError)}
             className="flex flex-col gap-4 w-full"
             noValidate
           >
@@ -65,33 +92,30 @@ export default function RegisterPage() {
               label="Email"
               type="email"
               register={_register}
-              errors={errors}
               autoComplete="username"
             />
             <CustomInput
               name="firstName"
               label="First name"
               register={_register}
-              errors={errors}
             />
             <CustomInput
               name="lastName"
               label="Last name"
               register={_register}
-              errors={errors}
             />
             <CustomInput
               name="phoneNumber"
               label="Phone number"
               type="tel"
               register={_register}
-              errors={errors}
             />
             <CustomInput
               label="Date of birth"
               name="dateOfBirth"
               type="date"
-              errors={errors}
+              max={formatDate(maxDate, DateFormats.DATE_DASH_REVERSE)}
+              min={formatDate(minDate, DateFormats.DATE_DASH_REVERSE)}
               register={_register}
             />
             <CustomInput
@@ -99,7 +123,6 @@ export default function RegisterPage() {
               label="Password"
               name="password"
               type="password"
-              errors={errors}
               register={_register}
               autoComplete="new-password"
             />
@@ -108,7 +131,6 @@ export default function RegisterPage() {
               label="Verify password"
               name="verifyPassword"
               type="password"
-              errors={errors}
               register={_register}
               autoComplete="new-password"
             />

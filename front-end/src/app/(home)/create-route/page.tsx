@@ -28,6 +28,7 @@ import {
 } from "lucide-react";
 import { SeatsSelect } from "@/components/ui/Inputs/SeatSelect";
 import { CustomTextarea } from "@/components/ui/Inputs/CustomTextarea";
+import { onError } from "@/utils/formUtils";
 
 const FIELD_LABELS: Record<string, string> = {
   departureLocation: "Departure location",
