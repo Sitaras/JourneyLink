@@ -9,7 +9,7 @@ const router = Router();
 router.post(
   "/city-autocomplete",
   validateData(cityAutocompleteSchema),
-  limiter,
+  // limiter,
   PlacesController.cityAutocomplete
 );
 

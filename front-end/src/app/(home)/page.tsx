@@ -1,23 +1,16 @@
-import {
-  QueryClient,
-  dehydrate,
-  HydrationBoundary,
-} from "@tanstack/react-query";
-import HomeForm from "@/components/HomeForm/HomeForm";
+import HomePage from "@/components/HomePage/HomePage";
 
-export default async function Home() {
-  const queryClient = new QueryClient();
+interface HomePageProps {
+  searchParams: Promise<{
+    from?: string;
+    to?: string;
+    departureDate?: string;
+    page?: string;
+  }>;
+}
 
-  await queryClient.prefetchQuery({
-    queryKey: ["whatever"],
-    queryFn: () => {
-      return "whatever";
-    },
-  });
+export default async function Home({ searchParams }: HomePageProps) {
+  const params = await searchParams;
 
-  return (
-    <HydrationBoundary state={dehydrate(queryClient)}>
-      <HomeForm />
-    </HydrationBoundary>
-  );
+  return <HomePage searchParams={params} />;
 }

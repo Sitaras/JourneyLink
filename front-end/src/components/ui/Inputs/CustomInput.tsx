@@ -5,7 +5,6 @@ import { FieldErrors, UseFormRegister } from "react-hook-form";
 import { cn } from "@/lib/utils";
 
 export interface CustomInputProps extends React.ComponentProps<"input"> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   register?: UseFormRegister<any>;
   errors?: FieldErrors;
   label?: string;

@@ -50,6 +50,7 @@ export class AuthController {
         lastName,
         dateOfBirth,
         email,
+        phoneNumber,
         bio: '',
         avatar: '',
         socials: {
@@ -70,7 +71,7 @@ export class AuthController {
         rating: {
           average: 0,
           count: 0
-        }
+        },
       });
       
       user.profile = profile._id as any;

@@ -57,6 +57,7 @@ export interface NavbarNavItem {
   href: string;
   label: string;
   external?: boolean;
+  protected?: boolean;
 }
 
 export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
@@ -72,8 +73,9 @@ export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 const defaultNavigationLinks: NavbarNavItem[] = [
-  { href: "/", label: "Home" },
-  { href: "/settings", label: "Settings" },
+  { href: routes.home, label: "Home" },
+  { href: routes.settings, label: "Settings", protected: true },
+  { href: routes.createRoute, label: "Create route", protected: true },
 ];
 
 export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
@@ -191,35 +193,41 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                 <PopoverContent align="start" className="w-64 p-1">
                   <NavigationMenu className="max-w-none">
                     <NavigationMenuList className="flex-col items-start gap-0">
-                      {navigationLinks.map((link, index) => (
-                        <NavigationMenuItem key={index} className="w-full">
-                          {link.external ? (
-                            <a
-                              href={link.href}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className={cn(
-                                "flex w-full items-center rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:text-accent-foreground no-underline",
-                                isLinkActive(link.href) &&
-                                  "text-accent-foreground"
-                              )}
-                            >
-                              {link.label}
-                            </a>
-                          ) : (
-                            <Link
-                              href={link.href}
-                              className={cn(
-                                "flex w-full items-center rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:text-accent-foreground no-underline",
-                                isLinkActive(link.href) &&
-                                  "bg-accent text-accent-foreground"
-                              )}
-                            >
-                              {link.label}
-                            </Link>
-                          )}
-                        </NavigationMenuItem>
-                      ))}
+                      {navigationLinks.map((link) => {
+                        if (link.protected && !isAuthenticated) return null;
+                        return (
+                          <NavigationMenuItem
+                            key={link.href}
+                            className="w-full"
+                          >
+                            {link.external ? (
+                              <a
+                                href={link.href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={cn(
+                                  "flex w-full items-center rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:text-accent-foreground no-underline",
+                                  isLinkActive(link.href) &&
+                                    "text-accent-foreground"
+                                )}
+                              >
+                                {link.label}
+                              </a>
+                            ) : (
+                              <Link
+                                href={link.href}
+                                className={cn(
+                                  "flex w-full items-center rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:text-accent-foreground no-underline",
+                                  isLinkActive(link.href) &&
+                                    "bg-accent text-accent-foreground"
+                                )}
+                              >
+                                {link.label}
+                              </Link>
+                            )}
+                          </NavigationMenuItem>
+                        );
+                      })}
                     </NavigationMenuList>
                   </NavigationMenu>
                 </PopoverContent>
@@ -242,26 +250,15 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
               {!isMobile && (
                 <NavigationMenu className="flex">
                   <NavigationMenuList className="gap-1">
-                    {navigationLinks.map((link, index) => (
-                      <NavigationMenuItem key={index}>
-                        {link.external ? (
-                          <a
-                            href={link.href}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className={cn(
-                              "group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 relative no-underline",
-                              "before:absolute before:bottom-0 before:left-0 before:right-0 before:h-0.5 before:bg-primary before:scale-x-0 before:transition-transform before:duration-300 hover:before:scale-x-100",
-                              isLinkActive(link.href) &&
-                                "before:scale-x-100 text-primary"
-                            )}
-                          >
-                            {link.label}
-                          </a>
-                        ) : (
-                          <NavigationMenuLink asChild>
-                            <Link
+                    {navigationLinks.map((link, index) => {
+                      if (link.protected && !isAuthenticated) return null;
+                      return (
+                        <NavigationMenuItem key={index}>
+                          {link.external ? (
+                            <a
                               href={link.href}
+                              target="_blank"
+                              rel="noopener noreferrer"
                               className={cn(
                                 "group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 relative no-underline",
                                 "before:absolute before:bottom-0 before:left-0 before:right-0 before:h-0.5 before:bg-primary before:scale-x-0 before:transition-transform before:duration-300 hover:before:scale-x-100",
@@ -270,11 +267,25 @@ export const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
                               )}
                             >
                               {link.label}
-                            </Link>
-                          </NavigationMenuLink>
-                        )}
-                      </NavigationMenuItem>
-                    ))}
+                            </a>
+                          ) : (
+                            <NavigationMenuLink asChild>
+                              <Link
+                                href={link.href}
+                                className={cn(
+                                  "group inline-flex h-10 w-max items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground focus:text-accent-foreground focus:outline-none disabled:pointer-events-none disabled:opacity-50 relative no-underline",
+                                  "before:absolute before:bottom-0 before:left-0 before:right-0 before:h-0.5 before:bg-primary before:scale-x-0 before:transition-transform before:duration-300 hover:before:scale-x-100",
+                                  isLinkActive(link.href) &&
+                                    "before:scale-x-100 text-primary"
+                                )}
+                              >
+                                {link.label}
+                              </Link>
+                            </NavigationMenuLink>
+                          )}
+                        </NavigationMenuItem>
+                      );
+                    })}
                   </NavigationMenuList>
                 </NavigationMenu>
               )}

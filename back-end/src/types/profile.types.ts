@@ -6,6 +6,7 @@ export interface IProfile extends Document {
   lastName: string;
   dateOfBirth: Date;
   email: string;
+  phoneNumber: string;
   avatar?: string;
   bio?: string;
   socials?: {
@@ -13,7 +14,6 @@ export interface IProfile extends Document {
     twitter?: string;
     linkedIn?: string;
   };
-  preferredLanguages?: string[];
   verificationDocuments?: {
     idCard?: {
       url: string;

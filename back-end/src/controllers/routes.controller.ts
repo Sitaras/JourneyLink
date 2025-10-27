@@ -8,30 +8,204 @@ import {
 } from "@/schemas/routesSchema";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-
-// TODO: (PUT) update route
-// TODO: Atlas Search with fuzzy
+import mongoose from "mongoose";
 
 export class RoutesController {
+  private static addSeatCalculationStages(pipeline: any[]): void {
+    pipeline.push(
+      {
+        $addFields: {
+          bookedSeats: {
+            $sum: {
+              $map: {
+                input: {
+                  $filter: {
+                    input: "$passengers",
+                    as: "p",
+                    cond: { $eq: ["$$p.status", "confirmed"] },
+                  },
+                },
+                as: "cp",
+                in: "$$cp.seatsBooked",
+              },
+            },
+          },
+        },
+      },
+      {
+        $addFields: {
+          remainingSeats: { $subtract: ["$availableSeats", "$bookedSeats"] },
+        },
+      }
+    );
+  }
+
+  private static addDriverInfo(pipeline: any[]): void {
+    pipeline.push(
+      {
+        $lookup: {
+          from: "users",
+          localField: "driver",
+          foreignField: "_id",
+          as: "user",
+        },
+      },
+      {
+        $unwind: { path: "$user", preserveNullAndEmptyArrays: true },
+      },
+      {
+        $lookup: {
+          from: "profiles",
+          localField: "user.profile",
+          foreignField: "_id",
+          as: "driverProfile",
+        },
+      },
+      {
+        $unwind: { path: "$driverProfile", preserveNullAndEmptyArrays: true },
+      },
+      {
+        $addFields: {
+          driverProfile: {
+            $cond: {
+              if: { $ne: ["$driverProfile", null] },
+              then: {
+                _id: "$driverProfile._id",
+                firstName: "$driverProfile.firstName",
+                lastName: "$driverProfile.lastName",
+                email: "$driverProfile.email",
+                phone: "$driverProfile.phone",
+                avatar: "$driverProfile.avatar",
+                rating: "$driverProfile.rating",
+              },
+              else: null,
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          user: 0, // Remove the temporary user object
+        },
+      }
+    );
+  }
+
+  // private static addPassengerInfo(pipeline: any[]): void {
+  //   pipeline.push(
+  //     {
+  //       $lookup: {
+  //         from: "users",
+  //         localField: "passengers.user",
+  //         foreignField: "_id",
+  //         as: "passengerUsers",
+  //       },
+  //     },
+  //     {
+  //       $addFields: {
+  //         passengers: {
+  //           $map: {
+  //             input: "$passengers",
+  //             as: "passenger",
+  //             in: {
+  //               $mergeObjects: [
+  //                 "$$passenger",
+  //                 {
+  //                   userDetails: {
+  //                     $arrayElemAt: [
+  //                       {
+  //                         $filter: {
+  //                           input: "$passengerUsers",
+  //                           as: "user",
+  //                           cond: { $eq: ["$$user._id", "$$passenger.user"] },
+  //                         },
+  //                       },
+  //                       0,
+  //                     ],
+  //                   },
+  //                 },
+  //               ],
+  //             },
+  //           },
+  //         },
+  //       },
+  //     },
+  //     {
+  //       $project: {
+  //         passengerUsers: 0,
+  //       },
+  //     }
+  //   );
+  // }
+
+  private static buildMatchStage(query: IGetRoutesQueryPayload): any {
+    const { departureDate, maxPrice, smokingAllowed, petsAllowed } = query;
+
+    const matchStage: any = {
+      status: "active",
+      departureTime: { $gte: new Date() },
+    };
+
+    if (departureDate) {
+      const date = new Date(departureDate);
+      const nextDay = new Date(date);
+      nextDay.setDate(nextDay.getDate() + 1);
+      matchStage.departureTime = { $gte: date, $lt: nextDay };
+    }
+
+    if (maxPrice) {
+      matchStage.pricePerSeat = { $lte: parseFloat(maxPrice as any) };
+    }
+
+    if (smokingAllowed !== undefined) {
+      matchStage["preferences.smokingAllowed"] = smokingAllowed;
+    }
+
+    if (petsAllowed !== undefined) {
+      matchStage["preferences.petsAllowed"] = petsAllowed;
+    }
+
+    return matchStage;
+  }
+
+  private static buildSortStage(
+    sortBy: string,
+    sortOrder: string,
+    hasGeoQuery: boolean
+  ): any {
+    const sortStage: any = {};
+
+    switch (sortBy) {
+      case "price":
+        sortStage.pricePerSeat = sortOrder === "asc" ? 1 : -1;
+        break;
+      case "distance":
+        if (hasGeoQuery) {
+          sortStage.originDistance = sortOrder === "asc" ? 1 : -1;
+        } else {
+          sortStage.departureTime = sortOrder === "asc" ? 1 : -1;
+        }
+        break;
+      default:
+        sortStage.departureTime = sortOrder === "asc" ? 1 : -1;
+    }
+
+    return sortStage;
+  }
+
   static getRoutes = async (
     req: Request<{}, {}, {}, IGetRoutesQueryPayload>,
     res: Response
   ) => {
     try {
       const {
-        originCity,
-        destinationCity,
         originLat,
         originLng,
-        originRadius = 50, // Default 50km radius
+        originRadius = 50,
         destinationLat,
         destinationLng,
         destinationRadius = 50,
-        departureDate,
         minSeats,
-        maxPrice,
-        smokingAllowed,
-        petsAllowed,
         page = 1,
         limit = 10,
         sortBy = "departureTime",
@@ -39,33 +213,9 @@ export class RoutesController {
       } = req.query;
 
       const pipeline: any[] = [];
+      const matchStage = this.buildMatchStage(req.query);
 
-      const matchStage: any = {
-        status: "active",
-        departureTime: { $gte: new Date() },
-      };
-
-      if (departureDate) {
-        const date = new Date(departureDate);
-        const nextDay = new Date(date);
-        nextDay.setDate(nextDay.getDate() + 1);
-
-        matchStage.departureTime = {
-          $gte: date,
-          $lt: nextDay,
-        };
-      }
-
-      if (maxPrice) {
-        matchStage.pricePerSeat = { $lte: parseFloat(maxPrice as any) };
-      }
-      if (smokingAllowed !== undefined) {
-        matchStage["preferences.smokingAllowed"] = smokingAllowed;
-      }
-      if (petsAllowed !== undefined) {
-        matchStage["preferences.petsAllowed"] = petsAllowed;
-      }
-
+      // Geo-spatial query
       pipeline.push({
         $geoNear: {
           near: {
@@ -92,38 +242,14 @@ export class RoutesController {
                   parseFloat(destinationLng as any),
                   parseFloat(destinationLat as any),
                 ],
-                (destinationRadius as number) / 6378.1, // km → radians
+                (destinationRadius as number) / 6378.1,
               ],
             },
           },
         },
       });
 
-      pipeline.push({
-        $addFields: {
-          bookedSeats: {
-            $sum: {
-              $map: {
-                input: {
-                  $filter: {
-                    input: "$passengers",
-                    as: "p",
-                    cond: { $eq: ["$$p.status", "confirmed"] },
-                  },
-                },
-                as: "cp",
-                in: "$$cp.seatsBooked",
-              },
-            },
-          },
-        },
-      });
-
-      pipeline.push({
-        $addFields: {
-          remainingSeats: { $subtract: ["$availableSeats", "$bookedSeats"] },
-        },
-      });
+      this.addSeatCalculationStages(pipeline);
 
       if (minSeats) {
         pipeline.push({
@@ -131,18 +257,7 @@ export class RoutesController {
         });
       }
 
-      pipeline.push({
-        $lookup: {
-          from: "users",
-          localField: "driver",
-          foreignField: "_id",
-          as: "driverInfo",
-        },
-      });
-
-      pipeline.push({
-        $unwind: { path: "$driverInfo", preserveNullAndEmptyArrays: true },
-      });
+      this.addDriverInfo(pipeline);
 
       pipeline.push({
         $project: {
@@ -153,41 +268,30 @@ export class RoutesController {
           availableSeats: 1,
           remainingSeats: 1,
           pricePerSeat: 1,
-          vehicleInfo: 1,
           preferences: 1,
-          additionalInfo: 1,
           originDistance: 1,
-          driver: {
-            _id: "$driverInfo._id",
-            name: "$driverInfo.name",
-            email: "$driverInfo.email",
-            phone: "$driverInfo.phone",
-            rating: "$driverInfo.rating",
-            avatar: "$driverInfo.avatar",
+          driverProfile: {
+            avatar: 1,
+            rating: 1,
           },
           createdAt: 1,
         },
       });
 
-      const sortStage: any = {};
-      if (sortBy === "price") {
-        sortStage.pricePerSeat = sortOrder === "asc" ? 1 : -1;
-      } else if (sortBy === "distance" && originLat && originLng) {
-        sortStage.originDistance = sortOrder === "asc" ? 1 : -1;
-      } else {
-        sortStage.departureTime = sortOrder === "asc" ? 1 : -1;
-      }
+      const sortStage = this.buildSortStage(
+        sortBy as string,
+        sortOrder as string,
+        true
+      );
       pipeline.push({ $sort: sortStage });
 
-      // -------- Stage 8: pagination --------
+      // Pagination
       const skip = (parseInt(page as any) - 1) * parseInt(limit as any);
-      pipeline.push({ $skip: skip });
-      pipeline.push({ $limit: parseInt(limit as any) });
+      pipeline.push({ $skip: skip }, { $limit: parseInt(limit as any) });
 
-      // -------- Execute aggregation --------
       const routes = await Route.aggregate(pipeline);
 
-      // -------- Count pipeline --------
+      // Count total
       const countPipeline = pipeline.filter(
         (stage) =>
           !("$skip" in stage) && !("$limit" in stage) && !("$sort" in stage)
@@ -195,38 +299,20 @@ export class RoutesController {
       countPipeline.push({ $count: "total" });
       const countResult = await Route.aggregate(countPipeline);
       const total = countResult.length > 0 ? countResult[0].total : 0;
+
       return res.success(
         {
-          success: true,
           count: routes.length,
           total,
           page: parseInt(page as any),
           pages: Math.ceil(total / parseInt(limit as any)),
           data: routes,
-          filters: {
-            originCity,
-            destinationCity,
-            originLocation:
-              originLat && originLng
-                ? { lat: originLat, lng: originLng, radius: originRadius }
-                : null,
-            destinationLocation:
-              destinationLat && destinationLng
-                ? {
-                    lat: destinationLat,
-                    lng: destinationLng,
-                    radius: destinationRadius,
-                  }
-                : null,
-            departureDate,
-            minSeats,
-            maxPrice,
-          },
         },
         "",
         StatusCodes.OK
       );
     } catch (error) {
+      console.error("Error fetching routes:", error);
       return res.error(
         "An error occurred while searching routes",
         StatusCodes.INTERNAL_SERVER_ERROR
@@ -252,10 +338,6 @@ export class RoutesController {
 
       const userId = req.user?.userId;
 
-      // TODO: check is user has the driver role
-
-      // TODO: Origin and destination cities must be different
-
       const route = await Route.create({
         driver: userId,
         origin,
@@ -279,20 +361,27 @@ export class RoutesController {
         StatusCodes.CREATED
       );
     } catch (error) {
+      console.error("Error creating route:", error);
       return res.error("An error occurred", StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 
   static getRouteById = async (
-    req: Request<MongoIdParam>,
+    req: AuthRequest<MongoIdParam>,
     res: Response
   ): Promise<Response | void> => {
     try {
       const { id } = req.params;
+      const userId = req.user?.userId;
 
-      const route = await Route.findById(id)
-        .populate("driver", "name email phone rating avatar")
-        .populate("passengers.user", "name avatar rating");
+      const pipeline: any[] = [
+        { $match: { _id: new mongoose.Types.ObjectId(id) } },
+      ];
+
+      this.addSeatCalculationStages(pipeline);
+      this.addDriverInfo(pipeline);
+
+      const [route] = await Route.aggregate(pipeline);
 
       if (!route) {
         return res.status(StatusCodes.NOT_FOUND).json({
@@ -301,11 +390,54 @@ export class RoutesController {
         });
       }
 
+      const isDriver = route.driver.toString() === userId?.toString();
+      const isPassenger = route.passengers?.some(
+        (p: any) => p.user?.toString() === userId?.toString()
+      );
+
+      this.applyVisibilityRules(route, isDriver, isPassenger);
+
       return res.success(route, "", StatusCodes.OK);
     } catch (error) {
+      console.error("Error fetching route:", error);
       return res.error("An error occurred", StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
+
+  private static applyVisibilityRules(
+    route: any,
+    isDriver: boolean,
+    isPassenger: boolean
+  ): void {
+    if (isDriver) {
+      // Driver sees everything (already sanitized by pipeline)
+      return;
+    }
+
+    if (isPassenger) {
+      // Passenger sees driver contact info but not other passengers
+      delete route.passengers;
+      // driverProfile already has: firstName, lastName, email, phone, avatar, rating
+      return;
+    }
+
+    // Non-participant (public view) - minimal info
+    delete route.passengers;
+
+    if (route.vehicleInfo) {
+      route.vehicleInfo = {
+        make: route.vehicleInfo.make,
+        model: route.vehicleInfo.model,
+        color: route.vehicleInfo.color,
+      };
+    }
+
+    if (route.driverProfile) {
+      // Public: only firstName, avatar, rating
+      const { firstName, avatar, rating } = route.driverProfile;
+      route.driverProfile = { firstName, avatar, rating };
+    }
+  }
 
   static deleteRoute = async (
     req: AuthRequest<MongoIdParam, undefined, IDeleteRoutePayload>,
@@ -339,14 +471,13 @@ export class RoutesController {
         );
       }
 
+      // Update route status
       route.status = "cancelled";
-      await route.save();
+      route.cancelledAt = new Date();
 
       if (req.body?.reason) {
         route.cancellationReason = req.body.reason;
       }
-
-      route.cancelledAt = new Date();
 
       await route.save();
 

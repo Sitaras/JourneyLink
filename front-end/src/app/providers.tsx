@@ -4,6 +4,7 @@ import { useState } from "react";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/context/AuthContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 export default function Providers({
   hasAccessToken,
@@ -37,10 +38,12 @@ export default function Providers({
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <AuthProvider hasAccessToken={hasAccessToken}>
-        <TooltipProvider>{children}</TooltipProvider>
-      </AuthProvider>
-    </QueryClientProvider>
+    <NuqsAdapter>
+      <QueryClientProvider client={queryClient}>
+        <AuthProvider hasAccessToken={hasAccessToken}>
+          <TooltipProvider>{children}</TooltipProvider>
+        </AuthProvider>
+      </QueryClientProvider>
+    </NuqsAdapter>
   );
 }

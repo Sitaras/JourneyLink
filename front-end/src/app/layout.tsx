@@ -5,6 +5,7 @@ import Providers from "./providers";
 import { authStorage } from "@/api-actions/authStorage";
 import { Toaster } from "@/components/ui/sonner";
 import { Navbar } from "@/components/Navbar/navbar";
+import Footer from "@/components/Footer/Footer";
 
 import styles from "./layout.module.css";
 
@@ -36,6 +37,7 @@ export default async function RootLayout({
       <body
         className={`flex min-h-screen w-full flex-col ${geistSans.variable} ${geistMono.variable}`}
       >
+        <Toaster richColors />
         <Providers hasAccessToken={Boolean(token)}>
           <main className={styles.page}>
             <div className={styles.container}>
@@ -43,8 +45,8 @@ export default async function RootLayout({
               <main className={styles.main}>{children}</main>
             </div>
           </main>
+          <Footer/>
         </Providers>
-        <Toaster richColors />
       </body>
     </html>
   );

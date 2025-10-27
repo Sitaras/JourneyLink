@@ -7,8 +7,7 @@ const coordinatesSchema = z
   .refine(
     ([lng, lat]) => lng >= -180 && lng <= 180 && lat >= -90 && lat <= 90,
     { message: "Invalid coordinates format [longitude, latitude]" }
-  )
-  .optional();
+  );
 
 const locationSchema = z.object({
   city: z
@@ -33,7 +32,6 @@ const preferencesSchema = z
   .object({
     smokingAllowed: z.boolean().optional().default(false),
     petsAllowed: z.boolean().optional().default(false),
-    maxTwoInBack: z.boolean().optional().default(false),
   })
   .optional();
 
@@ -109,29 +107,24 @@ export const getRoutesQuerySchema = z
     // Geospatial search for origin
     originLat: z
       .string()
-      .optional()
       .transform((val) => (val ? parseFloat(val) : undefined))
       .pipe(
         z
           .number()
           .min(-90, "Latitude must be between -90 and 90")
           .max(90, "Latitude must be between -90 and 90")
-        // .optional()
       ),
     originLng: z
       .string()
-      .optional()
       .transform((val) => (val ? parseFloat(val) : undefined))
       .pipe(
         z
           .number()
           .min(-180, "Longitude must be between -180 and 180")
           .max(180, "Longitude must be between -180 and 180")
-          // .optional()
       ),
     originRadius: z
       .string()
-      .optional()
       .default("50")
       .transform((val) => parseFloat(val))
       .pipe(
@@ -140,34 +133,30 @@ export const getRoutesQuerySchema = z
           .min(1, "Radius must be at least 1km")
           .max(500, "Radius cannot exceed 500km")
           .default(50)
-      ),
+      )
+      .optional(),
 
     // Geospatial search for destination
     destinationLat: z
       .string()
-      .optional()
       .transform((val) => (val ? parseFloat(val) : undefined))
       .pipe(
         z
           .number()
           .min(-90, "Latitude must be between -90 and 90")
           .max(90, "Latitude must be between -90 and 90")
-          // .optional()
       ),
     destinationLng: z
       .string()
-      .optional()
       .transform((val) => (val ? parseFloat(val) : undefined))
       .pipe(
         z
           .number()
           .min(-180, "Longitude must be between -180 and 180")
           .max(180, "Longitude must be between -180 and 180")
-          // .optional()
       ),
     destinationRadius: z
       .string()
-      .optional()
       .default("50")
       .transform((val) => parseFloat(val))
       .pipe(
@@ -176,15 +165,13 @@ export const getRoutesQuerySchema = z
           .min(1, "Radius must be at least 1km")
           .max(500, "Radius cannot exceed 500km")
           .default(50)
-      ),
+      )
+      .optional(),
 
     // Date and time filters
-    departureDate: z
-      .string()
-      .datetime()
-      .or(z.string().regex(/^\d{4}-\d{2}-\d{2}$/))
-      .optional()
-      .transform((val) => (val ? new Date(val) : undefined)),
+    departureDate: isoDateSchema.refine((date) => new Date(date) > new Date(), {
+      message: "Departure time must be in the future",
+    }),
 
     // Seat and price filters
     minSeats: z
@@ -219,23 +206,23 @@ export const getRoutesQuerySchema = z
     // Pagination
     page: z
       .string()
-      .optional()
       .default("1")
       .transform((val) => parseInt(val))
-      .pipe(z.number().int().min(1).default(1)),
+      .pipe(z.number().int().min(1).default(1))
+      .optional(),
     limit: z
       .string()
-      .optional()
       .default("10")
       .transform((val) => parseInt(val))
-      .pipe(z.number().int().min(1).max(100).default(10)),
+      .pipe(z.number().int().min(1).max(100).default(10))
+      .optional(),
 
     // Sorting
     sortBy: z
       .enum(["price", "departureTime", "distance"])
-      .optional()
-      .default("departureTime"),
-    sortOrder: z.enum(["asc", "desc"]).optional().default("asc"),
+      .default("departureTime")
+      .optional(),
+    sortOrder: z.enum(["asc", "desc"]).default("asc").optional(),
   })
   .refine(
     (data) => {
@@ -270,20 +257,6 @@ export const getRoutesQuerySchema = z
       path: ["destinationLng"],
     }
   );
-// .refine(
-//   (data) => {
-//     // If sorting by distance, geospatial coordinates must be provided
-//     if (data.sortBy === "distance" && (!data.originLat || !data.originLng)) {
-//       return false;
-//     }
-//     return true;
-//   },
-//   {
-//     message:
-//       "Origin coordinates (originLat and originLng) are required when sorting by distance",
-//     path: ["sortBy"],
-//   }
-// );
 
 // Book route schema (for future use)
 export const bookRouteSchema = z.object({

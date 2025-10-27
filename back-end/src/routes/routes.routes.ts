@@ -37,9 +37,8 @@ router.delete(
 );
 
 /**
- * @route   POST /api/routes
+ * @route   GET /api/routes
  * @desc    Create new route
- * @access  Private (requires authentication)
  */
 router.get(
   "/",
@@ -54,6 +53,7 @@ router.get(
  */
 router.get(
   "/:id",
+  authenticateToken,
   validateData(mongoIdSchema, "params"),
   RoutesController.getRouteById as unknown as RequestHandler
 );

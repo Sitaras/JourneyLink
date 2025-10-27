@@ -87,10 +87,6 @@ const routeSchema = new Schema<IRouteDocument>(
         type: Boolean,
         default: false,
       },
-      maxTwoInBack: {
-        type: Boolean,
-        default: false,
-      },
     },
     additionalInfo: {
       type: String,

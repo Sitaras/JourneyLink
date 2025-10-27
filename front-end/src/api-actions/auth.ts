@@ -6,11 +6,11 @@ import { authStorage } from "./authStorage";
 import { registerSchema } from "@/schemas/auth/registerSchema";
 import z from "zod";
 import { loginSchema } from "@/schemas/auth/loginSchema";
+import { revalidatePath } from "next/cache";
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
-export const login = async (prevState: unknown, body: LoginFormValues) => {
-
+export const login = async (body: LoginFormValues) => {
   try {
     const response = await api
       .url("auth/login")
@@ -24,18 +24,17 @@ export const login = async (prevState: unknown, body: LoginFormValues) => {
       refreshToken: response?.tokens?.refreshToken,
     });
 
+    revalidatePath("/", "layout");
+
     return response;
   } catch (error: any) {
-    throw error?.message;
+    throw new Error(error?.message || "Login failed");
   }
 };
 
 type RegisterFormValues = z.infer<typeof registerSchema>;
 
-export const register = async (
-  prevState: unknown,
-  body: RegisterFormValues
-) => {
+export const register = async (body: RegisterFormValues) => {
   const dateOfBirthDateISOstring = formatToUTC(body.dateOfBirth);
 
   try {
@@ -49,7 +48,7 @@ export const register = async (
 
     return response;
   } catch (error: any) {
-    throw error?.message;
+    throw new Error(error?.message || "Registration failed");
   }
 };
 

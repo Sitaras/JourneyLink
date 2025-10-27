@@ -31,7 +31,6 @@ export interface IRoute extends Document {
   preferences?: {
     smokingAllowed: boolean;
     petsAllowed: boolean;
-    maxTwoInBack: boolean;
   };
   additionalInfo: string;
   status: "active" | "cancelled" | "completed";

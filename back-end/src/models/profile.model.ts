@@ -26,35 +26,39 @@ const profileSchema = new Schema<IProfileDocument>(
       type: String,
       required: true,
     },
+    phoneNumber: {
+      type: String,
+      required: true,
+    },
     avatar: {
       type: String,
-      default: '', 
+      default: "",
     },
     bio: {
       type: String,
       maxlength: 500,
-      default: '', 
+      default: "",
     },
     socials: {
       facebook: {
         type: String,
-        default: '', 
+        default: "",
       },
       twitter: {
         type: String,
-        default: '', 
+        default: "",
       },
       linkedIn: {
         type: String,
-        default: '', 
+        default: "",
       },
     },
-    
+
     verificationDocuments: {
       idCard: {
         url: {
           type: String,
-          default: '', 
+          default: "",
         },
         verified: {
           type: Boolean,
@@ -64,7 +68,7 @@ const profileSchema = new Schema<IProfileDocument>(
       drivingLicense: {
         url: {
           type: String,
-          default: '', 
+          default: "",
         },
         verified: {
           type: Boolean,

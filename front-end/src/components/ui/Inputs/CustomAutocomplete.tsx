@@ -33,7 +33,7 @@ export interface CustomAutocompleteProps<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
 > {
-  control: Control<TFieldValues>;
+  control: Control<any>;
   name: TName;
   options: readonly AutocompleteOption[];
   label?: string;
@@ -82,7 +82,11 @@ export const CustomAutocomplete = <
 
   return (
     <div className={cn("max-lg:w-full flex flex-col space-y-2", className)}>
-      {label && <Label className={labelClassName}>{label}</Label>}
+      {label && (
+        <Label className={labelClassName} htmlFor={name}>
+          {label}
+        </Label>
+      )}
       <Controller
         control={control}
         name={name}
@@ -90,6 +94,7 @@ export const CustomAutocomplete = <
           <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
               <Button
+                id={name}
                 variant="outline"
                 role="combobox"
                 aria-expanded={open}
