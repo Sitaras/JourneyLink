@@ -73,7 +73,7 @@ export default function RegisterPage() {
   );
 
   return (
-    <div className="h-full flex-1 flex justify-center items-center">
+    <div className="h-full w-full flex-1 flex justify-center items-center">
       <Card className="w-full max-w-sm">
         <CardHeader>
           <CardTitle className="text-2xl">Register</CardTitle>

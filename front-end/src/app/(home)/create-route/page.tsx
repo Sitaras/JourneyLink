@@ -30,18 +30,6 @@ import { SeatsSelect } from "@/components/ui/Inputs/SeatSelect";
 import { CustomTextarea } from "@/components/ui/Inputs/CustomTextarea";
 import { onError } from "@/utils/formUtils";
 
-const FIELD_LABELS: Record<string, string> = {
-  departureLocation: "Departure location",
-  arrivalLocation: "Arrival location",
-  dateTrip: "Travel Date",
-  time: "Time",
-  availableSeats: "Available seats",
-  pricePerSeat: "Price per seat",
-  smoking: "Smoking",
-  petsAllowed: "Pets allowed",
-  additionalInfo: "Additional info",
-};
-
 export default function CreateRoute() {
   const { register, control, handleSubmit } = useForm<CreateRouteFormValues>({
     resolver: zodResolver(createRouteSchema),
@@ -94,16 +82,20 @@ export default function CreateRoute() {
     mutation.mutate(body);
   };
 
-  const onError = (errors: FieldErrors) => {
-    const firstErrorKey = Object.keys(errors)[0];
-    const firstError = errors[firstErrorKey as keyof CreateRouteFormValues];
+  const handleOnError = (errors: FieldErrors) => {
+    const FIELD_LABELS: Record<string, string> = {
+      departureLocation: "Departure location",
+      arrivalLocation: "Arrival location",
+      dateTrip: "Travel Date",
+      time: "Time",
+      availableSeats: "Available seats",
+      pricePerSeat: "Price per seat",
+      smoking: "Smoking",
+      petsAllowed: "Pets allowed",
+      additionalInfo: "Additional info",
+    };
 
-    if (firstError?.message && firstErrorKey) {
-      const fieldLabel = FIELD_LABELS[firstErrorKey] || firstErrorKey;
-      toast.error(`${fieldLabel}: ${firstError.message}`);
-    } else {
-      toast.error("Please check the form for errors");
-    }
+    onError(FIELD_LABELS, errors);
   };
 
   return (
@@ -111,9 +103,7 @@ export default function CreateRoute() {
       <div className="flex flex-col gap-8 max-w-xl w-full">
         {/* Header */}
         <div className="flex flex-col gap-2">
-          <Typography variant="h2">
-            Offer a ride
-          </Typography>
+          <Typography variant="h2">Offer a ride</Typography>
           <Typography className="text-muted-foreground text-lg">
             Share your journey and split the costs. Fill in the details below to
             post your ride.
@@ -122,7 +112,7 @@ export default function CreateRoute() {
 
         <form
           id="create-route"
-          onSubmit={handleSubmit(onSubmit, onError)}
+          onSubmit={handleSubmit(onSubmit, handleOnError)}
           className="flex flex-col gap-6 w-full"
           noValidate
         >

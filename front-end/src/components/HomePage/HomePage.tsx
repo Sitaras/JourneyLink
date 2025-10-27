@@ -82,7 +82,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       isInitialLoad={isInitialLoad}
       page={page}
       totalPages={searchResult.totalPages}
-      limit={LIMIT}
+      limit={searchResult?.pageData?.length ?? 0}
       hasResults={hasResults}
       searchForm={
         <SearchRoutesForm
