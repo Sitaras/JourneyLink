@@ -28,37 +28,44 @@ const profileSchema = new Schema<IProfileDocument>(
     },
     avatar: {
       type: String,
+      default: '', 
     },
     bio: {
       type: String,
       maxlength: 500,
+      default: '', 
     },
     socials: {
       facebook: {
         type: String,
+        default: '', 
       },
       twitter: {
         type: String,
+        default: '', 
       },
       linkedIn: {
         type: String,
+        default: '', 
       },
     },
-    preferredLanguages: [
-      {
-        type: String,
-      },
-    ],
+    
     verificationDocuments: {
       idCard: {
-        url: String,
+        url: {
+          type: String,
+          default: '', 
+        },
         verified: {
           type: Boolean,
           default: false,
         },
       },
       drivingLicense: {
-        url: String,
+        url: {
+          type: String,
+          default: '', 
+        },
         verified: {
           type: Boolean,
           default: false,

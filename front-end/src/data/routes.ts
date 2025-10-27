@@ -8,6 +8,7 @@ const routes = {
   cookies: "/cookies",
   forgotPassword: "/forgot-password",
   resetPassword: "/reset-password",
+  profile: "/profile",
 };
 
 const protectedRoutes = [routes.home, routes.settings];
