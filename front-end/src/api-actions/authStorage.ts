@@ -5,16 +5,18 @@ export const authStorage = {
     (await cookies()).set({
       name: "access_token",
       value: token,
-      secure: process.env.NODE_ENV !== "production",
-      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 15,
     });
   },
   setRefreshToken: async ({ refreshToken }: { refreshToken: string }) => {
     (await cookies()).set({
       name: "refresh_token",
       value: refreshToken,
-      secure: process.env.NODE_ENV !== "production",
-      sameSite: "strict",
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      maxAge: 60 * 60 * 24 * 7,
     });
   },
   getRefreshToken: async () => {

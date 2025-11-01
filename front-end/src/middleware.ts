@@ -1,12 +1,8 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import {
-  routeConfig,
-  isProtectedRoute,
-  isAuthRoute,
-} from "./data/routes";
-import { cookies } from "next/headers";
+import { routeConfig, isProtectedRoute, isAuthRoute } from "./data/routes";
 import { decodeToken } from "./utils/userUtils";
+import { authStorage } from "./api-actions/authStorage";
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
@@ -18,9 +14,7 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const cookieStore = await cookies();
-  const token = cookieStore.get("access_token")?.value;
-
+  const token = await authStorage.getAccessToken();
   let userId: string | undefined;
 
   if (token) {
@@ -28,17 +22,16 @@ export async function middleware(request: NextRequest) {
       const decoded = decodeToken(token);
       userId = decoded.userId;
     } catch (error) {
-      // Invalid token - clear it and redirect to login
-      console.error("Invalid token:", error);
       const response = NextResponse.redirect(
         new URL(routeConfig.protected.redirectTo, request.nextUrl)
       );
       response.cookies.delete("access_token");
+      response.cookies.delete("refresh_token");
       return response;
     }
   }
 
-  const isAuthenticated = Boolean(token && userId);
+  const isAuthenticated = Boolean(userId);
 
   if (isProtected && !isAuthenticated) {
     const loginUrl = new URL(routeConfig.protected.redirectTo, request.nextUrl);
