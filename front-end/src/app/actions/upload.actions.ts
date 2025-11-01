@@ -1,6 +1,6 @@
 "use server";
 
-import { postFetcher } from '@/api-actions/api';
+import { authStorage } from '@/api-actions/authStorage';
 
 // Maximum file size in bytes (5MB)
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -15,10 +15,16 @@ export async function uploadFile(file: File): Promise<string> {
   formData.append('file', file);
 
   try {
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/users/upload`, {
+    // Get access token for authentication
+    const accessToken = await authStorage.getAccessToken();
+    
+    const response = await fetch(`${process.env.NEXT_PUBLIC_BASE_URL}/users/upload`, {
       method: 'POST',
       body: formData,
       credentials: 'include',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+      },
     });
 
     if (!response.ok) {
