@@ -6,7 +6,7 @@ import { authStorage } from '@/api-actions/authStorage';
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 
 export async function uploadFile(file: File): Promise<string> {
-  // Validate file size on client side
+  // Validate file size before upload
   if (file.size > MAX_FILE_SIZE) {
     throw new Error(`File size exceeds the maximum limit of 5MB. Your file is ${(file.size / 1024 / 1024).toFixed(2)}MB.`);
   }

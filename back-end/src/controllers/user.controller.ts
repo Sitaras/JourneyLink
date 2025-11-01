@@ -185,7 +185,13 @@ static async getProfile(req: AuthRequest, res: Response) {
         return;
       }
 
-      // Convert file buffer to base64 data URL
+      // NOTE: This converts the file to a base64 data URL as an interim solution.
+      // For production, consider implementing cloud storage (e.g., AWS S3, Google Cloud Storage)
+      // and returning a permanent URL instead of storing base64 in the database.
+      // This approach has limitations:
+      // - Increased database size and slower queries
+      // - Larger payload sizes in API responses
+      // - No CDN benefits for image delivery
       const base64 = req.file.buffer.toString('base64');
       const dataUrl = `data:${req.file.mimetype};base64,${base64}`;
 
