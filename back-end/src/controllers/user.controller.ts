@@ -177,4 +177,28 @@ static async getProfile(req: AuthRequest, res: Response) {
       return;
     }
   }
+
+  static async uploadFile(req: AuthRequest, res: Response) {
+    try {
+      if (!req.file) {
+        res.error("No file uploaded", 400);
+        return;
+      }
+
+      // Convert file buffer to base64 data URL
+      const base64 = req.file.buffer.toString('base64');
+      const dataUrl = `data:${req.file.mimetype};base64,${base64}`;
+
+      res.success({
+        url: dataUrl,
+        filename: req.file.originalname,
+        mimetype: req.file.mimetype,
+        size: req.file.size
+      });
+    } catch (error: any) {
+      console.error("Upload file error:", error);
+      res.error("An error occurred during file upload", 500);
+      return;
+    }
+  }
 }

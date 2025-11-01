@@ -8,6 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from "@/components/ui/separator";
 import { getProfile, updateProfile } from '@/app/actions/profile.actions';
+import { uploadFile } from '@/app/actions/upload.actions';
 
 interface SocialLinks {
   facebook: string;
@@ -95,31 +96,41 @@ const JourneyLinkProfile: React.FC = () => {
     setSocialLinks(prev => ({ ...prev, [platform]: value }));
   };
 
-  const handleAvatarUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setAvatar(reader.result as string);
-      };
-      reader.readAsDataURL(file);
+      try {
+        setLoading(true);
+        const url = await uploadFile(file);
+        setAvatar(url);
+      } catch (error: any) {
+        console.error('Avatar upload error:', error);
+        alert(error.message || 'Failed to upload avatar');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
-  const handleDocumentUpload = (type: 'idCard' | 'drivingLicense', e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDocumentUpload = async (type: 'idCard' | 'drivingLicense', e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
+      try {
+        setLoading(true);
+        const url = await uploadFile(file);
         setVerificationDocuments(prev => ({
           ...prev,
           [type]: {
-            url: reader.result as string,
+            url: url,
             verified: false
           }
         }));
-      };
-      reader.readAsDataURL(file);
+      } catch (error: any) {
+        console.error('Document upload error:', error);
+        alert(error.message || 'Failed to upload document');
+      } finally {
+        setLoading(false);
+      }
     }
   };
 
