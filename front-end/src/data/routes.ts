@@ -15,7 +15,7 @@ const routes = {
 
 const routeConfig = {
   protected: {
-    paths: [routes.settings, routes.createRoute] as string[],
+    paths: [routes.settings, routes.createRoute, routes.profile] as string[],
     // Note: /route is protected, but we'll handle dynamic routes separately
     patterns: [/^\/route\/.+/], // Regex to match /route/* paths
     redirectTo: routes.login,
@@ -38,7 +38,6 @@ const routeConfig = {
     ] as string[],
   },
 } as const;
-
 
 const isProtectedRoute = (path: string): boolean => {
   return (

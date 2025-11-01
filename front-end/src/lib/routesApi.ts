@@ -1,6 +1,6 @@
 import { getRoutes, getRoute } from "@/api-actions/routes";
 import type { IGetRoutesQueryPayload } from "@/schemas/routesSchema";
-import { Route } from "@/types/routes";
+import { Route } from "@/types/routes.types";
 
 export interface SearchRoutesResult {
   pageData: Route[];
