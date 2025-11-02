@@ -1,7 +1,10 @@
 import { Schema, Document, model } from "mongoose";
 import { IRoute } from "../types/route.types";
 
-interface IRouteDocument extends IRoute, Document {}
+export interface IRouteDocument extends IRoute, Document {
+  isBookable(requestedSeats?: number): boolean;
+  remainingSeats: number;
+}
 
 const routeSchema = new Schema<IRouteDocument>(
   {
@@ -138,4 +141,4 @@ routeSchema.methods.isBookable = function (requestedSeats = 1) {
   );
 };
 
-export const Route = model<IRoute>("Route", routeSchema);
+export const Route = model<IRouteDocument>("Route", routeSchema);
