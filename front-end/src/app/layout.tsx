@@ -39,6 +39,7 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const token = await authStorage.getAccessToken();
+  const refreshToken = await authStorage.getRefreshToken();
 
   return (
     <html lang="en">
@@ -46,7 +47,7 @@ export default async function RootLayout({
         className={`flex min-h-screen w-full flex-col ${geistSans.variable} ${geistMono.variable}`}
       >
         <Toaster richColors />
-        <Providers hasAccessToken={Boolean(token)}>
+        <Providers initialHasToken={Boolean(token) || Boolean(refreshToken)}>
           <main className={styles.page}>
             <div className={styles.container}>
               <Navbar />

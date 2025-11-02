@@ -7,10 +7,10 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 
 export default function Providers({
-  hasAccessToken,
+  initialHasToken,
   children,
 }: {
-  hasAccessToken: boolean;
+  initialHasToken: boolean;
   children: React.ReactNode;
 }) {
   const [queryClient] = useState(
@@ -40,7 +40,7 @@ export default function Providers({
   return (
     <NuqsAdapter>
       <QueryClientProvider client={queryClient}>
-        <AuthProvider hasAccessToken={hasAccessToken}>
+        <AuthProvider initialHasToken={initialHasToken}>
           <TooltipProvider>{children}</TooltipProvider>
         </AuthProvider>
       </QueryClientProvider>

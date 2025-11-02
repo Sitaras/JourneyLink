@@ -15,10 +15,7 @@ import UserMenu from "./UserMenu";
 import Logo from "./Logo";
 import type { NavbarProps, NavbarNavItem } from "./types";
 import Link from "next/link";
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-} from "../ui/dropdown-menu";
+import { DropdownMenu, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
 const defaultLinks: NavbarNavItem[] = [
   { href: routes.home, label: "Home" },
@@ -42,7 +39,7 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
     },
     ref
   ) => {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, isLoading } = useAuth();
     const pathname = usePathname();
     const [isMobile, setIsMobile] = useState(false);
     const [openMobile, setOpenMobile] = useState(false);
@@ -121,29 +118,30 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
             )}
           </div>
 
-          {isAuthenticated ? (
-            <UserMenu />
-          ) : (
-            <div className="flex gap-2">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={onSignInClick}
-                asChild={!onSignInClick}
-              >
-                <Link href={signInHref}>{signInText}</Link>
-              </Button>
+          {!isLoading &&
+            (isAuthenticated ? (
+              <UserMenu />
+            ) : (
+              <div className="flex gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={onSignInClick}
+                  asChild={!onSignInClick}
+                >
+                  <Link href={signInHref}>{signInText}</Link>
+                </Button>
 
-              <Button
-                size="sm"
-                className="shadow-sm"
-                onClick={onCtaClick}
-                asChild={!onCtaClick}
-              >
-                <Link href={ctaHref}>{ctaText}</Link>
-              </Button>
-            </div>
-          )}
+                <Button
+                  size="sm"
+                  className="shadow-sm"
+                  onClick={onCtaClick}
+                  asChild={!onCtaClick}
+                >
+                  <Link href={ctaHref}>{ctaText}</Link>
+                </Button>
+              </div>
+            ))}
         </div>
       </header>
     );

@@ -1,3 +1,5 @@
+"use client";
+
 import { createContext, useContext, useMemo } from "react";
 import { IUser } from "@/types/user.types";
 import { useQuery } from "@tanstack/react-query";
@@ -8,28 +10,29 @@ interface AuthContextType {
   isLoading: boolean;
   isAuthenticated: boolean;
   error?: unknown;
+  refetchUser: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({
-  hasAccessToken,
+  initialHasToken,
   children,
 }: {
-  hasAccessToken: boolean;
+  initialHasToken: boolean;
   children: React.ReactNode;
 }) => {
   const {
     data: user,
     isLoading,
     error,
+    refetch,
   } = useQuery<unknown, unknown, IUser>({
     queryKey: ["api/user"],
     queryFn: getUserInfo,
-    enabled: hasAccessToken,
-
-    staleTime: Infinity,
-    gcTime: Infinity,
+    enabled: initialHasToken,
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
     refetchOnMount: false,
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
@@ -38,11 +41,12 @@ export const AuthProvider = ({
   const value = useMemo(
     () => ({
       user,
-      isAuthenticated: Boolean(hasAccessToken),
-      isLoading,
+      isAuthenticated: Boolean(user),
+      isLoading: initialHasToken && isLoading,
       error,
+      refetchUser: () => refetch(),
     }),
-    [user, hasAccessToken, isLoading, error]
+    [user, initialHasToken, isLoading, error, refetch]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

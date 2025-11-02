@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { routeConfig, isProtectedRoute, isAuthRoute } from "./data/routes";
-import { decodeToken } from "./utils/userUtils";
-import { authStorage } from "./api-actions/authStorage";
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname;
@@ -14,32 +12,22 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  const token = await authStorage.getAccessToken();
-  let userId: string | undefined;
+  const accessToken = request.cookies.get("access_token")?.value;
+  const refreshToken = request.cookies.get("refresh_token")?.value;
 
-  if (token) {
-    try {
-      const decoded = decodeToken(token);
-      userId = decoded.userId;
-    } catch (error) {
-      const response = NextResponse.redirect(
-        new URL(routeConfig.protected.redirectTo, request.nextUrl)
-      );
-      response.cookies.delete("access_token");
-      response.cookies.delete("refresh_token");
-      return response;
-    }
-  }
+  const initialHasToken = Boolean(refreshToken || accessToken);
 
-  const isAuthenticated = Boolean(userId);
-
-  if (isProtected && !isAuthenticated) {
+  if (isProtected && !initialHasToken) {
     const loginUrl = new URL(routeConfig.protected.redirectTo, request.nextUrl);
     loginUrl.searchParams.set("from", path);
     return NextResponse.redirect(loginUrl);
   }
 
-  if (isAuth && isAuthenticated) {
+  if (isProtected && refreshToken && !accessToken) {
+    return NextResponse.next();
+  }
+
+  if (isAuth && initialHasToken) {
     const from = request.nextUrl.searchParams.get("from");
     const redirectUrl =
       from && !isAuthRoute(from) ? from : routeConfig.auth.redirectTo;
