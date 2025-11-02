@@ -4,7 +4,7 @@ import "./globals.css";
 import Providers from "./providers";
 import { authStorage } from "@/api-actions/authStorage";
 import { Toaster } from "@/components/ui/sonner";
-import { Navbar } from "@/components/Navbar/navbar";
+import Navbar from "@/components/Navbar/Navbar";
 import Footer from "@/components/Footer/Footer";
 
 import styles from "./layout.module.css";
@@ -20,9 +20,17 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "JourneyLink",
+  title: "CoPassengers",
   description:
-    "JourneyLink connects drivers with passengers for cost-sharing rides, promoting eco-friendly, efficient, and trusted intercity travel ",
+    "CoPassengers connects drivers with passengers for cost-sharing rides, promoting eco-friendly, efficient, and trusted intercity travel ",
+  icons: {
+    icon: [
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180" }],
+  },
+  manifest: "/site.webmanifest",
 };
 
 export default async function RootLayout({
@@ -45,7 +53,7 @@ export default async function RootLayout({
               <main className={styles.main}>{children}</main>
             </div>
           </main>
-          <Footer/>
+          <Footer />
         </Providers>
       </body>
     </html>

@@ -16,7 +16,9 @@ export default function Footer() {
               <div className="p-2 bg-primary rounded-lg">
                 <Car className="h-5 w-5 text-primary-foreground" />
               </div>
-              <Typography className="font-bold text-lg">RideShare</Typography>
+              <Typography className="font-bold text-lg">
+                CoPassengers
+              </Typography>
             </div>
             <Typography className="text-sm text-muted-foreground">
               Connecting travelers and reducing carbon footprints, one ride at a
@@ -122,7 +124,7 @@ export default function Footer() {
 
         <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
           <Typography className="text-sm text-muted-foreground">
-            © {currentYear} RideShare. All rights reserved.
+            © {currentYear} CoPassengers. All rights reserved.
           </Typography>
           <div className="flex items-center gap-6">
             <Link

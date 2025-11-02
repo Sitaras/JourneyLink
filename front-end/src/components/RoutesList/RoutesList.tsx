@@ -12,7 +12,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { MapPin, Calendar, ArrowRight, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Route } from "@/types/routes";
+import { Route } from "@/types/routes.types";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import Typography from "@/components/ui/typography";

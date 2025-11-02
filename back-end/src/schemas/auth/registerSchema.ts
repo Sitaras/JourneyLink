@@ -22,10 +22,7 @@ const passwordSchema = z
   });
 
 export const registerSchema = z.object({
-  email: z
-    .string()
-    .min(1, { message: "required" })
-    .email({ message: "Invalid format" }),
+  email: z.string().trim().email({ message: "emailError" }),
   firstName: z.string().min(1, { message: "required" }),
   lastName: z.string().min(1, { message: "required" }),
   phoneNumber: z

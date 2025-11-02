@@ -9,7 +9,7 @@ import {
   Route,
   RouteCreationResponse,
   RouteSearchResponse,
-} from "@/types/routes";
+} from "@/types/routes.types";
 
 export const getRoutes = async (parameters: IGetRoutesQueryPayload) => {
   const parsedParams = getRoutesQuerySchema.parse(parameters);
