@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Pencil, X, Check } from "lucide-react";
+import { Pencil,} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -171,7 +171,7 @@ const PersonalInfoCard = ({
               }
             />
 
-            <InfoField label="Bio" value={bio} multiline />
+            <InfoField label="Bio" value={bio} />
           </>
         )}
       </CardContent>

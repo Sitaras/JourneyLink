@@ -18,7 +18,7 @@ export default function Providers({
       new QueryClient({
         defaultOptions: {
           queries: {
-            staleTime: 900000,
+            staleTime: 1 * 60 * 1000,
             // refetchOnWindowFocus: false,
             retry: (failureCount, error: any) => {
               // Don't retry on 404 or 401 errors
@@ -28,9 +28,9 @@ export default function Providers({
               // Only retry up to 2 times
               return failureCount < 2;
             },
-            // Custom retry delay: 7s for first retry, 12s for second
+            // Custom retry delay: 1s for first retry, 4s for second
             retryDelay: (attemptIndex) => {
-              return attemptIndex === 1 ? 7000 : 12000;
+              return attemptIndex === 1 ? 1000 : 4000;
             },
           },
         },

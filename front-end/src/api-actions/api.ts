@@ -140,7 +140,10 @@ export const postFetcher = async <IBody, IResponse>(url: string, body: IBody) =>
     .post(body)
     .json<IResponse>((json) => json?.data);
 
-export const patchFetcher = async <IBody, IResponse>(url: string, body: IBody) =>
+export const patchFetcher = async <IBody, IResponse>(
+  url: string,
+  body: IBody
+) =>
   (await getAuthApi())
     .url(url)
     .patch(body)

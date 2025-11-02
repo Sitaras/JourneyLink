@@ -51,27 +51,6 @@ export class AuthController {
         dateOfBirth,
         email,
         phoneNumber,
-        bio: '',
-        avatar: '',
-        socials: {
-          facebook: '',
-          twitter: '',
-          linkedIn: ''
-        },
-        verificationDocuments: {
-          idCard: { 
-            url: '', 
-            verified: false 
-          },
-          drivingLicense: { 
-            url: '', 
-            verified: false 
-          }
-        },
-        rating: {
-          average: 0,
-          count: 0
-        },
       });
       
       user.profile = profile._id as any;

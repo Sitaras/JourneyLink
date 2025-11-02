@@ -5,7 +5,6 @@ import Typography from "../ui/typography";
 interface InfoFieldProps {
   label: string;
   value?: string;
-  multiline?: boolean;
 }
 
 const InfoField = ({ label, value }: InfoFieldProps) => {
