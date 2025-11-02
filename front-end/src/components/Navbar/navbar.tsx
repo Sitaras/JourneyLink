@@ -20,6 +20,7 @@ import { DropdownMenu, DropdownMenuTrigger } from "../ui/dropdown-menu";
 const defaultLinks: NavbarNavItem[] = [
   { href: routes.home, label: "Home" },
   { href: routes.createRoute, label: "Create Route", protected: true },
+  { href: routes.myRides, label: "My rides", protected: true },
 ];
 
 const Navbar = React.forwardRef<HTMLElement, NavbarProps>(

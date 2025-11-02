@@ -4,6 +4,7 @@ const routes = {
   register: "/register",
   settings: "/settings",
   createRoute: "/create-route",
+  myRides: "/my-rides",
   viewRoute: "/route",
   support: "/support",
   terms: "/terms-of-use",
@@ -15,7 +16,12 @@ const routes = {
 
 const routeConfig = {
   protected: {
-    paths: [routes.settings, routes.createRoute, routes.profile] as string[],
+    paths: [
+      routes.settings,
+      routes.createRoute,
+      routes.profile,
+      routes.myRides,
+    ] as string[],
     // Note: /route is protected, but we'll handle dynamic routes separately
     patterns: [/^\/route\/.+/], // Regex to match /route/* paths
     redirectTo: routes.login,
