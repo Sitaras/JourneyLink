@@ -9,7 +9,7 @@ export const getStatusVariant = (status: RideStatus) => {
     rejected: "destructive",
     cancelled: "destructive",
   };
-  return colors?.[status] || "outline";
+  return colors[status] || "outline";
 };
 
 export const getStatusLabel = (status: RideStatus): string => {
