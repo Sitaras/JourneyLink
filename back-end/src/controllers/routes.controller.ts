@@ -1,3 +1,4 @@
+import { Booking } from "../models/booking.model";
 import { AuthRequest } from "../middleware/auth.middleware";
 import { Route } from "../models/route.model";
 import {
@@ -8,7 +9,7 @@ import {
 } from "@/schemas/routesSchema";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import mongoose from "mongoose";
+import mongoose, { Types } from "mongoose";
 
 export class RoutesController {
   private static addSeatCalculationStages(pipeline: any[]): void {
@@ -490,4 +491,83 @@ export class RoutesController {
       return res.error("An error occurred", StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
+
+  static async getRoutesAs(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      const userId = req.user?.userId;
+      const { type = "asPassenger", sortOrder = "desc" } = req.query;
+
+      if (type === "asDriver") {
+        const routes = await Route.aggregate([
+          {
+            $match: {
+              driver: new Types.ObjectId(userId),
+              status: { $in: ["active", "completed"] },
+            },
+          },
+          {
+            $addFields: {
+              confirmedPassengers: {
+                $filter: {
+                  input: "$passengers",
+                  as: "p",
+                  cond: { $eq: ["$$p.status", "confirmed"] },
+                },
+              },
+            },
+          },
+          {
+            $addFields: {
+              totalPassengersBooked: { $size: "$confirmedPassengers" },
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              origin: 1,
+              destination: 1,
+              departureTime: 1,
+              pricePerSeat: 1,
+              availableSeats: 1,
+              totalPassengersBooked: 1,
+              status: 1,
+            },
+          },
+          {
+            $sort: { departureTime: sortOrder === "asc" ? 1 : -1 },
+          },
+        ]);
+
+        res.status(StatusCodes.OK).json({
+          success: true,
+          count: routes.length,
+          data: routes,
+        });
+        return;
+      }
+
+      if (type === "asPassenger") {
+        const bookings = await Booking.find({
+          passenger: userId,
+          status: { $ne: "cancelled" },
+        })
+          .populate("route", "origin destination departureTime pricePerSeat")
+          .sort({ createdAt: sortOrder === "asc" ? 1 : -1 });
+
+        res.status(StatusCodes.OK).json({
+          success: true,
+          count: bookings.length,
+          data: bookings,
+        });
+        return;
+      }
+
+      res.status(400).json({ message: "Invalid 'type' parameter." });
+    } catch (error) {
+      console.error("Error fetching Routes:", error);
+      res
+        .status(500)
+        .json({ message: "Server Error", error: (error as Error).message });
+    }
+  }
 }

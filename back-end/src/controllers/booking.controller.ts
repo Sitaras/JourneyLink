@@ -3,6 +3,7 @@ import { Booking } from "../models/booking.model";
 import { Route } from "../models/route.model";
 import { Types } from "mongoose";
 import { AuthRequest } from "../middleware/auth.middleware";
+import { StatusCodes } from "http-status-codes";
 
 export class BookingController {
 

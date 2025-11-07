@@ -47,6 +47,12 @@ router.get(
 );
 
 /**
+ * @route   GET /api/routes/getRoutes
+ * @desc    Get all routes for current user as driver or passenger (query param 'type'); requires authentication
+ */
+router.get("/getRoutes", authenticateToken, RoutesController.getRoutesAs);
+
+/**
  * @route   GET /api/routes/:id
  * @desc    Get single route by ID
  * @access  Public
@@ -68,5 +74,7 @@ router.get(
 //   "/:id",
 //   updateRoute
 // );
+
+
 
 export const routes = router;
