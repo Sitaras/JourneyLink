@@ -10,12 +10,13 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { MapPin, Calendar, ArrowRight, Loader2 } from "lucide-react";
+import { MapPin, Calendar, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Route } from "@/types/routes.types";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import Typography from "@/components/ui/typography";
+import LoadingState from "../LoadingState/LoadingState";
 
 interface RoutesListProps {
   routes?: Route[];
@@ -42,14 +43,7 @@ export default function RoutesList({
   });
 
   if (isLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center py-12 gap-3">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-        <Typography className="text-muted-foreground">
-          Loading routes...
-        </Typography>
-      </div>
-    );
+    return <LoadingState />;
   }
 
   if (!routes || routes.length === 0) {
@@ -80,15 +74,19 @@ export default function RoutesList({
             key={route._id}
             className="shadow-sm hover:shadow-lg transition-all duration-300 border-l-4 border-l-primary/20 hover:border-l-primary"
           >
-            <CardHeader className="pb-3">
+            <CardHeader className="pb-6">
               <CardTitle className="flex items-center gap-3 text-xl">
                 <div className="p-2 bg-primary/10 rounded-full">
                   <MapPin className="w-4 h-4 text-primary" />
                 </div>
                 <span className="flex items-center gap-2 flex-wrap">
-                  <span className="font-bold">{route.origin.city}</span>
+                  <Typography className="font-bold">
+                    {route.origin.city}
+                  </Typography>
                   <ArrowRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-                  <span className="font-bold">{route.destination.city}</span>
+                  <Typography className="font-bold">
+                    {route.destination.city}
+                  </Typography>
                 </span>
               </CardTitle>
               {(route.origin.address || route.destination.address) && (
@@ -137,7 +135,7 @@ export default function RoutesList({
                   )}/${encodeURIComponent(route._id)}`}
                 >
                   <Button size="default" className="font-semibold">
-                    View Details
+                    View details
                   </Button>
                 </Link>
               )}

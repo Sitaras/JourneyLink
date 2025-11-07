@@ -7,7 +7,7 @@ import { formatToUTC } from "@/utils/dateUtils";
 
 export const getUserInfo = async () => {
   try {
-    const response = fetcher("/me/user-info");
+    const response = fetcher("me/user-info");
 
     return response;
   } catch (error: any) {
@@ -17,7 +17,7 @@ export const getUserInfo = async () => {
 
 export const getUserProfile = async () => {
   try {
-    const response = fetcher<ProfileResponse>("/me/profile");
+    const response = fetcher<ProfileResponse>("me/profile");
 
     return response;
   } catch (error: any) {
