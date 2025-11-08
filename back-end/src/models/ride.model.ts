@@ -1,12 +1,12 @@
 import { Schema, Document, model } from "mongoose";
-import { IRoute } from "../types/route.types";
+import { IRide } from "../types/ride.types";
 
-export interface IRouteDocument extends IRoute, Document {
+export interface IRideDocument extends IRide, Document {
   isBookable(requestedSeats?: number): boolean;
   remainingSeats: number;
 }
 
-const routeSchema = new Schema<IRouteDocument>(
+const rideSchema = new Schema<IRideDocument>(
   {
     driver: {
       type: Schema.Types.ObjectId,
@@ -108,7 +108,7 @@ const routeSchema = new Schema<IRouteDocument>(
   }
 );
 
-routeSchema.index({
+rideSchema.index({
   "origin.coordinates": "2dsphere",
   "destination.coordinates": "2dsphere",
   departureTime: 1,
@@ -118,22 +118,22 @@ routeSchema.index({
 
 // routeSchema.index({ "destination.coordinates": "2dsphere" });
 
-routeSchema.index({
+rideSchema.index({
   "origin.city": 1,
   "destination.city": 1,
   departureTime: 1,
 });
 
-routeSchema.index({ status: 1, departureTime: 1 });
+rideSchema.index({ status: 1, departureTime: 1 });
 
-routeSchema.virtual("remainingSeats").get(function () {
+rideSchema.virtual("remainingSeats").get(function () {
   const bookedSeats = this.passengers
     .filter((p) => p.status === "confirmed")
     .reduce((sum, p) => sum + p.seatsBooked, 0);
   return this.availableSeats - bookedSeats;
 });
 
-routeSchema.methods.isBookable = function (requestedSeats = 1) {
+rideSchema.methods.isBookable = function (requestedSeats = 1) {
   return (
     this.status === "active" &&
     this.remainingSeats >= requestedSeats &&
@@ -141,4 +141,4 @@ routeSchema.methods.isBookable = function (requestedSeats = 1) {
   );
 };
 
-export const Route = model<IRouteDocument>("Route", routeSchema);
+export const Ride = model<IRideDocument>("Ride", rideSchema);

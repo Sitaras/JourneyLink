@@ -16,4 +16,4 @@ router.post(
     BookingController.createBooking
 );
 
-export const bookingRoutes = router;
+export const bookingRides = router;

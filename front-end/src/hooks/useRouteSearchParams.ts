@@ -1,6 +1,6 @@
 import {  parseAsString, useQueryStates } from "nuqs";
 
-export function useRouteSearchParams() {
+export function useRideSearchParams() {
   return useQueryStates({
     from: parseAsString.withDefault(""),
     to: parseAsString.withDefault(""),

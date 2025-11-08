@@ -2,7 +2,7 @@ import z from "zod";
 import { citySchema } from "./citySchema";
 import { parsePrice } from "@/utils/moneysUtils";
 
-export const createRouteSchema = z
+export const createRideSchema = z
   .object({
     departureLocation: citySchema,
     arrivalLocation: citySchema,
@@ -60,4 +60,4 @@ export const createRouteSchema = z
     }
   );
 
-export type CreateRouteFormValues = z.infer<typeof createRouteSchema>;
+export type CreateRideFormValues = z.infer<typeof createRideSchema>;

@@ -15,9 +15,9 @@ const bookingSchema = new Schema<IBookingDocument>(
       ref: "User",
       required: true,
     },
-    route: {
+    ride: {
       type: Schema.Types.ObjectId,
-      ref: "Route",
+      ref: "Ride",
       required: true,
     },
     status: {

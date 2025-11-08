@@ -1,9 +1,9 @@
-import SearchRoutesForm from "@/components/SearchRoutesForm/SearchRoutesForm";
-import RoutesList from "../RoutesList/RoutesList";
+import SearchRidesForm from "@/components/SearchRidesForm/SearchRidesForm";
+import RidesList from "../RoutesList/RidesList";
 import PaginationBar from "../PaginationBar/PaginationBar";
 import { parseDateFlexible } from "@/utils/dateUtils";
 import { getCityAutocomplete } from "@/lib/cityApi";
-import { searchRoutes, SearchRoutesResult } from "@/lib/routesApi";
+import { searchRides, SearchRidesResult } from "@/lib/rideApi";
 import Layout from "./Layout";
 
 interface HomePageProps {
@@ -53,7 +53,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
 
   const dateTrip = parseDateFlexible(departureDate) || undefined;
 
-  let searchResult: SearchRoutesResult = {
+  let searchResult: SearchRidesResult = {
     pageData: [],
     totalPages: 1,
     error: "",
@@ -68,7 +68,7 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       departureDate: dateTrip.toISOString(),
     };
 
-    const result = await searchRoutes(payload, page, LIMIT);
+    const result = await searchRides(payload, page, LIMIT);
 
     searchResult = structuredClone(result);
   }
@@ -85,14 +85,14 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       limit={searchResult?.pageData?.length ?? 0}
       hasResults={hasResults}
       searchForm={
-        <SearchRoutesForm
+        <SearchRidesForm
           values={{ departureLocation, arrivalLocation, dateTrip }}
           serviceError={searchResult.error}
         />
       }
       searchResults={
         hasSearchParams ? (
-          <RoutesList routes={searchResult.pageData} className="max-w-3xl" />
+          <RidesList rides={searchResult.pageData} className="max-w-3xl" />
         ) : null
       }
       pagination={

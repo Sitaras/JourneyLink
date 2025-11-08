@@ -12,23 +12,23 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { MapPin, Calendar, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { Route } from "@/types/routes.types";
+import { Ride } from "@/types/rides.types";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import Typography from "@/components/ui/typography";
 import LoadingState from "../LoadingState/LoadingState";
 
-interface RoutesListProps {
-  routes?: Route[];
+interface RidesListProps {
+  rides?: Ride[];
   isLoading?: boolean;
   className?: string;
 }
 
-export default function RoutesList({
-  routes,
+export default function RidesList({
+  rides,
   isLoading,
   className,
-}: RoutesListProps) {
+}: RidesListProps) {
   const { isAuthenticated } = useAuth();
 
   const cardDateFormatter = new Intl.DateTimeFormat("en-GB", {
@@ -46,14 +46,14 @@ export default function RoutesList({
     return <LoadingState />;
   }
 
-  if (!routes || routes.length === 0) {
+  if (!rides || rides.length === 0) {
     return (
       <Card className="shadow-sm w-full">
         <CardContent className="flex flex-col items-center justify-center py-12 gap-3">
           <MapPin className="w-12 h-12 text-muted-foreground/50" />
           <div className="text-center">
             <Typography className="font-semibold text-lg mb-1">
-              No routes found
+              No rides found
             </Typography>
             <Typography className="text-sm text-muted-foreground">
               Try adjusting your search criteria or check back later
@@ -66,12 +66,12 @@ export default function RoutesList({
 
   return (
     <div className={cn("flex flex-col gap-4 w-full", className)}>
-      {routes.map((route) => {
-        const departureDate = new Date(route.departureTime);
+      {rides.map((ride) => {
+        const departureDate = new Date(ride.departureTime);
 
         return (
           <Card
-            key={route._id}
+            key={ride._id}
             className="shadow-sm hover:shadow-lg transition-all duration-300 border-l-4 border-l-primary/20 hover:border-l-primary"
           >
             <CardHeader className="pb-6">
@@ -81,19 +81,19 @@ export default function RoutesList({
                 </div>
                 <span className="flex items-center gap-2 flex-wrap">
                   <Typography className="font-bold">
-                    {route.origin.city}
+                    {ride.origin.city}
                   </Typography>
                   <ArrowRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
                   <Typography className="font-bold">
-                    {route.destination.city}
+                    {ride.destination.city}
                   </Typography>
                 </span>
               </CardTitle>
-              {(route.origin.address || route.destination.address) && (
+              {(ride.origin.address || ride.destination.address) && (
                 <Typography className="text-sm text-muted-foreground ml-12">
-                  {route.origin.address && route.destination.address
-                    ? `${route.origin.address} → ${route.destination.address}`
-                    : route.origin.address || route.destination.address}
+                  {ride.origin.address && ride.destination.address
+                    ? `${ride.origin.address} → ${ride.destination.address}`
+                    : ride.origin.address || ride.destination.address}
                 </Typography>
               )}
             </CardHeader>
@@ -107,7 +107,7 @@ export default function RoutesList({
                   </Typography>
                 </div>
                 <Badge className="px-3 py-1">
-                  {route.remainingSeats} of {route.availableSeats} seats left
+                  {ride.remainingSeats} of {ride.availableSeats} seats left
                 </Badge>
               </div>
             </CardContent>
@@ -117,7 +117,7 @@ export default function RoutesList({
             <CardFooter className="flex justify-between items-center pt-4">
               <div className="flex flex-col gap-1">
                 <Typography className="text-2xl font-bold">
-                  €{route.pricePerSeat.toFixed(2)}
+                  €{ride.pricePerSeat.toFixed(2)}
                 </Typography>
                 <Typography className="text-xs text-muted-foreground">
                   per seat
@@ -126,13 +126,13 @@ export default function RoutesList({
 
               {isAuthenticated && (
                 <Link
-                  href={`/route/${encodeURIComponent(
-                    route.origin.city
+                  href={`/ride/${encodeURIComponent(
+                    ride.origin.city
                   )}/${encodeURIComponent(
-                    route.destination.city
+                    ride.destination.city
                   )}/${encodeURIComponent(
                     urlDateFormatter.format(departureDate)
-                  )}/${encodeURIComponent(route._id)}`}
+                  )}/${encodeURIComponent(ride._id)}`}
                 >
                   <Button size="default" className="font-semibold">
                     View details

@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const createBookingSchema = z.object({
-    route: z.string().min(24).max(24),
+    ride: z.string().min(24).max(24),
 });
 
 export const updateBookingStatusSchema = z.object({

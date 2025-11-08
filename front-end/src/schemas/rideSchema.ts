@@ -33,7 +33,7 @@ const preferencesSchema = z
   })
   .optional();
 
-export const createRouteSchema = z
+export const createRideSchema = z
   .object({
     origin: locationSchema,
     destination: locationSchema,
@@ -65,7 +65,7 @@ export const createRouteSchema = z
     }
   );
 
-export const updateRouteSchema = z
+export const updateRideSchema = z
   .object({
     origin: locationSchema.optional(),
     destination: locationSchema.optional(),
@@ -95,8 +95,8 @@ export const updateRouteSchema = z
     }
   );
 
-// Query params schema for GET /routes
-export const getRoutesQuerySchema = z.object({
+// Query params schema for GET /rides
+export const getRidesQuerySchema = z.object({
   originCity: z.string().trim().optional(),
   destinationCity: z.string().trim().optional(),
 
@@ -135,8 +135,8 @@ export const getRoutesQuerySchema = z.object({
   sortOrder: z.enum(["asc", "desc"]).default("asc").optional(),
 });
 
-// Book route schema (for future use)
-export const bookRouteSchema = z.object({
+// Book ride schema (for future use)
+export const bookRideSchema = z.object({
   seatsRequested: z
     .number()
     .int("Seats must be an integer")
@@ -145,7 +145,7 @@ export const bookRouteSchema = z.object({
   passengerNotes: z.string().trim().max(200).optional(),
 });
 
-export const deleteRouteSchema = z
+export const deleteRideSchema = z
   .object({
     reason: z
       .string()
@@ -157,8 +157,8 @@ export const deleteRouteSchema = z
   })
   .optional();
 
-export type ICreateRoutePayload = z.infer<typeof createRouteSchema>;
-export type UpdateRouteInput = z.infer<typeof updateRouteSchema>;
-export type IGetRoutesQueryPayload = z.infer<typeof getRoutesQuerySchema>;
-export type BookRouteInput = z.infer<typeof bookRouteSchema>;
-export type IDeleteRoutePayload = z.infer<typeof deleteRouteSchema>;
+export type ICreateRidePayload = z.infer<typeof createRideSchema>;
+export type UpdateRideInput = z.infer<typeof updateRideSchema>;
+export type IGetRidesQueryPayload = z.infer<typeof getRidesQuerySchema>;
+export type BookRideInput = z.infer<typeof bookRideSchema>;
+export type IDeleteRidePayload = z.infer<typeof deleteRideSchema>;

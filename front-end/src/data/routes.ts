@@ -3,9 +3,9 @@ const routes = {
   login: "/login",
   register: "/register",
   settings: "/settings",
-  createRoute: "/create-route",
+  createRide: "/create-ride",
   myRides: "/my-rides",
-  viewRoute: "/route",
+  viewRide: "/ride",
   support: "/support",
   terms: "/terms-of-use",
   cookies: "/cookies",
@@ -18,7 +18,7 @@ const routeConfig = {
   protected: {
     paths: [
       routes.settings,
-      routes.createRoute,
+      routes.createRide,
       routes.profile,
       routes.myRides,
     ] as string[],

@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useForm } from "react-hook-form";
 import { DatePicker } from "@/components/ui/datepicker";
 import CityAutoComplete from "@/components/ui/Inputs/CityAutoComplete";
-import { routeSearchSchema } from "@/schemas/home/routeSearchSchema";
+import { rideSearchSchema } from "@/schemas/home/rideSearchSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
@@ -13,25 +13,25 @@ import { toast } from "sonner";
 import { useEffect } from "react";
 import { Search, MapPin, Calendar } from "lucide-react";
 
-type RouteSearchFormValues = z.infer<typeof routeSearchSchema>;
+type RideSearchFormValues = z.infer<typeof rideSearchSchema>;
 
-interface SearchRoutesFormProps {
-  values?: RouteSearchFormValues;
+interface SearchRidesFormProps {
+  values?: RideSearchFormValues;
   isLoading?: boolean;
   className?: string;
   serviceError?: string;
 }
 
-export default function SearchRoutesForm({
+export default function SearchRidesForm({
   values,
   isLoading,
   className,
   serviceError,
-}: SearchRoutesFormProps) {
+}: SearchRidesFormProps) {
   const router = useRouter();
 
-  const { control, handleSubmit, watch } = useForm<RouteSearchFormValues>({
-    resolver: zodResolver(routeSearchSchema),
+  const { control, handleSubmit, watch } = useForm<RideSearchFormValues>({
+    resolver: zodResolver(rideSearchSchema),
     defaultValues: values || {
       departureLocation: undefined,
       arrivalLocation: undefined,
@@ -47,7 +47,7 @@ export default function SearchRoutesForm({
     }
   }, [serviceError]);
 
-  const onSubmit = (data: RouteSearchFormValues) => {
+  const onSubmit = (data: RideSearchFormValues) => {
     const from = data.departureLocation?.label || "";
     const to = data.arrivalLocation?.label || "";
     const departureDate = new Intl.DateTimeFormat("el").format(data.dateTrip);

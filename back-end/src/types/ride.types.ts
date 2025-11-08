@@ -1,6 +1,6 @@
 import { Types, Document } from "mongoose";
 
-export interface IRoute extends Document {
+export interface IRide extends Document {
   driver: Types.ObjectId;
   origin: {
     city: string;

@@ -42,7 +42,7 @@ export const mockRidesAsPassenger: Ride[] = [
     distance: 502,
     duration: "5h 30m",
     vehicleModel: "Toyota Corolla",
-    notes: "Highway route, one rest stop included",
+    notes: "Highway ride, one rest stop included",
   },
   {
     id: "ride-2",

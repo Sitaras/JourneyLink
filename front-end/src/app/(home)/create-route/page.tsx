@@ -1,19 +1,19 @@
 "use client";
 
-import { createRoute } from "@/api-actions/routes";
+import { createRide } from "@/api-actions/ride";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { DatePicker } from "@/components/ui/datepicker";
 import CityAutoComplete from "@/components/ui/Inputs/CityAutoComplete";
 import { CustomInput } from "@/components/ui/Inputs/CustomInput";
-import { createRouteSchema } from "@/schemas/home/createRouteSchema";
+import { createRideSchema } from "@/schemas/home/createRideSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { FieldErrors, useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { CreateRouteFormValues } from "@/schemas/home/createRouteSchema";
+import { CreateRideFormValues } from "@/schemas/home/createRideSchema";
 import { Switch } from "@/components/ui/switch";
-import { ICreateRoutePayload } from "@/schemas/routesSchema";
+import { ICreateRidePayload } from "@/schemas/rideSchema";
 import { combineDateAndTime } from "@/utils/dateUtils";
 import { parsePrice } from "@/utils/moneysUtils";
 import Typography from "@/components/ui/typography";
@@ -30,9 +30,9 @@ import { SeatsSelect } from "@/components/ui/Inputs/SeatSelect";
 import { CustomTextarea } from "@/components/ui/Inputs/CustomTextarea";
 import { onError } from "@/utils/formUtils";
 
-export default function CreateRoute() {
-  const { register, control, handleSubmit } = useForm<CreateRouteFormValues>({
-    resolver: zodResolver(createRouteSchema),
+export default function CreateRide() {
+  const { register, control, handleSubmit } = useForm<CreateRideFormValues>({
+    resolver: zodResolver(createRideSchema),
     defaultValues: {
       smoking: false,
       petsAllowed: false,
@@ -41,26 +41,26 @@ export default function CreateRoute() {
   });
 
   const mutation = useMutation({
-    mutationFn: async (data: ICreateRoutePayload) => {
-      return createRoute(data);
+    mutationFn: async (data: ICreateRidePayload) => {
+      return createRide(data);
     },
     onSuccess: () => {
-      toast.success("Route created successfully!", {
+      toast.success("Ride created successfully!", {
         description: "Your ride is now available for passengers to book.",
       });
     },
     onError: (err: Error) => {
-      toast.error("Failed to create route");
+      toast.error("Failed to create ride");
     },
   });
 
-  const onSubmit = (data: CreateRouteFormValues) => {
+  const onSubmit = (data: CreateRideFormValues) => {
     const departureTime = combineDateAndTime(
       data.dateTrip,
       data.time
     ).toISOString();
 
-    const body: ICreateRoutePayload = {
+    const body: ICreateRidePayload = {
       origin: {
         city: data.departureLocation.name,
         coordinates: [data.departureLocation.lng, data.departureLocation.lat],
@@ -111,18 +111,18 @@ export default function CreateRoute() {
         </div>
 
         <form
-          id="create-route"
+          id="create-ride"
           onSubmit={handleSubmit(onSubmit, handleOnError)}
           className="flex flex-col gap-6 w-full"
           noValidate
         >
-          {/* Route Section */}
+          {/* Ride Section */}
           <Card className="shadow-sm">
             <CardContent className="p-6 space-y-5">
               <div className="flex items-center gap-2 mb-2">
                 <MapPin className="w-5 h-5 text-primary" />
                 <Typography className="font-semibold text-lg">
-                  Route Details
+                  Ride Details
                 </Typography>
               </div>
 
@@ -267,11 +267,11 @@ export default function CreateRoute() {
             className="w-full text-base font-semibold"
             disabled={mutation.isPending}
           >
-            {mutation.isPending ? "Creating route..." : "Publish Route"}
+            {mutation.isPending ? "Creating ride..." : "Publish Ride"}
           </Button>
 
           <Typography className="text-xs text-center text-muted-foreground">
-            By publishing this route, you agree to our terms of service and
+            By publishing this ride, you agree to our terms of service and
             community guidelines.
           </Typography>
         </form>

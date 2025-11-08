@@ -1,4 +1,4 @@
-import { getRouteById } from "@/lib/routesApi";
+import { getRideById } from "@/lib/rideApi";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   MapPin,
@@ -16,26 +16,26 @@ import { Separator } from "@/components/ui/separator";
 import Typography from "@/components/ui/typography";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
-export default async function Route({
+export default async function Ride({
   params,
 }: {
   params: Promise<{ slug: string[] }>;
 }) {
   const { slug } = await params;
-  const [, , , routeId] = slug;
+  const [, , , rideId] = slug;
 
-  const { data: routeData } = await getRouteById(routeId);
+  const { data: rideData } = await getRideById(rideId);
 
-  if (!routeData) {
+  if (!rideData) {
     return (
       <section className="flex items-center justify-center min-h-[50vh]">
         <Card className="max-w-md">
           <CardContent className="p-6 text-center">
             <Typography className="text-lg font-semibold mb-2">
-              Route not found
+              Ride not found
             </Typography>
             <Typography className="text-sm text-muted-foreground">
-              The route you are looking for does not exist or has been removed.
+              The ride you are looking for does not exist or has been removed.
             </Typography>
           </CardContent>
         </Card>
@@ -45,17 +45,17 @@ export default async function Route({
 
   const departureDate = new Intl.DateTimeFormat("en-GB", {
     dateStyle: "medium",
-  }).format(new Date(routeData.departureTime));
+  }).format(new Date(rideData.departureTime));
 
   const departureTime = new Intl.DateTimeFormat("en-GB", {
     timeStyle: "short",
-  }).format(new Date(routeData.departureTime));
+  }).format(new Date(rideData.departureTime));
 
   const hasRating =
-    !!routeData.driverProfile.rating.average ||
-    !!routeData.driverProfile.rating.count;
+    !!rideData.driverProfile.rating.average ||
+    !!rideData.driverProfile.rating.count;
     
-  const isBookingAvailable = routeData.remainingSeats > 0;
+  const isBookingAvailable = rideData.remainingSeats > 0;
 
   return (
     <section className="flex flex-col gap-8 items-center w-full py-8 px-4">
@@ -70,24 +70,24 @@ export default async function Route({
             </Avatar>
             <div className="flex flex-col gap-1">
               <Typography className="font-semibold text-lg">
-                {routeData.driverProfile.firstName}
+                {rideData.driverProfile.firstName}
               </Typography>
               <Typography className="text-xs text-muted-foreground uppercase tracking-wide">
                 Driver
               </Typography>
               {hasRating && (
                 <div className="flex items-center gap-2 mt-1">
-                  {!!routeData.driverProfile.rating.average && (
+                  {!!rideData.driverProfile.rating.average && (
                     <div className="flex items-center gap-1">
                       <Star className="size-4 fill-yellow-400 text-yellow-400" />
                       <Typography className="text-sm font-medium">
-                        {routeData.driverProfile.rating.average}
+                        {rideData.driverProfile.rating.average}
                       </Typography>
                     </div>
                   )}
-                  {!!routeData.driverProfile.rating.count && (
+                  {!!rideData.driverProfile.rating.count && (
                     <Typography className="text-xs text-muted-foreground">
-                      ({routeData.driverProfile.rating.count + "rides"} )
+                      ({rideData.driverProfile.rating.count + "rides"} )
                     </Typography>
                   )}
                 </div>
@@ -96,7 +96,7 @@ export default async function Route({
           </CardContent>
         </Card>
 
-        {/* Route Details Card */}
+        {/* Ride Details Card */}
         <Card className="shadow-sm hover:shadow-md transition-shadow">
           <CardHeader className="pb-4">
             <CardTitle className="flex items-center gap-3 text-xl">
@@ -104,9 +104,9 @@ export default async function Route({
                 <MapPin className="w-5 h-5 text-primary" />
               </div>
               <span className="flex items-center gap-2">
-                {routeData.origin.city}
+                {rideData.origin.city}
                 <span className="text-muted-foreground">→</span>
-                {routeData.destination.city}
+                {rideData.destination.city}
               </span>
             </CardTitle>
           </CardHeader>
@@ -125,7 +125,7 @@ export default async function Route({
                 </div>
               </div>
               <Badge className="text-sm px-3 py-1">
-                {routeData.remainingSeats} of {routeData.availableSeats} left
+                {rideData.remainingSeats} of {rideData.availableSeats} left
               </Badge>
             </div>
 
@@ -139,25 +139,25 @@ export default async function Route({
               <div className="flex flex-wrap gap-2">
                 <Badge
                   variant={
-                    routeData.preferences.smokingAllowed
+                    rideData.preferences.smokingAllowed
                       ? "default"
                       : "secondary"
                   }
                   className="flex items-center gap-1.5 px-3 py-1"
                 >
                   <Cigarette className="w-3.5 h-3.5" />
-                  {routeData.preferences.smokingAllowed
+                  {rideData.preferences.smokingAllowed
                     ? "Smoking allowed"
                     : "No smoking"}
                 </Badge>
                 <Badge
                   variant={
-                    routeData.preferences.petsAllowed ? "default" : "secondary"
+                    rideData.preferences.petsAllowed ? "default" : "secondary"
                   }
                   className="flex items-center gap-1.5 px-3 py-1"
                 >
                   <PawPrint className="w-3.5 h-3.5" />
-                  {routeData.preferences.petsAllowed
+                  {rideData.preferences.petsAllowed
                     ? "Pets allowed"
                     : "No pets"}
                 </Badge>
@@ -165,7 +165,7 @@ export default async function Route({
             </div>
 
             {/* Vehicle Info */}
-            {routeData.vehicleInfo && (
+            {rideData.vehicleInfo && (
               <>
                 <Separator />
                 <div>
@@ -175,10 +175,10 @@ export default async function Route({
                   <div className="flex items-center gap-2">
                     <Car className="w-4 h-4 text-primary flex-shrink-0" />
                     <Typography className="text-sm">
-                      {routeData?.vehicleInfo?.make} {routeData?.vehicleInfo?.model}
+                      {rideData?.vehicleInfo?.make} {rideData?.vehicleInfo?.model}
                       <span className="text-muted-foreground">
                         {" "}
-                        • {routeData?.vehicleInfo?.color}
+                        • {rideData?.vehicleInfo?.color}
                       </span>
                     </Typography>
                   </div>
@@ -187,7 +187,7 @@ export default async function Route({
             )}
 
             {/* Additional Info */}
-            {routeData.additionalInfo && (
+            {rideData.additionalInfo && (
               <>
                 <Separator />
                 <div>
@@ -195,7 +195,7 @@ export default async function Route({
                     Additional Information
                   </Typography>
                   <Typography className="text-sm leading-relaxed">
-                    {routeData.additionalInfo}
+                    {rideData.additionalInfo}
                   </Typography>
                 </div>
               </>
@@ -208,7 +208,7 @@ export default async function Route({
           <CardContent className="flex justify-between items-center p-6">
             <div>
               <Typography className="text-2xl font-bold">
-                €{routeData.pricePerSeat}
+                €{rideData.pricePerSeat}
               </Typography>
               <Typography className="text-sm text-muted-foreground mt-1">
                 per seat
@@ -231,8 +231,8 @@ export default async function Route({
 
         {!isBookingAvailable && (
           <Typography className="text-sm text-center text-muted-foreground">
-            This route is fully booked. Check back later or search for
-            alternative routes.
+            This ride is fully booked. Check back later or search for
+            alternative rides.
           </Typography>
         )}
       </div>

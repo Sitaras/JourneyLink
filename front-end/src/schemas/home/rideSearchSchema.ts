@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { citySchema } from "./citySchema";
 
-export const routeSearchSchema = z
+export const rideSearchSchema = z
   .object({
     departureLocation: z
       .union([citySchema, z.undefined()])

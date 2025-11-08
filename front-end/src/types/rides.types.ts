@@ -1,12 +1,12 @@
-export interface RouteSearchResponse {
+export interface RideSearchResponse {
   count: number;
   total: number;
   page: number;
   pages: number;
-  data: Route[];
+  data: Ride[];
 }
 
-export interface Route {
+export interface Ride {
   _id: string;
   driverProfile: {
     firstName?: string;
@@ -41,7 +41,7 @@ export interface Location {
   coordinates: [number, number]; // [longitude, latitude]
 }
 
-export type RouteCreationResponse = {
+export type RideCreationResponse = {
   id: string;
   origin: {
     city: string;

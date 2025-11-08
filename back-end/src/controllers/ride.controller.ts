@@ -1,17 +1,17 @@
 import { Booking } from "../models/booking.model";
 import { AuthRequest } from "../middleware/auth.middleware";
-import { Route } from "../models/route.model";
+import { Ride } from "../models/ride.model";
 import {
-  ICreateRoutePayload,
-  IDeleteRoutePayload,
-  IGetRoutesQueryPayload,
+  ICreateRidePayload,
+  IDeleteRidePayload,
+  IGetRideQueryPayload,
   MongoIdParam,
-} from "@/schemas/routesSchema";
+} from "@/schemas/rideSchema";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import mongoose, { Types } from "mongoose";
 
-export class RoutesController {
+export class RideController {
   private static addSeatCalculationStages(pipeline: any[]): void {
     pipeline.push(
       {
@@ -139,7 +139,7 @@ export class RoutesController {
   //   );
   // }
 
-  private static buildMatchStage(query: IGetRoutesQueryPayload): any {
+  private static buildMatchStage(query: IGetRideQueryPayload): any {
     const { departureDate, maxPrice, smokingAllowed, petsAllowed } = query;
 
     const matchStage: any = {
@@ -194,8 +194,8 @@ export class RoutesController {
     return sortStage;
   }
 
-  static getRoutes = async (
-    req: Request<{}, {}, {}, IGetRoutesQueryPayload>,
+  static getRide = async (
+    req: Request<{}, {}, {}, IGetRideQueryPayload>,
     res: Response
   ) => {
     try {
@@ -290,7 +290,7 @@ export class RoutesController {
       const skip = (parseInt(page as any) - 1) * parseInt(limit as any);
       pipeline.push({ $skip: skip }, { $limit: parseInt(limit as any) });
 
-      const routes = await Route.aggregate(pipeline);
+      const rides = await Ride.aggregate(pipeline);
 
       // Count total
       const countPipeline = pipeline.filter(
@@ -298,31 +298,31 @@ export class RoutesController {
           !("$skip" in stage) && !("$limit" in stage) && !("$sort" in stage)
       );
       countPipeline.push({ $count: "total" });
-      const countResult = await Route.aggregate(countPipeline);
+      const countResult = await Ride.aggregate(countPipeline);
       const total = countResult.length > 0 ? countResult[0].total : 0;
 
       return res.success(
         {
-          count: routes.length,
+          count: rides.length,
           total,
           page: parseInt(page as any),
           pages: Math.ceil(total / parseInt(limit as any)),
-          data: routes,
+          data: rides,
         },
         "",
         StatusCodes.OK
       );
     } catch (error) {
-      console.error("Error fetching routes:", error);
+      console.error("Error fetching rides:", error);
       return res.error(
-        "An error occurred while searching routes",
+        "An error occurred while searching rides",
         StatusCodes.INTERNAL_SERVER_ERROR
       );
     }
   };
 
-  static createRoute = async (
-    req: AuthRequest<{}, {}, ICreateRoutePayload>,
+  static createRide = async (
+    req: AuthRequest<{}, {}, ICreateRidePayload>,
     res: Response
   ) => {
     try {
@@ -339,7 +339,7 @@ export class RoutesController {
 
       const userId = req.user?.userId;
 
-      const route = await Route.create({
+      const ride = await Ride.create({
         driver: userId,
         origin,
         destination,
@@ -351,23 +351,23 @@ export class RoutesController {
         additionalInfo,
       });
 
-      const populatedRoute = await Route.findById(route._id).populate(
+      const populatedRide = await Ride.findById(ride._id).populate(
         "driver",
         "name email phone"
       );
 
       return res.success(
-        populatedRoute,
-        "Route created successfully",
+        populatedRide,
+        "Ride created successfully",
         StatusCodes.CREATED
       );
     } catch (error) {
-      console.error("Error creating route:", error);
+      console.error("Error creating ride:", error);
       return res.error("An error occurred", StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 
-  static getRouteById = async (
+  static getRideById = async (
     req: AuthRequest<MongoIdParam>,
     res: Response
   ): Promise<Response | void> => {
@@ -382,31 +382,31 @@ export class RoutesController {
       this.addSeatCalculationStages(pipeline);
       this.addDriverInfo(pipeline);
 
-      const [route] = await Route.aggregate(pipeline);
+      const [ride] = await Ride.aggregate(pipeline);
 
-      if (!route) {
+      if (!ride) {
         return res.status(StatusCodes.NOT_FOUND).json({
           success: false,
-          message: "Route not found",
+          message: "Ride not found",
         });
       }
 
-      const isDriver = route.driver.toString() === userId?.toString();
-      const isPassenger = route.passengers?.some(
+      const isDriver = ride.driver.toString() === userId?.toString();
+      const isPassenger = ride.passengers?.some(
         (p: any) => p.user?.toString() === userId?.toString()
       );
 
-      this.applyVisibilityRules(route, isDriver, isPassenger);
+      this.applyVisibilityRules(ride, isDriver, isPassenger);
 
-      return res.success(route, "", StatusCodes.OK);
+      return res.success(ride, "", StatusCodes.OK);
     } catch (error) {
-      console.error("Error fetching route:", error);
+      console.error("Error fetching ride:", error);
       return res.error("An error occurred", StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 
   private static applyVisibilityRules(
-    route: any,
+    ride: any,
     isDriver: boolean,
     isPassenger: boolean
   ): void {
@@ -417,88 +417,88 @@ export class RoutesController {
 
     if (isPassenger) {
       // Passenger sees driver contact info but not other passengers
-      delete route.passengers;
+      delete ride.passengers;
       // driverProfile already has: firstName, lastName, email, phone, avatar, rating
       return;
     }
 
     // Non-participant (public view) - minimal info
-    delete route.passengers;
+    delete ride.passengers;
 
-    if (route.vehicleInfo) {
-      route.vehicleInfo = {
-        make: route.vehicleInfo.make,
-        model: route.vehicleInfo.model,
-        color: route.vehicleInfo.color,
+    if (ride.vehicleInfo) {
+      ride.vehicleInfo = {
+        make: ride.vehicleInfo.make,
+        model: ride.vehicleInfo.model,
+        color: ride.vehicleInfo.color,
       };
     }
 
-    if (route.driverProfile) {
+    if (ride.driverProfile) {
       // Public: only firstName, avatar, rating
-      const { firstName, avatar, rating } = route.driverProfile;
-      route.driverProfile = { firstName, avatar, rating };
+      const { firstName, avatar, rating } = ride.driverProfile;
+      ride.driverProfile = { firstName, avatar, rating };
     }
   }
 
-  static deleteRoute = async (
-    req: AuthRequest<MongoIdParam, undefined, IDeleteRoutePayload>,
+  static deleteRide = async (
+    req: AuthRequest<MongoIdParam, undefined, IDeleteRidePayload>,
     res: Response
   ) => {
     const userId = req.user?.userId;
-    const routeId = req.params?.id;
+    const rideId = req.params?.id;
 
     try {
-      const route = await Route.findById(routeId);
+      const ride = await Ride.findById(rideId);
 
-      if (!route) {
-        return res.error("Route not found", StatusCodes.NOT_FOUND);
+      if (!ride) {
+        return res.error("Ride not found", StatusCodes.NOT_FOUND);
       }
 
-      if (route.status === "cancelled") {
-        return res.error("Route is already cancelled", StatusCodes.BAD_REQUEST);
+      if (ride.status === "cancelled") {
+        return res.error("Ride is already cancelled", StatusCodes.BAD_REQUEST);
       }
 
-      if (route.status === "completed") {
+      if (ride.status === "completed") {
         return res.error(
-          "Cannot cancel a completed route",
+          "Cannot cancel a completed ride",
           StatusCodes.BAD_REQUEST
         );
       }
 
-      if (route.driver.toString() !== userId) {
+      if (ride.driver.toString() !== userId) {
         return res.error(
-          "Not authorized to delete this route",
+          "Not authorized to delete this ride",
           StatusCodes.FORBIDDEN
         );
       }
 
-      // Update route status
-      route.status = "cancelled";
-      route.cancelledAt = new Date();
+      // Update ride status
+      ride.status = "cancelled";
+      ride.cancelledAt = new Date();
 
       if (req.body?.reason) {
-        route.cancellationReason = req.body.reason;
+        ride.cancellationReason = req.body.reason;
       }
 
-      await route.save();
+      await ride.save();
 
       if (req.body?.notifyPassengers) {
         // TODO: notification
       }
 
-      return res.success(route, "Route cancelled successfully", StatusCodes.OK);
+      return res.success(ride, "Ride cancelled successfully", StatusCodes.OK);
     } catch (error) {
       return res.error("An error occurred", StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
 
-  static async getRoutesAs(req: AuthRequest, res: Response): Promise<void> {
+  static async getRidesAs(req: AuthRequest, res: Response): Promise<void> {
     try {
       const userId = req.user?.userId;
       const { type = "asPassenger", sortOrder = "desc" } = req.query;
 
       if (type === "asDriver") {
-        const routes = await Route.aggregate([
+        const rides = await Ride.aggregate([
           {
             $match: {
               driver: new Types.ObjectId(userId),
@@ -540,8 +540,8 @@ export class RoutesController {
 
         res.status(StatusCodes.OK).json({
           success: true,
-          count: routes.length,
-          data: routes,
+          count: rides.length,
+          data: rides,
         });
         return;
       }
@@ -551,7 +551,7 @@ export class RoutesController {
           passenger: userId,
           status: { $ne: "cancelled" },
         })
-          .populate("route", "origin destination departureTime pricePerSeat")
+          .populate("ride", "origin destination departureTime pricePerSeat")
           .sort({ createdAt: sortOrder === "asc" ? 1 : -1 });
 
         res.status(StatusCodes.OK).json({
@@ -564,7 +564,7 @@ export class RoutesController {
 
       res.status(400).json({ message: "Invalid 'type' parameter." });
     } catch (error) {
-      console.error("Error fetching Routes:", error);
+      console.error("Error fetching rides:", error);
       res
         .status(500)
         .json({ message: "Server Error", error: (error as Error).message });
