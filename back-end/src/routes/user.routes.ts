@@ -34,7 +34,7 @@ router.patch(
 
 /**
  * @route   GET /api/me/user-rides
- * @desc    Get all routes for current user as driver or passenger (query param 'type'); requires authentication
+ * @desc    Get all rides for current user as driver or passenger (query param 'type'); requires authentication
  */
 router.get(
   "/user-rides",
