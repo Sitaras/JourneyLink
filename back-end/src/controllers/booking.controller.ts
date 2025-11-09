@@ -56,7 +56,7 @@ export class BookingController {
       const booking = await Booking.create({
         passenger: passengerId,
         driver: rideDoc.driver,
-        rideId,
+        ride: rideId,
         status: "pending",
       });
 
