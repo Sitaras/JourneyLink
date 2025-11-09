@@ -22,8 +22,8 @@ const routeConfig = {
       routes.profile,
       routes.myRides,
     ] as string[],
-    // Note: /route is protected, but we'll handle dynamic routes separately
-    patterns: [/^\/route\/.+/], // Regex to match /route/* paths
+    // Note: /ride is protected, but we'll handle dynamic routes separately
+    patterns: [/^\/ride\/.+/], // Regex to match /ride/* paths
     redirectTo: routes.login,
   },
   auth: {

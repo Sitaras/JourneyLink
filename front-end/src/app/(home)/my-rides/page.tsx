@@ -3,7 +3,7 @@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Typography from "@/components/ui/typography";
 import React, { useState } from "react";
-import RidesList from "@/components/RidesList/RidesList";
+import UserRidesList from "@/components/UserRidesList/UserRidesList";
 import { Car, User } from "lucide-react";
 
 type TabValue = "passenger" | "driver";
@@ -71,7 +71,7 @@ const MyRidesPage = () => {
                   {tab.description}
                 </Typography>
               </div>
-              <RidesList type={tab.value} />
+              <UserRidesList type={tab.value} />
             </TabsContent>
           ))}
         </Tabs>

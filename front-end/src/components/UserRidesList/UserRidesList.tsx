@@ -14,7 +14,7 @@ interface RidesListProps {
   className?: string;
 }
 
-const RidesList = ({ type, className }: RidesListProps) => {
+const UserRidesList = ({ type, className }: RidesListProps) => {
   const {
     data,
     fetchNextPage,
@@ -106,4 +106,4 @@ const RidesList = ({ type, className }: RidesListProps) => {
   );
 };
 
-export default RidesList;
+export default UserRidesList;

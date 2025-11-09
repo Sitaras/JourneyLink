@@ -38,7 +38,8 @@ router.delete(
 
 /**
  * @route   GET /api/ride/all
- * @desc    Get ride
+ * @desc    Get all rides
+ * @access  Public
  */
 router.get(
   "/all",
@@ -58,7 +59,6 @@ router.get(
   RideController.getRideById as unknown as RequestHandler
 );
 
-
 /**
  * @route   PUT /api/ride/:id
  * @desc    Update ride
@@ -68,7 +68,5 @@ router.get(
 //   "/:id",
 //   updateRide
 // );
-
-
 
 export const rideRoutes = router;

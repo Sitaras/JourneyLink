@@ -12,30 +12,34 @@ router.use(authenticateToken);
 /**
  * @route   GET /api/me/user-info
  * @desc    Get basic user info
-*/
+ */
 router.get("/user-info", UserController.getUserInfo);
 
 /**
  * @route   GET /api/me/profile
  * @desc    Get user profile
-*/
+ */
 router.get("/profile", UserController.getProfile);
 
 /**
  * @route   PATCH /api/me/profile
  * @desc    Update user profile
-*/
-router.patch("/profile",validateData(updateProfileSchema),UserController.updateProfile);
+ */
+router.patch(
+  "/profile",
+  validateData(updateProfileSchema),
+  UserController.updateProfile
+);
 
 /**
- * @route   GET /api/me/user-ride-all
+ * @route   GET /api/me/user-rides
  * @desc    Get all routes for current user as driver or passenger (query param 'type'); requires authentication
-*/
-router.get("/user-rides", authenticateToken, RideController.getRidesAs);
+ */
+router.get("/user-rides", authenticateToken, UserController.getRides);
 
 /**
  * @route   GET /api/me/user-ride/:id
  * @desc    Get single ride by ID for current user
-*/
+ */
 
 export const userRoutes = router;

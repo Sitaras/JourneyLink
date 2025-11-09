@@ -22,7 +22,7 @@ export const getRides = async (parameters: IGetRidesQueryPayload) => {
 
   try {
     const response = await api
-      .url(`rides?${queryString}`)
+      .url(`ride/all?${queryString}`)
       .get()
       .json<RideSearchResponse>((json) => json?.data);
 
@@ -37,7 +37,7 @@ export const createRide = async (body: ICreateRidePayload) => {
     const response = await postFetcher<
       ICreateRidePayload,
       RideCreationResponse
-    >("rides", body);
+    >("ride", body);
 
     return response;
   } catch (error: any) {
@@ -47,7 +47,7 @@ export const createRide = async (body: ICreateRidePayload) => {
 
 export const getRide = async (id: string) => {
   try {
-    const response = await fetcher<Ride>(`rides/${id}`);
+    const response = await fetcher<Ride>(`ride/${id}`);
 
     return response;
   } catch (error: any) {

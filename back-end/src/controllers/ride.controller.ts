@@ -444,10 +444,11 @@ export class RideController {
     req: AuthRequest<MongoIdParam, undefined, IDeleteRidePayload>,
     res: Response
   ) => {
-    const userId = req.user?.userId;
-    const rideId = req.params?.id;
-
+    
     try {
+      const userId = req.user?.userId;
+      const rideId = req.params?.id;
+      
       const ride = await Ride.findById(rideId);
 
       if (!ride) {
@@ -491,83 +492,4 @@ export class RideController {
       return res.error("An error occurred", StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
-
-  static async getRidesAs(req: AuthRequest, res: Response): Promise<void> {
-    try {
-      const userId = req.user?.userId;
-      const { type = "asPassenger", sortOrder = "desc" } = req.query;
-
-      if (type === "asDriver") {
-        const rides = await Ride.aggregate([
-          {
-            $match: {
-              driver: new Types.ObjectId(userId),
-              status: { $in: ["active", "completed"] },
-            },
-          },
-          {
-            $addFields: {
-              confirmedPassengers: {
-                $filter: {
-                  input: "$passengers",
-                  as: "p",
-                  cond: { $eq: ["$$p.status", "confirmed"] },
-                },
-              },
-            },
-          },
-          {
-            $addFields: {
-              totalPassengersBooked: { $size: "$confirmedPassengers" },
-            },
-          },
-          {
-            $project: {
-              _id: 1,
-              origin: 1,
-              destination: 1,
-              departureTime: 1,
-              pricePerSeat: 1,
-              availableSeats: 1,
-              totalPassengersBooked: 1,
-              status: 1,
-            },
-          },
-          {
-            $sort: { departureTime: sortOrder === "asc" ? 1 : -1 },
-          },
-        ]);
-
-        res.status(StatusCodes.OK).json({
-          success: true,
-          count: rides.length,
-          data: rides,
-        });
-        return;
-      }
-
-      if (type === "asPassenger") {
-        const bookings = await Booking.find({
-          passenger: userId,
-          status: { $ne: "cancelled" },
-        })
-          .populate("ride", "origin destination departureTime pricePerSeat")
-          .sort({ createdAt: sortOrder === "asc" ? 1 : -1 });
-
-        res.status(StatusCodes.OK).json({
-          success: true,
-          count: bookings.length,
-          data: bookings,
-        });
-        return;
-      }
-
-      res.status(400).json({ message: "Invalid 'type' parameter." });
-    } catch (error) {
-      console.error("Error fetching rides:", error);
-      res
-        .status(500)
-        .json({ message: "Server Error", error: (error as Error).message });
-    }
-  }
 }
