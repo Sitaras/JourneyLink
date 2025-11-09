@@ -4,47 +4,48 @@ import { Ride } from "../models/ride.model";
 import { Types } from "mongoose";
 import { AuthRequest } from "../middleware/auth.middleware";
 import { isUserInRide } from "../utils/rideUtils";
-// import { StatusCodes } from "http-status-codes";
+import { StatusCodes } from "http-status-codes";
+import { ICreateBookingPayload } from "@/schemas/bookingSchema";
 
 export class BookingController {
-  static async createBooking(req: AuthRequest, res: Response): Promise<void> {
+  static async createBooking(
+    req: AuthRequest<{}, {}, ICreateBookingPayload>,
+    res: Response
+  ) {
     try {
-      const { ride } = req.body;
+      const { rideId } = req.body;
       const passengerId = req.user?.userId;
 
-      if (!Types.ObjectId.isValid(ride)) {
-        res.status(400).json({ message: "Invalid IDs provided." });
-        return;
+      if (!Types.ObjectId.isValid(rideId)) {
+        return res.error("Invalid Ride ID", StatusCodes.BAD_REQUEST);
       }
 
-      const rideDoc = await Ride.findById(ride);
+      const rideDoc = await Ride.findById(rideId);
       if (!rideDoc) {
-        res.status(404).json({ message: "Ride not found." });
-        return;
+        return res.error("Ride not found", StatusCodes.NOT_FOUND);
       }
 
-      /**
-       * Check if ride is bookable.
-       */
       if (!rideDoc.isBookable()) {
-        res.status(400).json({ message: "Ride is not available for booking." });
-        return;
+        return res.error(
+          "Ride is not available for booking.",
+          StatusCodes.BAD_REQUEST
+        );
       }
 
-      /**
-       * Prevent driver booking their own ride.
-       */
       if (rideDoc.driver.toString() === passengerId) {
-        res.status(400).json({ message: "Driver cannot book their own ride." });
-        return;
+        return res.error(
+          "Driver cannot book their own rideId.",
+          StatusCodes.BAD_REQUEST
+        );
       }
 
-      // Check if passenger is already in the ride or has a pending booking
-      if (await isUserInRide(passengerId!, ride)) {
-        return res.error("User already in ride or pending booking.", 400);
+      if (await isUserInRide(passengerId!, rideId)) {
+        return res.error(
+          "User already in rideId or pending booking.",
+          StatusCodes.BAD_REQUEST
+        );
       }
 
-      // Add passenger to ride as pending
       rideDoc.passengers.push({
         user: new Types.ObjectId(passengerId),
         seatsBooked: 1,
@@ -55,16 +56,21 @@ export class BookingController {
       const booking = await Booking.create({
         passenger: passengerId,
         driver: rideDoc.driver,
-        ride,
+        rideId,
         status: "pending",
       });
 
-      res.status(201).json({
-        message: "Booking created successfully.",
+      return res.success(
         booking,
-      });
+        "Booking created successfully.",
+        StatusCodes.CREATED
+      );
     } catch (error) {
-      res.status(500).json({ message: "Server Error", error });
+      return res.error(
+        "Server Error",
+        StatusCodes.INTERNAL_SERVER_ERROR,
+        error
+      );
     }
   }
 }

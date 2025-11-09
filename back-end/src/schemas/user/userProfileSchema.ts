@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { isoDateSchema } from "./isoDateSchema";
+import { isoDateSchema } from "../isoDateSchema";
 
 const greekPhoneNumber = new RegExp(/^(?:[0-9]{10})$/);
 

@@ -6,8 +6,8 @@ import {
   createRideSchema,
   deleteRideSchema,
   getRideQuerySchema,
-  mongoIdSchema,
 } from "../schemas/rideSchema";
+import { mongoIdSchema } from "../schemas/idSchema";
 
 const router = Router();
 
@@ -50,7 +50,7 @@ router.get(
 /**
  * @route   GET /api/ride/:id
  * @desc    Get single ride by ID
- * @access  Public
+ * @access  Private (requires authentication)
  */
 router.get(
   "/:id",

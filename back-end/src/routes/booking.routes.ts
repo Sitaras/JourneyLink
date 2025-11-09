@@ -2,18 +2,16 @@ import { Router } from "express";
 import { authenticateToken } from "../middleware/auth.middleware";
 import { validateData } from "../middleware/validationMiddleware";
 import { BookingController } from "../controllers/booking.controller";
-import {
-    createBookingSchema,
-} from "../schemas/bookingSchema";
-
+import { createBookingSchema } from "../schemas/bookingSchema";
 
 const router = Router();
 
+router.use(authenticateToken);
+
 router.post(
-    "/create-booking",
-    authenticateToken,
-    validateData(createBookingSchema),
-    BookingController.createBooking
+  "/create-booking",
+  validateData(createBookingSchema),
+  BookingController.createBooking
 );
 
 export const bookingRides = router;

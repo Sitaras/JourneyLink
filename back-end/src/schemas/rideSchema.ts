@@ -280,13 +280,8 @@ export const deleteRideSchema = z
   })
   .optional();
 
-export const mongoIdSchema = z.object({
-  id: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid id"),
-});
-
 export type ICreateRidePayload = z.infer<typeof createRideSchema>;
 export type UpdateRideInput = z.infer<typeof updateRideSchema>;
 export type IGetRideQueryPayload = z.infer<typeof getRideQuerySchema>;
 export type BookRideInput = z.infer<typeof bookRideSchema>;
 export type IDeleteRidePayload = z.infer<typeof deleteRideSchema>;
-export type MongoIdParam = z.infer<typeof mongoIdSchema>;

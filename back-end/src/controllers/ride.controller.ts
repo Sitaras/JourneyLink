@@ -1,15 +1,14 @@
-import { Booking } from "../models/booking.model";
 import { AuthRequest } from "../middleware/auth.middleware";
 import { Ride } from "../models/ride.model";
 import {
   ICreateRidePayload,
   IDeleteRidePayload,
   IGetRideQueryPayload,
-  MongoIdParam,
 } from "@/schemas/rideSchema";
 import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import mongoose, { Types } from "mongoose";
+import mongoose from "mongoose";
+import { MongoIdParam } from "../schemas/idSchema";
 
 export class RideController {
   private static addSeatCalculationStages(pipeline: any[]): void {
@@ -444,11 +443,10 @@ export class RideController {
     req: AuthRequest<MongoIdParam, undefined, IDeleteRidePayload>,
     res: Response
   ) => {
-    
     try {
       const userId = req.user?.userId;
       const rideId = req.params?.id;
-      
+
       const ride = await Ride.findById(rideId);
 
       if (!ride) {

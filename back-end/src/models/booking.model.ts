@@ -1,5 +1,5 @@
 import { Schema, Document, model } from "mongoose";
-import { IBooking } from "../types/booking.types";
+import { BookingStatus, IBooking } from "../types/booking.types";
 
 interface IBookingDocument extends IBooking, Document {}
 
@@ -22,8 +22,8 @@ const bookingSchema = new Schema<IBookingDocument>(
     },
     status: {
       type: String,
-      enum: ["pending", "confirmed", "cancelled"],
-      default: "pending",
+      enum: Object.values(BookingStatus),
+      default: BookingStatus.PENDING,
     },
   },
   {

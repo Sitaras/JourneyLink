@@ -3,10 +3,12 @@ import { User } from "../models/user.model";
 import { Profile } from "../models/profile.model";
 import { AuthRequest } from "@/middleware/auth.middleware";
 import { StatusCodes } from "http-status-codes";
-import { UpdateProfilePayload } from "../schemas/profileSchema";
+import { UpdateProfilePayload } from "../schemas/user/userProfileSchema";
 import { Booking } from "../models/booking.model";
 import { Ride } from "../models/ride.model";
 import { Types } from "mongoose";
+import { MongoIdParam } from "@/schemas/idSchema";
+import { IGetUserRidesQueryPayload } from "@/schemas/user/userRideSchema";
 
 export class UserController {
   static async getUserInfo(req: AuthRequest, res: Response) {
@@ -78,10 +80,13 @@ export class UserController {
     }
   }
 
-  static async getRides(req: AuthRequest, res: Response): Promise<void> {
+  static async getRides(
+    req: AuthRequest<{}, {}, {}, IGetUserRidesQueryPayload>,
+    res: Response
+  ) {
     try {
       const userId = req.user?.userId;
-      const { type = "asPassenger", sortOrder = "desc" } = req.query;
+      const { type = "asPassenger", sortOrder = "asc" } = req.query || {};
 
       if (type === "asDriver") {
         const rides = await Ride.aggregate([
@@ -157,7 +162,7 @@ export class UserController {
     }
   }
 
-  static async getRideById(req: AuthRequest, res: Response): Promise<void> {
+  static async getRideById(req: AuthRequest<MongoIdParam>, res: Response) {
     try {
       const { id } = req.params;
       const userId = req.user?.userId;
@@ -177,7 +182,7 @@ export class UserController {
 
       const isDriver = rideBase.driver?._id?.toString() === userId?.toString();
       const isPassenger = rideBase.passengers?.some(
-        (p: any) => p.user?._id?.toString() === userId?.toString()
+        (p) => p.user?._id?.toString() === userId?.toString()
       );
 
       if (!isDriver && !isPassenger) {
@@ -187,17 +192,23 @@ export class UserController {
         );
       }
 
-      const responseData: any = { ride: rideBase };
-
+      let responseData;
       // If user is driver, populate passengers info
       if (isDriver) {
         const rideWithPassengers = await Ride.findById(id)
           .populate("passengers.user", "email phoneNumber profile")
           .lean();
 
-        responseData.ride.passengers = rideWithPassengers?.passengers || [];
+        responseData = {
+          ride: {
+            ...rideBase,
+            passengers: rideWithPassengers?.passengers || [],
+          },
+        };
       } else {
-        delete responseData.ride.passengers;
+        // For passengers, exclude the passengers field
+        const { passengers, ...rideWithoutPassengers } = rideBase;
+        responseData = { ride: rideWithoutPassengers };
       }
 
       return res.success(responseData, "Ride details", StatusCodes.OK);
