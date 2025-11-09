@@ -7,7 +7,7 @@ import { UpdateProfilePayload } from "../schemas/user/userProfileSchema";
 import { Booking } from "../models/booking.model";
 import { Ride } from "../models/ride.model";
 import { Types } from "mongoose";
-import { MongoIdParam } from "@/schemas/idSchema";
+import { MongoIdParam } from "../schemas/idSchema";
 import { IGetUserRidesQueryPayload } from "@/schemas/user/userRideSchema";
 
 export class UserController {
