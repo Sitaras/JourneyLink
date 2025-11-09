@@ -41,5 +41,6 @@ router.get("/user-rides", authenticateToken, UserController.getRides);
  * @route   GET /api/me/user-ride/:id
  * @desc    Get single ride by ID for current user
  */
+router.get("/user-ride/:id", authenticateToken, UserController.getRideById);
 
 export const userRoutes = router;

@@ -124,12 +124,11 @@ export class UserController {
           },
         ]);
 
-        res.status(StatusCodes.OK).json({
-          success: true,
-          count: rides.length,
-          data: rides,
-        });
-        return;
+        return res.success(
+          { count: rides.length, data: rides },
+          "Rides fetched successfully",
+          StatusCodes.OK
+        );
       }
 
       if (type === "asPassenger") {
@@ -140,20 +139,75 @@ export class UserController {
           .populate("ride", "origin destination departureTime pricePerSeat")
           .sort({ createdAt: sortOrder === "asc" ? 1 : -1 });
 
-        res.status(StatusCodes.OK).json({
-          success: true,
-          count: bookings.length,
-          data: bookings,
-        });
-        return;
+        return res.success(
+          { count: bookings.length, data: bookings },
+          "Rides fetched successfully (as Passenger)",
+          StatusCodes.OK
+        );
       }
 
-      res.status(400).json({ message: "Invalid 'type' parameter." });
+      return res.error("Invalid 'type' parameter.", StatusCodes.BAD_REQUEST);
     } catch (error) {
       console.error("Error fetching rides:", error);
-      res
-        .status(500)
-        .json({ message: "Server Error", error: (error as Error).message });
+      return res.error(
+        "Server error while fetching rides.",
+        StatusCodes.INTERNAL_SERVER_ERROR,
+        error
+      );
+    }
+  }
+
+  static async getRideById(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      const { id } = req.params;
+      const userId = req.user?.userId;
+
+      // Validate ride ID
+      if (!Types.ObjectId.isValid(id)) {
+        return res.error("Invalid Ride ID", StatusCodes.BAD_REQUEST);
+      }
+
+      const rideBase = await Ride.findById(id)
+        .populate("driver", "email phoneNumber roles profile")
+        .lean();
+
+      if (!rideBase) {
+        return res.error("Ride not found", StatusCodes.NOT_FOUND);
+      }
+
+      const isDriver = rideBase.driver?._id?.toString() === userId?.toString();
+      const isPassenger = rideBase.passengers?.some(
+        (p: any) => p.user?._id?.toString() === userId?.toString()
+      );
+
+      if (!isDriver && !isPassenger) {
+        return res.error(
+          "Not authorized to view this ride",
+          StatusCodes.FORBIDDEN
+        );
+      }
+
+      const responseData: any = { ride: rideBase };
+
+      // If user is driver, populate passengers info
+      if (isDriver) {
+        const rideWithPassengers = await Ride.findById(id)
+          .populate("passengers.user", "email phoneNumber profile")
+          .lean();
+
+        responseData.ride.passengers = rideWithPassengers?.passengers || [];
+      } else {
+        delete responseData.ride.passengers;
+      }
+
+      return res.success(responseData, "Ride details", StatusCodes.OK);
+    } catch (error) {
+      console.error("Error fetching ride by ID:", error);
+      return res.error(
+        "Server Error",
+        StatusCodes.INTERNAL_SERVER_ERROR,
+        error
+      );
     }
   }
 }

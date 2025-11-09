@@ -3,6 +3,7 @@ import { Booking } from "../models/booking.model";
 import { Ride } from "../models/ride.model";
 import { Types } from "mongoose";
 import { AuthRequest } from "../middleware/auth.middleware";
+import { isUserInRide } from "../utils/rideUtils";
 // import { StatusCodes } from "http-status-codes";
 
 export class BookingController {
@@ -37,6 +38,19 @@ export class BookingController {
         res.status(400).json({ message: "Driver cannot book their own ride." });
         return;
       }
+
+      // Check if passenger is already in the ride or has a pending booking
+      if (await isUserInRide(passengerId!, ride)) {
+        return res.error("User already in ride or pending booking.", 400);
+      }
+
+      // Add passenger to ride as pending
+      rideDoc.passengers.push({
+        user: new Types.ObjectId(passengerId),
+        seatsBooked: 1,
+        status: "pending",
+      });
+      await rideDoc.save();
 
       const booking = await Booking.create({
         passenger: passengerId,
