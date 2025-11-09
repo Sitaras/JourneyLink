@@ -29,15 +29,12 @@ export const getAuthApi = async () => {
     .resolve((resolver) =>
       resolver
         .unauthorized(async (error, originalReq) => {
-          // Check if this is a retry to avoid infinite loops
           if ((originalReq as any)._isRetry) {
             throw error.json;
           }
 
-          // Mark as retry
           (originalReq as any)._isRetry = true;
 
-          // If already refreshing, queue this request
           if (state.isRefreshingToken) {
             state.queuedRequests.set(originalReq?._url, {
               req: originalReq,
@@ -45,10 +42,8 @@ export const getAuthApi = async () => {
             return Promise.reject(error);
           }
 
-          // Clear invalid token
           await authStorage.removeToken();
 
-          // Get refresh token
           const refreshToken = await authStorage.getRefreshToken();
           if (!refreshToken) {
             if (typeof window !== "undefined") {
@@ -56,8 +51,6 @@ export const getAuthApi = async () => {
             }
             throw error.json;
           }
-
-          // Start refresh process
 
           try {
             state.isRefreshingToken = true;
@@ -74,7 +67,6 @@ export const getAuthApi = async () => {
               throw error.json;
             }
 
-            // Store new tokens
             await authStorage.setRefreshToken({
               refreshToken: newRefreshToken,
             });
@@ -82,18 +74,15 @@ export const getAuthApi = async () => {
               await authStorage.setToken({ token: newToken });
             }
 
-            // Replay original request with new token
             const response = await originalReq
               .auth(`Bearer ${newToken}`)
               .fetch()
               .json((json) => json?.data);
 
-            // Resolve the refresh promise
             if (state.resolveRefreshPromise) {
               state.resolveRefreshPromise(newToken);
             }
 
-            // Replay queued requests
             state.queuedRequests.forEach(async ({ req }) => {
               try {
                 const result = await req

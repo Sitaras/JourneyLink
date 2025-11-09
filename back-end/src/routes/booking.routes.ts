@@ -9,7 +9,7 @@ const router = Router();
 router.use(authenticateToken);
 
 router.post(
-  "/create-booking",
+  "/",
   validateData(createBookingSchema),
   BookingController.createBooking
 );

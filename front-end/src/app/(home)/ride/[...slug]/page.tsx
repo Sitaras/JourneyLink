@@ -11,10 +11,10 @@ import {
   Clock,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import Typography from "@/components/ui/typography";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import BookingButton from "@/components/BookingButton/BookingButton";
 
 export default async function Ride({
   params,
@@ -40,7 +40,7 @@ export default async function Ride({
           </CardContent>
         </Card>
       </section>
-  );
+    );
   }
 
   const departureDate = new Intl.DateTimeFormat("en-GB", {
@@ -54,8 +54,6 @@ export default async function Ride({
   const hasRating =
     !!rideData.driverProfile.rating.average ||
     !!rideData.driverProfile.rating.count;
-    
-  const isBookingAvailable = rideData.remainingSeats > 0;
 
   return (
     <section className="flex flex-col gap-8 items-center w-full py-8 px-4">
@@ -175,7 +173,8 @@ export default async function Ride({
                   <div className="flex items-center gap-2">
                     <Car className="w-4 h-4 text-primary flex-shrink-0" />
                     <Typography className="text-sm">
-                      {rideData?.vehicleInfo?.make} {rideData?.vehicleInfo?.model}
+                      {rideData?.vehicleInfo?.make}{" "}
+                      {rideData?.vehicleInfo?.model}
                       <span className="text-muted-foreground">
                         {" "}
                         • {rideData?.vehicleInfo?.color}
@@ -220,21 +219,7 @@ export default async function Ride({
           </CardContent>
         </Card>
 
-        {/* Booking Button */}
-        <Button
-          size="lg"
-          className="w-full text-base font-semibold"
-          disabled={!isBookingAvailable}
-        >
-          {isBookingAvailable ? "Book Your Seat" : "No Seats Available"}
-        </Button>
-
-        {!isBookingAvailable && (
-          <Typography className="text-sm text-center text-muted-foreground">
-            This ride is fully booked. Check back later or search for
-            alternative rides.
-          </Typography>
-        )}
+        <BookingButton rideId={rideData._id} isBookingAvailable />
       </div>
     </section>
   );

@@ -61,7 +61,7 @@ export class BookingController {
       });
 
       return res.success(
-        booking,
+        { status: booking.status },
         "Booking created successfully.",
         StatusCodes.CREATED
       );
