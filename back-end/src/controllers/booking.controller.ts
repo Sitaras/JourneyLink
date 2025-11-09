@@ -34,14 +34,14 @@ export class BookingController {
 
       if (rideDoc.driver.toString() === passengerId) {
         return res.error(
-          "Driver cannot book their own rideId.",
+          "Driver cannot book their own ride.",
           StatusCodes.BAD_REQUEST
         );
       }
 
       if (await isUserInRide(passengerId!, rideId)) {
         return res.error(
-          "User already in rideId or pending booking.",
+          "User already in ride or has pending booking.",
           StatusCodes.BAD_REQUEST
         );
       }
