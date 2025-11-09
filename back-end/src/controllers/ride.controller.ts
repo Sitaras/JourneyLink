@@ -286,8 +286,8 @@ export class RideController {
       pipeline.push({ $sort: sortStage });
 
       // Pagination
-      const skip = (parseInt(page as any) - 1) * parseInt(limit as any);
-      pipeline.push({ $skip: skip }, { $limit: parseInt(limit as any) });
+      const skip = (page - 1) * limit;
+      pipeline.push({ $skip: skip }, { $limit: limit });
 
       const rides = await Ride.aggregate(pipeline);
 
@@ -304,8 +304,8 @@ export class RideController {
         {
           count: rides.length,
           total,
-          page: parseInt(page as any),
-          pages: Math.ceil(total / parseInt(limit as any)),
+          page,
+          pages: Math.ceil(total / limit),
           data: rides,
         },
         "",
