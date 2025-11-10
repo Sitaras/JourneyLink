@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { routeConfig, isProtectedRoute, isAuthRoute } from "./data/routes";
+import { routeConfig, isProtectedRoute, isAuthRoute } from "./configs/routes";
 
 export async function proxy(request: NextRequest) {
   const path = request.nextUrl.pathname;

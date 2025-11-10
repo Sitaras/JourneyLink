@@ -1,8 +1,10 @@
-import wretch from "wretch";
+import wretch, { WretchError, WretchResponse } from "wretch";
 import { authStorage } from "./authStorage";
 
 export const api = wretch(process.env.NEXT_PUBLIC_BASE_URL)
-  .errorType("json")
+  .customError(async (error, response) => {
+    return { ...error, json: await response.json() };
+  })
   .catcherFallback((err) => {
     throw err.json;
   });
@@ -10,7 +12,6 @@ export const api = wretch(process.env.NEXT_PUBLIC_BASE_URL)
 const state = {
   isRefreshingToken: false,
   queuedRequests: new Map<string, { req: any }>(),
-  resolveRefreshPromise: null as ((token: string) => void) | null,
 };
 
 export const refreshTokenService = async (refreshToken: string) => {
@@ -25,7 +26,9 @@ export const getAuthApi = async () => {
 
   return wretch(process.env.NEXT_PUBLIC_BASE_URL)
     .auth(`Bearer ${accessToken}`)
-    .errorType("json")
+    .customError(async (error, response) => {
+      return { ...error, json: await response.json() };
+    })
     .resolve((resolver) =>
       resolver
         .unauthorized(async (error, originalReq) => {
@@ -76,38 +79,41 @@ export const getAuthApi = async () => {
 
             const response = await originalReq
               .auth(`Bearer ${newToken}`)
+              .customError(async (error, response) => {
+                return { ...error, json: await response.json() };
+              })
               .fetch()
+              .unauthorized((err) => {
+                throw err;
+              })
               .json((json) => json?.data);
-
-            if (state.resolveRefreshPromise) {
-              state.resolveRefreshPromise(newToken);
-            }
 
             state.queuedRequests.forEach(async ({ req }) => {
               try {
-                const result = await req
+                return await req
                   .auth(`Bearer ${newToken}`)
+                  .customError(
+                    async (error: WretchError, response: WretchResponse) => {
+                      return { ...error, json: await response.json() };
+                    }
+                  )
                   .fetch()
                   .json((json: { data: any }) => json?.data);
-                return result;
               } catch (err) {
                 throw err;
               }
             });
 
+            return response;
+          } catch (error) {
+            if ((error as WretchError)?.status === 401) {
+              await authStorage.clearAuthTokens();
+              throw (error as WretchError).response.json;
+            }
+            throw error;
+          } finally {
             state.queuedRequests.clear();
             state.isRefreshingToken = false;
-
-            return response;
-          } catch (refreshError) {
-            state.isRefreshingToken = false;
-            await authStorage.clearAuthTokens();
-            // if (typeof window !== "undefined") {
-            //   window.location.href = "/login";
-            // }
-            throw error.json;
-          } finally {
-            state.resolveRefreshPromise = null;
           }
         })
         .fetchError((err) => {

@@ -3865,7 +3865,7 @@ __metadata:
     tailwindcss: "npm:^3.4.17"
     tailwindcss-animate: "npm:^1.0.7"
     typescript: "npm:^5"
-    wretch: "npm:^2.11.0"
+    wretch: "npm:3.0.3"
     yarn: "npm:^1.22.22"
     zod: "npm:^3.24.2"
   languageName: unknown
@@ -6001,10 +6001,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"wretch@npm:^2.11.0":
-  version: 2.11.0
-  resolution: "wretch@npm:2.11.0"
-  checksum: 10c0/5fea89eea46a29d32b9277d79c96426832f326f9f4ef9d0c5babc8c8747e2b20f7bcb6355c5a7dca2f1f5cab5aad37d94f08d86377015d734acddac93b0fbda1
+"wretch@npm:3.0.3":
+  version: 3.0.3
+  resolution: "wretch@npm:3.0.3"
+  checksum: 10c0/8e6b939cebf00d4876fdd915b24bdc768711c813e590418b244dfd6fe1335bb9a8abe9132ca852a2e5ea1feec7b5f346c2b5afe7c7256bad26563634bd1aca67
   languageName: node
   linkType: hard
 

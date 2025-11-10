@@ -24,7 +24,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.9.2",
     "multer": "^1.4.5-lts.1",
-    "wretch": "^2.11.0",
+    "wretch": "3.0.3",
     "zod": "^3.24.2"
   },
   "devDependencies": {

@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { routes } from "@/data/routes";
+import { routes } from "@/configs/routes";
 
 export default function UserMenu() {
   const { user } = useAuth();
