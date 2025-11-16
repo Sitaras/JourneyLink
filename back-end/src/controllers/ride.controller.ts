@@ -371,7 +371,7 @@ export class RideController {
   static getRideById = async (
     req: AuthRequest<MongoIdParam>,
     res: Response
-  ): Promise<Response | void> => {
+  ) => {
     try {
       const { id } = req.params;
       const userId = req.user?.userId;

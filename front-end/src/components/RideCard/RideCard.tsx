@@ -13,7 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Calendar, MapPin, Star, User, Users } from "lucide-react";
 import Link from "next/link";
-import { getStatusVariant, getStatusLabel } from "@/utils/myRidesUtils";
+import { getRideStatusVariant, getRideStatusLabel } from "@/utils/myRidesUtils";
 import { UserRideRole } from "@/types/user.types";
 import { RideStatus, UserRide } from "@/types/rides.types";
 import { dateTimeFormatter } from "@/utils/formatters";
@@ -31,9 +31,8 @@ const RideCard = ({
   buttonLabel = "View details",
   className,
 }: RideCardProps) => {
-
-  const statusVariant = getStatusVariant(ride.status);
-  const statusLabel = getStatusLabel(ride.status);
+  const statusVariant = getRideStatusVariant(ride.status);
+  const statusLabel = getRideStatusLabel(ride.status);
 
   const isCompleted = ride.status === RideStatus.COMPLETED;
   const isCancelled = ride.status === RideStatus.CANCELLED;

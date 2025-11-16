@@ -95,11 +95,12 @@ export type UserRide = {
   destination: Location;
   departureTime: string;
   pricePerSeat: number;
-  status: RideStatus | BookingStatus;
+  status: RideStatus;
 
   availableSeats?: number;
   totalPassengersBooked?: number;
   bookingDate?: string;
+  bookingStatus?: BookingStatus;
   driver?: Driver;
 };
 

@@ -1,11 +1,9 @@
+import { BookingStatus } from "../types/booking.types";
 import { Booking } from "../models/booking.model";
 import { Ride } from "../models/ride.model";
 import { Types } from "mongoose";
 
-export const isUserInRide = async (
-  userId: string,
-  rideId: string
-): Promise<boolean> => {
+export const isUserInRide = async (userId: string, rideId: string) => {
   if (!Types.ObjectId.isValid(userId) || !Types.ObjectId.isValid(rideId))
     return false;
 
@@ -20,7 +18,7 @@ export const isUserInRide = async (
   const pendingBooking = await Booking.findOne({
     passenger: userId,
     ride: rideId,
-    status: "pending",
+    status: BookingStatus.PENDING,
   });
 
   return !!pendingBooking;

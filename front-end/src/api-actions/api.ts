@@ -1,5 +1,5 @@
 import wretch, { WretchError, WretchResponse } from "wretch";
-import { authStorage } from "./authStorage";
+import { authStorage } from "../lib/authStorage";
 
 export const api = wretch(process.env.NEXT_PUBLIC_BASE_URL)
   .customError(async (error, response) => {

@@ -149,14 +149,12 @@ export class UserController {
       } else {
         totalCount = await Booking.countDocuments({
           passenger: userId,
-          status: { $ne: BookingStatus.CANCELLED },
         });
 
         const bookings = await Booking.aggregate([
           {
             $match: {
               passenger: new Types.ObjectId(userId),
-              status: { $ne: BookingStatus.CANCELLED },
             },
           },
           {
@@ -214,13 +212,14 @@ export class UserController {
           },
           {
             $project: {
-              _id: 1,
+              _id: "$rideDetails._id",
               origin: "$rideDetails.origin",
               destination: "$rideDetails.destination",
               departureTime: "$rideDetails.departureTime",
               pricePerSeat: "$rideDetails.pricePerSeat",
+              status: "$rideDetails.status",
               driver: "$driverProfile",
-              status: 1,
+              bookingStatus: "$status",
               bookingDate: "$createdAt",
             },
           },

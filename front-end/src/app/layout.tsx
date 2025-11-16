@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
-import { authStorage } from "@/api-actions/authStorage";
+import { authStorage } from "@/lib/authStorage";
 import { Toaster } from "@/components/ui/sonner";
 import Navbar from "@/components/Navbar/navbar";
 import Footer from "@/components/Footer/Footer";

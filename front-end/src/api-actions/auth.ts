@@ -2,7 +2,7 @@
 
 import { api, refreshTokenService } from "./api";
 import { formatToUTC } from "@/utils/dateUtils";
-import { authStorage } from "./authStorage";
+import { authStorage } from "../lib/authStorage";
 import { registerSchema } from "@/schemas/auth/registerSchema";
 import z from "zod";
 import { loginSchema } from "@/schemas/auth/loginSchema";

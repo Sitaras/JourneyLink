@@ -5,7 +5,8 @@ import { Types } from "mongoose";
 import { AuthRequest } from "../middleware/auth.middleware";
 import { isUserInRide } from "../utils/rideUtils";
 import { StatusCodes } from "http-status-codes";
-import { ICreateBookingPayload } from "@/schemas/bookingSchema";
+import { ICreateBookingPayload } from "../schemas/bookingSchema";
+import { BookingStatus } from "../types/booking.types";
 
 export class BookingController {
   static async createBooking(
@@ -49,7 +50,7 @@ export class BookingController {
       rideDoc.passengers.push({
         user: new Types.ObjectId(passengerId),
         seatsBooked: 1,
-        status: "pending",
+        status: BookingStatus.PENDING,
       });
       await rideDoc.save();
 
@@ -57,7 +58,7 @@ export class BookingController {
         passenger: passengerId,
         driver: rideDoc.driver,
         ride: rideId,
-        status: "pending",
+        status: BookingStatus.PENDING,
       });
 
       return res.success(

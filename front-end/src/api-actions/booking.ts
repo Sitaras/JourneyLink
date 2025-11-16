@@ -1,4 +1,5 @@
 "use server";
+
 import { IBookSeatPayload } from "@/schemas/bookingSchema";
 import { postFetcher } from "./api";
 import { IBookSeatResponse } from "@/types/booking.types";
