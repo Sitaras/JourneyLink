@@ -2,22 +2,19 @@ import { UserRideRole } from "../../types/user.types";
 import { z } from "zod";
 
 export const getUserRidesQuerySchema = z.object({
-  type: z
-    .nativeEnum(UserRideRole)
-    .default(UserRideRole.AS_PASSENGER)
-    .optional(),
-  sortOrder: z.enum(["asc", "desc"]).default("asc").optional(),
+  type: z.enum(UserRideRole).prefault(UserRideRole.AS_PASSENGER).optional(),
+  sortOrder: z.enum(["asc", "desc"]).prefault("asc").optional(),
   page: z
     .string()
-    .default("1")
-    .transform((val) => parseInt(val))
-    .pipe(z.number().int().min(1).default(1))
+    .prefault("1")
+    .transform((val) => (val ? parseInt(val) : undefined))
+    .pipe(z.int().min(1).prefault(1))
     .optional(),
   limit: z
     .string()
-    .default("10")
-    .transform((val) => parseInt(val))
-    .pipe(z.number().int().min(1).max(100).default(10))
+    .prefault("10")
+    .transform((val) => (val ? parseInt(val) : undefined))
+    .pipe(z.int().min(1).max(100).prefault(10))
     .optional(),
 });
 

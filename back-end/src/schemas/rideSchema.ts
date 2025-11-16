@@ -1,12 +1,15 @@
 import { z } from "zod";
 import { isoDateSchema } from "./isoDateSchema";
+import { RideStatus } from "../types/ride.types";
 
 const coordinatesSchema = z
   .array(z.number())
   .length(2)
   .refine(
     ([lng, lat]) => lng >= -180 && lng <= 180 && lat >= -90 && lat <= 90,
-    { message: "Invalid coordinates format [longitude, latitude]" }
+    {
+      error: "Invalid coordinates format [longitude, latitude]",
+    }
   );
 
 const locationSchema = z.object({
@@ -30,8 +33,8 @@ const vehicleInfoSchema = z
 
 const preferencesSchema = z
   .object({
-    smokingAllowed: z.boolean().optional().default(false),
-    petsAllowed: z.boolean().optional().default(false),
+    smokingAllowed: z.boolean().optional().prefault(false),
+    petsAllowed: z.boolean().optional().prefault(false),
   })
   .optional();
 
@@ -40,10 +43,9 @@ export const createRideSchema = z
     origin: locationSchema,
     destination: locationSchema,
     departureTime: isoDateSchema.refine((date) => new Date(date) > new Date(), {
-      message: "Departure time must be in the future",
+      error: "Departure time must be in the future",
     }),
     availableSeats: z
-      .number()
       .int("Available seats must be an integer")
       .min(1, "Must have at least 1 available seat")
       .max(8, "Cannot have more than 8 seats"),
@@ -62,8 +64,8 @@ export const createRideSchema = z
       );
     },
     {
-      message: "Origin and destination cities must be different",
       path: ["destination"],
+      error: "Origin and destination cities must be different",
     }
   );
 
@@ -72,14 +74,14 @@ export const updateRideSchema = z
     origin: locationSchema.optional(),
     destination: locationSchema.optional(),
     departureTime: isoDateSchema.refine((date) => new Date(date) > new Date(), {
-      message: "Departure time must be in the future",
+      error: "Departure time must be in the future",
     }),
-    availableSeats: z.number().int().min(1).max(8).optional(),
+    availableSeats: z.int().min(1).max(8).optional(),
     pricePerSeat: z.number().nonnegative().max(1000).optional(),
     vehicleInfo: vehicleInfoSchema,
     preferences: preferencesSchema,
     additionalInfo: z.string().trim().max(500).optional(),
-    status: z.enum(["active", "cancelled", "completed"]).optional(),
+    status: z.enum(RideStatus).optional(),
   })
   .refine(
     (data) => {
@@ -92,8 +94,8 @@ export const updateRideSchema = z
       return true;
     },
     {
-      message: "Origin and destination cities must be different",
       path: ["destination"],
+      error: "Origin and destination cities must be different",
     }
   );
 
@@ -125,14 +127,14 @@ export const getRideQuerySchema = z
       ),
     originRadius: z
       .string()
-      .default("50")
-      .transform((val) => parseFloat(val))
+      .prefault("50")
+      .transform((val) => (val ? parseFloat(val) : undefined))
       .pipe(
         z
           .number()
           .min(1, "Radius must be at least 1km")
           .max(500, "Radius cannot exceed 500km")
-          .default(50)
+          .prefault(50)
       )
       .optional(),
 
@@ -157,20 +159,20 @@ export const getRideQuerySchema = z
       ),
     destinationRadius: z
       .string()
-      .default("50")
-      .transform((val) => parseFloat(val))
+      .prefault("50")
+      .transform((val) => (val ? parseFloat(val) : undefined))
       .pipe(
         z
           .number()
           .min(1, "Radius must be at least 1km")
           .max(500, "Radius cannot exceed 500km")
-          .default(50)
+          .prefault(50)
       )
       .optional(),
 
     // Date and time filters
     departureDate: isoDateSchema.refine((date) => new Date(date) > new Date(), {
-      message: "Departure time must be in the future",
+      error: "Departure time must be in the future",
     }),
 
     // Seat and price filters
@@ -178,7 +180,7 @@ export const getRideQuerySchema = z
       .string()
       .optional()
       .transform((val) => (val ? parseInt(val) : undefined))
-      .pipe(z.number().int().min(1).max(8).optional()),
+      .pipe(z.int().min(1).max(8).optional()),
     maxPrice: z
       .string()
       .optional()
@@ -206,23 +208,23 @@ export const getRideQuerySchema = z
     // Pagination
     page: z
       .string()
-      .default("1")
-      .transform((val) => parseInt(val))
-      .pipe(z.number().int().min(1).default(1))
+      .prefault("1")
+      .transform((val) => (val ? parseInt(val) : undefined))
+      .pipe(z.int().min(1).prefault(1))
       .optional(),
     limit: z
       .string()
-      .default("10")
-      .transform((val) => parseInt(val))
-      .pipe(z.number().int().min(1).max(100).default(10))
+      .prefault("10")
+      .transform((val) => (val ? parseInt(val) : undefined))
+      .pipe(z.int().min(1).max(100).prefault(10))
       .optional(),
 
     // Sorting
     sortBy: z
       .enum(["price", "departureTime", "distance"])
-      .default("departureTime")
+      .prefault("departureTime")
       .optional(),
-    sortOrder: z.enum(["asc", "desc"]).default("asc").optional(),
+    sortOrder: z.enum(["asc", "desc"]).prefault("asc").optional(),
   })
   .refine(
     (data) => {
@@ -236,8 +238,8 @@ export const getRideQuerySchema = z
       return true;
     },
     {
-      message: "Both originLat and originLng must be provided together",
       path: ["originLng"],
+      error: "Both originLat and originLng must be provided together",
     }
   )
   .refine(
@@ -252,16 +254,14 @@ export const getRideQuerySchema = z
       return true;
     },
     {
-      message:
-        "Both destinationLat and destinationLng must be provided together",
       path: ["destinationLng"],
+      error: "Both destinationLat and destinationLng must be provided together",
     }
   );
 
 // Book ride schema (for future use)
 export const bookRideSchema = z.object({
   seatsRequested: z
-    .number()
     .int("Seats must be an integer")
     .min(1, "Must book at least 1 seat")
     .max(8, "Cannot book more than 8 seats"),
@@ -276,7 +276,7 @@ export const deleteRideSchema = z
       .min(5, "Cancellation reason must be at least 5 characters")
       .max(200, "Cancellation reason is too long")
       .optional(),
-    notifyPassengers: z.boolean().optional().default(true),
+    notifyPassengers: z.boolean().optional().prefault(true),
   })
   .optional();
 

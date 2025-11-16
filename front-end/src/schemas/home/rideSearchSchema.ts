@@ -6,15 +6,15 @@ export const rideSearchSchema = z
     departureLocation: z
       .union([citySchema, z.undefined()])
       .refine((val) => Boolean(val), {
-        message: "required",
-      }),
+          error: "required"
+    }),
     arrivalLocation: z
       .union([citySchema, z.undefined()])
       .refine((val) => Boolean(val), {
-        message: "required",
-      }),
+          error: "required"
+    }),
     dateTrip: z.union([z.date(), z.undefined()]).refine((val) => Boolean(val), {
-      message: "required",
+        error: "required"
     }),
   })
   .refine(
@@ -25,8 +25,8 @@ export const rideSearchSchema = z
       return data.dateTrip >= today;
     },
     {
-      message: "Travel date cannot be in the past",
       path: ["dateTrip"],
+        error: "Travel date cannot be in the past"
     }
   )
   .refine(
@@ -37,7 +37,7 @@ export const rideSearchSchema = z
       );
     },
     {
-      message: "Departure and arrival locations must be different",
       path: ["arrivalLocation"],
+        error: "Departure and arrival locations must be different"
     }
   );

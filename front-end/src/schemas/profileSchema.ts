@@ -3,23 +3,33 @@ import { z } from "zod";
 const greekPhoneNumber = new RegExp(/^(?:[0-9]{10})$/);
 
 export const updateProfileSchema = z.object({
-  firstName: z.string().trim().min(1, { message: "required" }).optional(),
-  lastName: z.string().trim().min(1, { message: "required" }).optional(),
-  dateOfBirth: z.string().min(1, { message: "required" }),
-  email: z.string().trim().email({ message: "emailError" }).optional(),
+  firstName: z.string().trim().min(1, {
+      error: "required"
+}).optional(),
+  lastName: z.string().trim().min(1, {
+      error: "required"
+}).optional(),
+  dateOfBirth: z.string().min(1, {
+      error: "required"
+}),
+  email: z.email({
+        error: "emailError"
+  }).trim().optional(),
   phoneNumber: z
     .string()
-    .min(1, { message: "required" })
+    .min(1, {
+        error: "required"
+    })
     .regex(greekPhoneNumber, {
-      message: "Invalid format",
+        error: "Invalid format"
     })
     .optional(),
   bio: z.string().trim().max(500, "Maximum 500 characters").optional(),
   socials: z
     .object({
-      facebook: z.string().url("Invalid URL").or(z.literal("")).optional(),
-      twitter: z.string().url("Invalid URL").or(z.literal("")).optional(),
-      linkedIn: z.string().url("Invalid URL").or(z.literal("")).optional(),
+      facebook: z.url("Invalid URL").or(z.literal("")).optional(),
+      twitter: z.url("Invalid URL").or(z.literal("")).optional(),
+      linkedIn: z.url("Invalid URL").or(z.literal("")).optional(),
     })
     .optional(),
 });

@@ -108,7 +108,8 @@ export const getAuthApi = async () => {
           } catch (error) {
             if ((error as WretchError)?.status === 401) {
               await authStorage.clearAuthTokens();
-              throw (error as WretchError).response.json;
+              const errorJson = await (error as WretchError).response.json();
+              throw errorJson;
             }
             throw error;
           } finally {

@@ -9,6 +9,8 @@ import { Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
 import mongoose from "mongoose";
 import { MongoIdParam } from "../schemas/idSchema";
+import { BookingStatus } from "../types/booking.types";
+import { RideStatus } from "../types/ride.types";
 
 export class RideController {
   private static addSeatCalculationStages(pipeline: any[]): void {
@@ -22,7 +24,7 @@ export class RideController {
                   $filter: {
                     input: "$passengers",
                     as: "p",
-                    cond: { $eq: ["$$p.status", "confirmed"] },
+                    cond: { $eq: ["$$p.status", BookingStatus.CONFIRMED] },
                   },
                 },
                 as: "cp",
@@ -472,7 +474,7 @@ export class RideController {
       }
 
       // Update ride status
-      ride.status = "cancelled";
+      ride.status = RideStatus.CANCELED;
       ride.cancelledAt = new Date();
 
       if (req.body?.reason) {

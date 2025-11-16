@@ -9,6 +9,8 @@ import { Ride } from "../models/ride.model";
 import { Types } from "mongoose";
 import { MongoIdParam } from "../schemas/idSchema";
 import { IGetUserRidesQueryPayload } from "@/schemas/user/userRideSchema";
+import { RideStatus } from "../types/ride.types";
+import { BookingStatus } from "../types/booking.types";
 
 export class UserController {
   static async getUserInfo(req: AuthRequest, res: Response) {
@@ -93,7 +95,7 @@ export class UserController {
           {
             $match: {
               driver: new Types.ObjectId(userId),
-              status: { $in: ["active", "completed"] },
+              status: { $in: [RideStatus.ACTIVE, RideStatus.COMPLETED] },
             },
           },
           {
@@ -102,7 +104,7 @@ export class UserController {
                 $filter: {
                   input: "$passengers",
                   as: "p",
-                  cond: { $eq: ["$$p.status", "confirmed"] },
+                  cond: { $eq: ["$$p.status", BookingStatus.CONFIRMED] },
                 },
               },
             },

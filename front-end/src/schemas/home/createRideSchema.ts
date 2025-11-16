@@ -7,29 +7,35 @@ export const createRideSchema = z
     departureLocation: citySchema,
     arrivalLocation: citySchema,
     dateTrip: z.date(),
-    time: z.string().min(1, { message: "required" }),
+    time: z.string().min(1, {
+        error: "required"
+    }),
     availableSeats: z
       .string()
-      .min(1, { message: "required" })
+      .min(1, {
+          error: "required"
+    })
       .refine(
         (val) => {
           const num = Number(val);
           return !isNaN(num) && Number.isInteger(num) && num >= 1 && num <= 8;
         },
         {
-          message: "Must be between 1 and 8",
+            error: "Must be between 1 and 8"
         }
       ),
     pricePerSeat: z
       .string()
-      .min(1, { message: "Price per seat is required" })
+      .min(1, {
+          error: "Price per seat is required"
+    })
       .refine(
         (val) => {
           const num = parsePrice(val);
           return num !== null && num >= 0 && num <= 1000;
         },
         {
-          message: "Price must be between 0 and 1000",
+            error: "Price must be between 0 and 1000"
         }
       )
       .refine(
@@ -40,7 +46,7 @@ export const createRideSchema = z
           return !decimals || decimals.length <= 2;
         },
         {
-          message: "Price can have at most 2 decimal digits",
+            error: "Price can have at most 2 decimal digits"
         }
       ),
     smoking: z.boolean(),
@@ -55,8 +61,8 @@ export const createRideSchema = z
       );
     },
     {
-      message: "Departure and arrival locations must be different",
       path: ["arrivalLocation"],
+        error: "Departure and arrival locations must be different"
     }
   );
 

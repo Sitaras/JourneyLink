@@ -1,3 +1,8 @@
+export enum RideStatus {
+  ACTIVE = "active",
+  COMPLETED = "completed",
+  CANCELED = "cancelled",
+}
 export interface RideSearchResponse {
   count: number;
   total: number;

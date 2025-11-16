@@ -1,12 +1,15 @@
 import { z } from "zod";
 import { isoDateSchema } from "./isoDateSchema";
+import { RideStatus } from "@/types/rides.types";
 
 const coordinatesSchema = z
   .array(z.number())
   .length(2)
   .refine(
     ([lng, lat]) => lng >= -180 && lng <= 180 && lat >= -90 && lat <= 90,
-    { message: "Invalid coordinates format [longitude, latitude]" }
+    {
+        error: "Invalid coordinates format [longitude, latitude]"
+    }
   )
   .optional();
 
@@ -28,8 +31,8 @@ const vehicleInfoSchema = z
 
 const preferencesSchema = z
   .object({
-    smokingAllowed: z.boolean().optional().default(false),
-    petsAllowed: z.boolean().optional().default(false),
+    smokingAllowed: z.boolean().optional().prefault(false),
+    petsAllowed: z.boolean().optional().prefault(false),
   })
   .optional();
 
@@ -38,11 +41,9 @@ export const createRideSchema = z
     origin: locationSchema,
     destination: locationSchema,
     departureTime: isoDateSchema.refine((date) => new Date(date) > new Date(), {
-      message: "Departure time must be in the future",
+        error: "Departure time must be in the future"
     }),
-    availableSeats: z
-      .number()
-      .int("Available seats must be an integer")
+    availableSeats: z.int("Available seats must be an integer")
       .min(1, "Must have at least 1 available seat")
       .max(8, "Cannot have more than 8 seats"),
     pricePerSeat: z
@@ -60,8 +61,8 @@ export const createRideSchema = z
       );
     },
     {
-      message: "Origin and destination cities must be different",
       path: ["destination"],
+        error: "Origin and destination cities must be different"
     }
   );
 
@@ -70,14 +71,14 @@ export const updateRideSchema = z
     origin: locationSchema.optional(),
     destination: locationSchema.optional(),
     departureTime: isoDateSchema.refine((date) => new Date(date) > new Date(), {
-      message: "Departure time must be in the future",
+      error: "Departure time must be in the future",
     }),
-    availableSeats: z.number().int().min(1).max(8).optional(),
+    availableSeats: z.int().min(1).max(8).optional(),
     pricePerSeat: z.number().nonnegative().max(1000).optional(),
     vehicleInfo: vehicleInfoSchema,
     preferences: preferencesSchema,
     additionalInfo: z.string().trim().max(500).optional(),
-    status: z.enum(["active", "cancelled", "completed"]).optional(),
+    status: z.enum(RideStatus).optional(),
   })
   .refine(
     (data) => {
@@ -90,8 +91,8 @@ export const updateRideSchema = z
       return true;
     },
     {
-      message: "Origin and destination cities must be different",
       path: ["destination"],
+      error: "Origin and destination cities must be different",
     }
   );
 
@@ -112,8 +113,8 @@ export const getRidesQuerySchema = z.object({
 
   // Date and time filters
   departureDate: isoDateSchema.refine((date) => new Date(date) > new Date(), {
-    message: "Departure time must be in the future",
-  }),
+      error: "Departure time must be in the future"
+}),
 
   // Seat and price filters
   minSeats: z.string().optional(),
@@ -130,16 +131,14 @@ export const getRidesQuerySchema = z.object({
   // Sorting
   sortBy: z
     .enum(["price", "departureTime", "distance"])
-    .default("departureTime")
+    .prefault("departureTime")
     .optional(),
-  sortOrder: z.enum(["asc", "desc"]).default("asc").optional(),
+  sortOrder: z.enum(["asc", "desc"]).prefault("asc").optional(),
 });
 
 // Book ride schema (for future use)
 export const bookRideSchema = z.object({
-  seatsRequested: z
-    .number()
-    .int("Seats must be an integer")
+  seatsRequested: z.int("Seats must be an integer")
     .min(1, "Must book at least 1 seat")
     .max(8, "Cannot book more than 8 seats"),
   passengerNotes: z.string().trim().max(200).optional(),
@@ -153,7 +152,7 @@ export const deleteRideSchema = z
       .min(5, "Cancellation reason must be at least 5 characters")
       .max(200, "Cancellation reason is too long")
       .optional(),
-    notifyPassengers: z.boolean().optional().default(true),
+    notifyPassengers: z.boolean().optional().prefault(true),
   })
   .optional();
 

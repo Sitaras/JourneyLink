@@ -1,5 +1,6 @@
 import { Schema, Document, model } from "mongoose";
-import { IRide } from "../types/ride.types";
+import { IRide, RideStatus } from "../types/ride.types";
+import { BookingStatus } from "../types/booking.types";
 
 export interface IRideDocument extends IRide, Document {
   isBookable(requestedSeats?: number): boolean;
@@ -70,8 +71,8 @@ const rideSchema = new Schema<IRideDocument>(
         },
         status: {
           type: String,
-          enum: ["pending", "confirmed", "cancelled"],
-          default: "pending",
+          enum: Object.values(BookingStatus),
+          default: BookingStatus.PENDING,
         },
       },
     ],
@@ -97,8 +98,8 @@ const rideSchema = new Schema<IRideDocument>(
     },
     status: {
       type: String,
-      enum: ["active", "cancelled", "completed"],
-      default: "active",
+      enum: Object.values(RideStatus),
+      default: RideStatus.ACTIVE,
     },
     cancellationReason: String,
     cancelledAt: Date,
@@ -128,14 +129,14 @@ rideSchema.index({ status: 1, departureTime: 1 });
 
 rideSchema.virtual("remainingSeats").get(function () {
   const bookedSeats = this.passengers
-    .filter((p) => p.status === "confirmed")
+    .filter((p) => p.status === BookingStatus.CONFIRMED)
     .reduce((sum, p) => sum + p.seatsBooked, 0);
   return this.availableSeats - bookedSeats;
 });
 
 rideSchema.methods.isBookable = function (requestedSeats = 1) {
   return (
-    this.status === "active" &&
+    this.status === RideStatus.ACTIVE &&
     this.remainingSeats >= requestedSeats &&
     this.departureTime > new Date()
   );

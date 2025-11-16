@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from "express";
-import { z, ZodError } from "zod";
+import { z, ZodError, ZodSchema } from "zod";
 import { StatusCodes } from "http-status-codes";
 
 type ValidationTarget = "body" | "query" | "params";
 
 export const validateData = (
-  schema: z.ZodSchema<any>,
+  schema: ZodSchema<any>,
   target: ValidationTarget = "body"
 ) => {
   return (req: Request, res: Response, next: NextFunction) => {
@@ -15,7 +15,7 @@ export const validateData = (
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        const errorMessages = error.errors.map((issue) => {
+        const errorMessages = error.issues.map((issue) => {
           const field = issue.path.join(".");
           return {
             field,

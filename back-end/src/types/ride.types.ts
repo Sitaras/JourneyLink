@@ -1,4 +1,11 @@
 import { Types, Document } from "mongoose";
+import { BookingStatus } from "./booking.types";
+
+export enum RideStatus {
+  ACTIVE = "active",
+  COMPLETED = "completed",
+  CANCELED = "cancelled",
+}
 
 export interface IRide extends Document {
   driver: Types.ObjectId;
@@ -19,7 +26,7 @@ export interface IRide extends Document {
     {
       user: Types.ObjectId;
       seatsBooked: number;
-      status: "pending" | "confirmed" | "cancelled";
+      status: BookingStatus;
     }
   ];
   vehicleInfo: {
@@ -33,7 +40,7 @@ export interface IRide extends Document {
     petsAllowed: boolean;
   };
   additionalInfo: string;
-  status: "active" | "cancelled" | "completed";
+  status: RideStatus;
   cancellationReason?: string;
   cancelledAt?: Date;
 }
