@@ -97,6 +97,10 @@ export class UserController {
       } = req.query || {};
 
       const skip = (page - 1) * limit;
+      const sortDirection = sortOrder === "asc" ? 1 : -1;
+
+      let data: any[];
+      let totalCount: number;
 
       if (type === UserRideRole.AS_DRIVER) {
         const matchStage = {
@@ -110,9 +114,10 @@ export class UserController {
           matchStage,
           { $count: "total" },
         ]);
-        const totalCount = totalCountResult[0]?.total || 0;
 
-        const rides = await Ride.aggregate([
+        totalCount = totalCountResult[0]?.total || 0;
+
+        data = await Ride.aggregate([
           matchStage,
           {
             $addFields: {
@@ -126,11 +131,6 @@ export class UserController {
             },
           },
           {
-            $addFields: {
-              totalPassengersBooked: { $size: "$confirmedPassengers" },
-            },
-          },
-          {
             $project: {
               _id: 1,
               origin: 1,
@@ -138,61 +138,111 @@ export class UserController {
               departureTime: 1,
               pricePerSeat: 1,
               availableSeats: 1,
-              totalPassengersBooked: 1,
+              totalPassengersBooked: { $size: "$confirmedPassengers" },
               status: 1,
             },
           },
-          {
-            $sort: { departureTime: sortOrder === "asc" ? 1 : -1 },
-          },
+          { $sort: { departureTime: sortDirection } },
           { $skip: skip },
           { $limit: limit },
         ]);
-
-        const totalPages = Math.ceil(totalCount / limit);
-
-        return res.success(
-          {
-            count: rides.length,
-            total: totalCount,
-            page,
-            pages: totalPages,
-            data: rides,
-          },
-          "Rides fetched successfully",
-          StatusCodes.OK
-        );
-      }
-
-      if (type === UserRideRole.AS_PASSENGER) {
-        const totalCount = await Booking.countDocuments({
+      } else {
+        totalCount = await Booking.countDocuments({
           passenger: userId,
           status: { $ne: BookingStatus.CANCELLED },
         });
 
-        const bookings = await Booking.find({
-          passenger: userId,
-          status: { $ne: BookingStatus.CANCELLED },
-        })
-          .populate("ride", "origin destination departureTime pricePerSeat")
-          .sort({ createdAt: sortOrder === "asc" ? 1 : -1 })
-          .skip(skip)
-          .limit(limit);
-
-        const totalPages = Math.ceil(totalCount / limit);
-
-        return res.success(
+        const bookings = await Booking.aggregate([
           {
-            count: bookings.length,
-            total: totalCount,
-            page,
-            pages: totalPages,
-            data: bookings,
+            $match: {
+              passenger: new Types.ObjectId(userId),
+              status: { $ne: BookingStatus.CANCELLED },
+            },
           },
-          "Rides fetched successfully",
-          StatusCodes.OK
-        );
+          {
+            $lookup: {
+              from: "rides",
+              localField: "ride",
+              foreignField: "_id",
+              as: "rideDetails",
+            },
+          },
+          { $unwind: "$rideDetails" },
+          {
+            $lookup: {
+              from: "users",
+              localField: "driver",
+              foreignField: "_id",
+              as: "user",
+            },
+          },
+          {
+            $unwind: { path: "$user", preserveNullAndEmptyArrays: true },
+          },
+          {
+            $lookup: {
+              from: "profiles",
+              localField: "user.profile",
+              foreignField: "_id",
+              as: "driverProfile",
+            },
+          },
+          {
+            $unwind: {
+              path: "$driverProfile",
+              preserveNullAndEmptyArrays: true,
+            },
+          },
+          {
+            $addFields: {
+              driverProfile: {
+                $cond: {
+                  if: { $ne: ["$driverProfile", null] },
+                  then: {
+                    firstName: "$driverProfile.firstName",
+                    rating: "$driverProfile.rating",
+                  },
+                  else: null,
+                },
+              },
+            },
+          },
+          {
+            $project: {
+              user: 0,
+            },
+          },
+          {
+            $project: {
+              _id: 1,
+              origin: "$rideDetails.origin",
+              destination: "$rideDetails.destination",
+              departureTime: "$rideDetails.departureTime",
+              pricePerSeat: "$rideDetails.pricePerSeat",
+              driver: "$driverProfile",
+              status: 1,
+              bookingDate: "$createdAt",
+            },
+          },
+          { $sort: { createdAt: sortDirection } },
+          { $skip: skip },
+          { $limit: limit },
+        ]);
+
+        data = bookings;
       }
+
+      return res.success(
+        {
+          count: data.length,
+          total: totalCount,
+          page,
+          pages: Math.ceil(totalCount / limit),
+          data,
+        },
+        "Rides fetched successfully",
+        StatusCodes.OK
+      );
     } catch (error) {
       return res.error(
         "Server error while fetching rides.",
@@ -201,7 +251,6 @@ export class UserController {
       );
     }
   }
-
   static async getRideById(req: AuthRequest<MongoIdParam>, res: Response) {
     try {
       const { id } = req.params;
