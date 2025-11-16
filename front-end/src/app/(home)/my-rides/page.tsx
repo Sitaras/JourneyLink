@@ -2,25 +2,26 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Typography from "@/components/ui/typography";
-import React, { useState } from "react";
+import { useState } from "react";
 import UserRidesList from "@/components/UserRidesList/UserRidesList";
 import { Car, User } from "lucide-react";
-
-type TabValue = "passenger" | "driver";
+import { UserRideRole } from "@/types/user.types";
 
 const MyRidesPage = () => {
-  const [activeTab, setActiveTab] = useState<TabValue>("passenger");
+  const [activeTab, setActiveTab] = useState<UserRideRole>(
+    UserRideRole.AS_PASSENGER
+  );
 
   const tabs = [
     {
       name: "As Passenger",
-      value: "passenger" as TabValue,
+      value: UserRideRole.AS_PASSENGER,
       icon: User,
       description: "Rides you've booked",
     },
     {
       name: "As Driver",
-      value: "driver" as TabValue,
+      value: UserRideRole.AS_DRIVER,
       icon: Car,
       description: "Rides you're offering",
     },
@@ -38,7 +39,7 @@ const MyRidesPage = () => {
 
         <Tabs
           value={activeTab}
-          onValueChange={(value) => setActiveTab(value as TabValue)}
+          onValueChange={(value) => setActiveTab(value as UserRideRole)}
           className="w-full"
         >
           <TabsList className="w-full p-0 border-b rounded-none bg-transparent h-auto">
@@ -56,7 +57,9 @@ const MyRidesPage = () => {
                   </span>
                   <span className="sm:hidden">
                     <Typography className="font-medium">
-                      {tab.value === "passenger" ? "Passenger" : "Driver"}
+                      {tab.value === UserRideRole.AS_PASSENGER
+                        ? "Passenger"
+                        : "Driver"}
                     </Typography>
                   </span>
                 </TabsTrigger>

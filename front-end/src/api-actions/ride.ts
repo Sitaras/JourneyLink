@@ -10,15 +10,12 @@ import {
   RideCreationResponse,
   RideSearchResponse,
 } from "@/types/rides.types";
+import { generateQueryString } from "@/utils/genericUtils";
 
 export const getRides = async (parameters: IGetRidesQueryPayload) => {
   const parsedParams = getRidesQuerySchema.parse(parameters);
 
-  const queryString = new URLSearchParams(
-    Object.entries(parsedParams)
-      .filter(([_, value]) => value !== undefined && value !== null)
-      .map(([key, value]) => [key, String(value)])
-  ).toString();
+  const queryString = generateQueryString(parsedParams);
 
   try {
     const response = await api

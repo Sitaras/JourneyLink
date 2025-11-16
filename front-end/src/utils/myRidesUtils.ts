@@ -1,24 +1,25 @@
 import type { BadgeVariant } from "@/components/ui/badge";
-import { RideStatus } from "@/types/ride.types";
+import { RideStatus } from "@/types/rides.types";
+import { BookingStatus } from "@/types/booking.types";
 
-export const getStatusVariant = (status: RideStatus) => {
-  const colors: Record<RideStatus, BadgeVariant> = {
-    pending: "secondary",
-    confirmed: "success",
-    completed: "success",
-    rejected: "destructive",
-    cancelled: "destructive",
+export const getStatusVariant = (status: RideStatus | BookingStatus) => {
+  const colors: Record<RideStatus | BookingStatus, BadgeVariant> = {
+    [RideStatus.ACTIVE]: "secondary",
+    [RideStatus.COMPLETED]: "success",
+    [BookingStatus.PENDING]: "secondary",
+    [BookingStatus.CONFIRMED]: "success",
+    [RideStatus.CANCELLED]: "destructive",
   };
   return colors[status] || "outline";
 };
 
-export const getStatusLabel = (status: RideStatus): string => {
+export const getStatusLabel = (status: RideStatus | BookingStatus): string => {
   const labels = {
-    pending: "Pending",
-    confirmed: "Confirmed",
-    completed: "Completed",
-    rejected: "Declined",
-    cancelled: "Cancelled",
+    [RideStatus.ACTIVE]: "Pending",
+    [RideStatus.COMPLETED]: "Completed",
+    [BookingStatus.PENDING]: "Pending",
+    [BookingStatus.CONFIRMED]: "Confirmed",
+    [RideStatus.CANCELLED]: "Cancelled",
   };
   return labels[status] || status;
 };

@@ -8,7 +8,7 @@ import { FieldErrors, useForm } from "react-hook-form";
 import {
   UpdateProfilePayload,
   updateProfileSchema,
-} from "@/schemas/profileSchema";
+} from "@/schemas/user/profileSchema";
 import z from "zod";
 import { toast } from "sonner";
 import { formatDate } from "@/utils/dateUtils";

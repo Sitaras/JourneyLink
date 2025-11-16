@@ -17,6 +17,7 @@ import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import Typography from "@/components/ui/typography";
 import LoadingState from "../LoadingState/LoadingState";
+import { dateTimeFormatter, shortDateFormatter } from "@/utils/formatters";
 
 interface RidesListProps {
   rides?: Ride[];
@@ -30,17 +31,6 @@ export default function RidesList({
   className,
 }: RidesListProps) {
   const { isAuthenticated } = useAuth();
-
-  const cardDateFormatter = new Intl.DateTimeFormat("en-GB", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
-
-  const urlDateFormatter = new Intl.DateTimeFormat("en-GB", {
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-  });
 
   if (isLoading) {
     return <LoadingState />;
@@ -103,7 +93,7 @@ export default function RidesList({
                 <div className="flex items-center gap-2 text-sm">
                   <Calendar className="w-4 h-4 text-primary flex-shrink-0" />
                   <Typography className="font-medium">
-                    {cardDateFormatter.format(departureDate)}
+                    {dateTimeFormatter.format(departureDate)}
                   </Typography>
                 </div>
                 <Badge className="px-3 py-1">
@@ -131,7 +121,7 @@ export default function RidesList({
                   )}/${encodeURIComponent(
                     ride.destination.city
                   )}/${encodeURIComponent(
-                    urlDateFormatter.format(departureDate)
+                    shortDateFormatter.format(departureDate)
                   )}/${encodeURIComponent(ride._id)}`}
                 >
                   <Button size="default" className="font-semibold">

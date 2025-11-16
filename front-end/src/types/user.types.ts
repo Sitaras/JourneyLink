@@ -1,3 +1,8 @@
+export enum UserRideRole {
+  AS_PASSENGER = "asPassenger",
+  AS_DRIVER = "asDriver",
+}
+
 export enum UserRole {
   PASSENGER = "passenger",
   DRIVER = "driver",

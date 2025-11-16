@@ -15,6 +15,7 @@ import { Separator } from "@/components/ui/separator";
 import Typography from "@/components/ui/typography";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import BookingButton from "@/components/BookingButton/BookingButton";
+import { dateFormatter, timeFormatter } from "@/utils/formatters";
 
 export default async function Ride({
   params,
@@ -43,13 +44,9 @@ export default async function Ride({
     );
   }
 
-  const departureDate = new Intl.DateTimeFormat("en-GB", {
-    dateStyle: "medium",
-  }).format(new Date(rideData.departureTime));
+  const departureDate = dateFormatter.format(new Date(rideData.departureTime));
 
-  const departureTime = new Intl.DateTimeFormat("en-GB", {
-    timeStyle: "short",
-  }).format(new Date(rideData.departureTime));
+  const departureTime = timeFormatter.format(new Date(rideData.departureTime));
 
   const hasRating =
     !!rideData.driverProfile.rating.average ||

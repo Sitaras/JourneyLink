@@ -7,12 +7,13 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import LoadingState from "@/components/LoadingState/LoadingState";
 import RideCard from "@/components/RideCard/RideCard";
-import { fetchRides } from "@/mock/rides";
+import { UserRideRole } from "@/types/user.types";
+import { getUserRides } from "@/api-actions/user";
 
-interface RidesListProps {
-  type: "passenger" | "driver";
+type RidesListProps = {
+  type: UserRideRole;
   className?: string;
-}
+};
 
 const UserRidesList = ({ type, className }: RidesListProps) => {
   const {
@@ -23,11 +24,11 @@ const UserRidesList = ({ type, className }: RidesListProps) => {
     isFetchingNextPage,
     error,
   } = useInfiniteQuery({
-    queryKey: ["my-rides", type],
-    queryFn: ({ pageParam }) => fetchRides(pageParam, type),
+    queryKey: ["me/user-rides", type],
+    queryFn: ({ pageParam }) => getUserRides({ type, page: pageParam }),
     initialPageParam: 1,
-    getNextPageParam: (lastPage, allPages) => {
-      return lastPage.hasMore ? allPages.length + 1 : undefined;
+    getNextPageParam: (lastPage) => {
+      return lastPage.page < lastPage.pages ? lastPage.page + 1 : undefined;
     },
   });
 
@@ -60,7 +61,7 @@ const UserRidesList = ({ type, className }: RidesListProps) => {
   }
 
   const totalRides =
-    data?.pages.reduce((acc, page) => acc + page.rides.length, 0) ?? 0;
+    data?.pages.reduce((acc, page) => acc + page.data.length, 0) ?? 0;
 
   if (totalRides === 0) {
     return (
@@ -72,7 +73,7 @@ const UserRidesList = ({ type, className }: RidesListProps) => {
               No rides yet
             </Typography>
             <Typography className="text-muted-foreground text-sm">
-              {type === "passenger"
+              {type === UserRideRole.AS_PASSENGER
                 ? "You haven't booked any rides as a passenger"
                 : "You haven't created any rides as a driver"}
             </Typography>
@@ -86,9 +87,9 @@ const UserRidesList = ({ type, className }: RidesListProps) => {
     <section className={cn("space-y-4", className)}>
       {data?.pages.map((page, pageIndex) => (
         <React.Fragment key={pageIndex}>
-          {page.rides.map((ride) => (
+          {page.data.map((ride) => (
             <RideCard
-              key={ride.id}
+              key={ride._id}
               ride={ride}
               viewType={type}
               buttonLabel="View details"

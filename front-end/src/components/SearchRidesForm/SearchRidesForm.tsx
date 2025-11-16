@@ -12,6 +12,7 @@ import type { z } from "zod";
 import { toast } from "sonner";
 import { useEffect } from "react";
 import { Search, MapPin, Calendar } from "lucide-react";
+import { shortDateFormatter } from "@/utils/formatters";
 
 type RideSearchFormValues = z.infer<typeof rideSearchSchema>;
 
@@ -50,7 +51,7 @@ export default function SearchRidesForm({
   const onSubmit = (data: RideSearchFormValues) => {
     const from = data.departureLocation?.label || "";
     const to = data.arrivalLocation?.label || "";
-    const departureDate = new Intl.DateTimeFormat("el").format(data.dateTrip);
+    const departureDate = shortDateFormatter.format(data.dateTrip);
 
     const params = new URLSearchParams({ from, to, departureDate, page: "1" });
     router.push(`/?${params.toString()}`);
