@@ -474,7 +474,7 @@ export class RideController {
       }
 
       // Update ride status
-      ride.status = RideStatus.CANCELED;
+      ride.status = RideStatus.CANCELLED;
       ride.cancelledAt = new Date();
 
       if (req.body?.reason) {

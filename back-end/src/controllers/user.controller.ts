@@ -11,6 +11,7 @@ import { MongoIdParam } from "../schemas/idSchema";
 import { IGetUserRidesQueryPayload } from "@/schemas/user/userRideSchema";
 import { RideStatus } from "../types/ride.types";
 import { BookingStatus } from "../types/booking.types";
+import { UserRideRole } from "../types/user.types";
 
 export class UserController {
   static async getUserInfo(req: AuthRequest, res: Response) {
@@ -88,16 +89,31 @@ export class UserController {
   ) {
     try {
       const userId = req.user?.userId;
-      const { type = "asPassenger", sortOrder = "asc" } = req.query || {};
+      const {
+        type = UserRideRole.AS_PASSENGER,
+        sortOrder = "asc",
+        page = 1,
+        limit = 10,
+      } = req.query || {};
 
-      if (type === "asDriver") {
-        const rides = await Ride.aggregate([
-          {
-            $match: {
-              driver: new Types.ObjectId(userId),
-              status: { $in: [RideStatus.ACTIVE, RideStatus.COMPLETED] },
-            },
+      const skip = (page - 1) * limit;
+
+      if (type === UserRideRole.AS_DRIVER) {
+        const matchStage = {
+          $match: {
+            driver: new Types.ObjectId(userId),
+            status: { $in: [RideStatus.ACTIVE, RideStatus.COMPLETED] },
           },
+        };
+
+        const totalCountResult = await Ride.aggregate([
+          matchStage,
+          { $count: "total" },
+        ]);
+        const totalCount = totalCountResult[0]?.total || 0;
+
+        const rides = await Ride.aggregate([
+          matchStage,
           {
             $addFields: {
               confirmedPassengers: {
@@ -129,33 +145,55 @@ export class UserController {
           {
             $sort: { departureTime: sortOrder === "asc" ? 1 : -1 },
           },
+          { $skip: skip },
+          { $limit: limit },
         ]);
 
+        const totalPages = Math.ceil(totalCount / limit);
+
         return res.success(
-          { count: rides.length, data: rides },
+          {
+            count: rides.length,
+            total: totalCount,
+            page,
+            pages: totalPages,
+            data: rides,
+          },
           "Rides fetched successfully",
           StatusCodes.OK
         );
       }
 
-      if (type === "asPassenger") {
+      if (type === UserRideRole.AS_PASSENGER) {
+        const totalCount = await Booking.countDocuments({
+          passenger: userId,
+          status: { $ne: BookingStatus.CANCELLED },
+        });
+
         const bookings = await Booking.find({
           passenger: userId,
-          status: { $ne: "cancelled" },
+          status: { $ne: BookingStatus.CANCELLED },
         })
           .populate("ride", "origin destination departureTime pricePerSeat")
-          .sort({ createdAt: sortOrder === "asc" ? 1 : -1 });
+          .sort({ createdAt: sortOrder === "asc" ? 1 : -1 })
+          .skip(skip)
+          .limit(limit);
+
+        const totalPages = Math.ceil(totalCount / limit);
 
         return res.success(
-          { count: bookings.length, data: bookings },
-          "Rides fetched successfully (as Passenger)",
+          {
+            count: bookings.length,
+            total: totalCount,
+            page,
+            pages: totalPages,
+            data: bookings,
+          },
+          "Rides fetched successfully",
           StatusCodes.OK
         );
       }
-
-      return res.error("Invalid 'type' parameter.", StatusCodes.BAD_REQUEST);
     } catch (error) {
-      console.error("Error fetching rides:", error);
       return res.error(
         "Server error while fetching rides.",
         StatusCodes.INTERNAL_SERVER_ERROR,
@@ -215,7 +253,6 @@ export class UserController {
 
       return res.success(responseData, "Ride details", StatusCodes.OK);
     } catch (error) {
-      console.error("Error fetching ride by ID:", error);
       return res.error(
         "Server Error",
         StatusCodes.INTERNAL_SERVER_ERROR,

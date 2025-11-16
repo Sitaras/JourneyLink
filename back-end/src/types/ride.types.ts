@@ -4,7 +4,7 @@ import { BookingStatus } from "./booking.types";
 export enum RideStatus {
   ACTIVE = "active",
   COMPLETED = "completed",
-  CANCELED = "cancelled",
+  CANCELLED = "cancelled",
 }
 
 export interface IRide extends Document {
