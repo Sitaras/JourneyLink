@@ -8,7 +8,7 @@ import { Booking } from "../models/booking.model";
 import { Ride } from "../models/ride.model";
 import { Types } from "mongoose";
 import { MongoIdParam } from "../schemas/idSchema";
-import { IGetUserRidesQueryPayload } from "@/schemas/user/userRideSchema";
+import { IGetUserRidesQueryPayload } from "../schemas/user/userRideSchema";
 import { RideStatus } from "../types/ride.types";
 import { BookingStatus } from "../types/booking.types";
 import { UserRideRole } from "../types/user.types";
