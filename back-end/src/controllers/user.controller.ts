@@ -280,6 +280,24 @@ export class UserController {
         );
       }
 
+      const userHasRequested = rideBase.passengers?.some(
+        (p) => p.user?.toString() === userId?.toString()
+      );
+
+
+      const noAvailableSeats = (rideBase.availableSeats ?? 0) <= 0;
+
+      const rideInactive = ["completed", "cancelled"].includes(
+        rideBase.status?.toLowerCase()
+      );
+
+      const canBook = !(
+        isDriver ||
+        userHasRequested ||
+        noAvailableSeats ||
+        rideInactive
+      );
+
       let responseData;
       // If user is driver, populate passengers info
       if (isDriver) {
@@ -291,12 +309,18 @@ export class UserController {
           ride: {
             ...rideBase,
             passengers: rideWithPassengers?.passengers || [],
+            canBook,
           },
         };
       } else {
         // For passengers, exclude the passengers field
         const { passengers, ...rideWithoutPassengers } = rideBase;
-        responseData = { ride: rideWithoutPassengers };
+        responseData = {
+          ride: {
+            ...rideWithoutPassengers,
+            canBook,
+          },
+        };
       }
 
       return res.success(responseData, "Ride details", StatusCodes.OK);

@@ -5,6 +5,7 @@ import { BookingStatus } from "../types/booking.types";
 export interface IRideDocument extends IRide, Document {
   isBookable(requestedSeats?: number): boolean;
   remainingSeats: number;
+  getBookingStatus(userId: string, requestedSeats?: number): { canBook: boolean; reason: string | null };
 }
 
 const rideSchema = new Schema<IRideDocument>(
@@ -140,6 +141,29 @@ rideSchema.methods.isBookable = function (requestedSeats = 1) {
     this.remainingSeats >= requestedSeats &&
     this.departureTime > new Date()
   );
+};
+
+rideSchema.methods.getBookingStatus = function (
+  userId: string,
+  requestedSeats = 1
+) {
+  const isDriver = this.driver?.toString() === userId.toString();
+  if (isDriver) return { canBook: false, reason: "USER_IS_DRIVER" };
+
+  const hasRequested = this.passengers?.some(
+    (p : any ) => p.user?.toString() === userId.toString()
+  );
+  if (hasRequested) return { canBook: false, reason: "ALREADY_REQUESTED" };
+
+  if ([RideStatus.COMPLETED, RideStatus.CANCELLED].includes(this.status)) {
+    return { canBook: false, reason: "RIDE_INACTIVE" };
+  }
+
+  if (!this.isBookable(requestedSeats)) {
+    return { canBook: false, reason: "NO_AVAILABLE_SEATS" };
+  }
+
+  return { canBook: true, reason: null };
 };
 
 export const Ride = model<IRideDocument>("Ride", rideSchema);

@@ -1,5 +1,5 @@
 import { AuthRequest } from "../middleware/auth.middleware";
-import { Ride } from "../models/ride.model";
+import { IRideDocument, Ride } from "../models/ride.model";
 import {
   ICreateRidePayload,
   IDeleteRidePayload,
@@ -376,6 +376,10 @@ export class RideController {
       const { id } = req.params;
       const userId = req.user?.userId;
 
+      if (!userId) {
+        return res.error("Authentication required", StatusCodes.UNAUTHORIZED);
+      }
+
       const pipeline: any[] = [
         { $match: { _id: new mongoose.Types.ObjectId(id) } },
       ];
@@ -383,14 +387,14 @@ export class RideController {
       this.addSeatCalculationStages(pipeline);
       this.addDriverInfo(pipeline);
 
-      const [ride] = await Ride.aggregate(pipeline);
+      const [rideAgg] = await Ride.aggregate(pipeline);
+      const ride = Ride.hydrate(rideAgg);
 
       if (!ride) {
-        return res.status(StatusCodes.NOT_FOUND).json({
-          success: false,
-          message: "Ride not found",
-        });
+        return res.error("Ride not Found!", StatusCodes.INTERNAL_SERVER_ERROR);
       }
+
+      const { canBook, reason: cannotBookReason } = ride.getBookingStatus(userId);
 
       const isDriver = ride.driver.toString() === userId?.toString();
       const isPassenger = ride.passengers?.some(
@@ -399,7 +403,7 @@ export class RideController {
 
       this.applyVisibilityRules(ride, isDriver, isPassenger);
 
-      return res.success(ride, "", StatusCodes.OK);
+      return res.success({ ride, canBook, cannotBookReason }, "", StatusCodes.OK);
     } catch (error) {
       console.error("Error fetching ride:", error);
       return res.error("An error occurred", StatusCodes.INTERNAL_SERVER_ERROR);

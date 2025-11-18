@@ -8,6 +8,8 @@ import {
   IRefreshTokenPayload,
 } from "../types/user.types";
 import { verifyRefreshToken } from "../utils/token.utils";
+import { AuthRequest } from "@/middleware/auth.middleware";
+import { StatusCodes } from "http-status-codes";
 
 export class AuthController {
   static async register(
@@ -170,6 +172,34 @@ export class AuthController {
       }
     } catch (error) {
       res.error("An error occurred", 500);
+    }
+  }
+
+  static async logout(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      const userId = req.user?.userId;
+      const authHeader = req.headers["authorization"];
+      const token = authHeader?.split(" ")[1];
+
+      if (!token || !userId) {
+        res.error("Unauthorized", 401);
+        return;
+      }
+
+      const user = await User.findById(userId);
+
+      if (!user) {
+        res.error("User not found", StatusCodes.NOT_FOUND);
+        return;
+      }
+      
+      user.refreshTokens = [];
+      await user.save();
+
+      res.success({ message: "Logged out successfully" }, "Logout successful");
+    } catch (error) {
+      console.error("Logout error:", error);
+      res.error("An error occurred", StatusCodes.INTERNAL_SERVER_ERROR);
     }
   }
 }
