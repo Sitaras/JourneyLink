@@ -8,14 +8,13 @@ const coordinatesSchema = z
   .refine(
     ([lng, lat]) => lng >= -180 && lng <= 180 && lat >= -90 && lat <= 90,
     {
-        error: "Invalid coordinates format [longitude, latitude]"
+      error: "Invalid coordinates format [longitude, latitude]",
     }
   )
   .optional();
 
 const locationSchema = z.object({
-  city: z
-    .string(),
+  city: z.string(),
   address: z.string().optional(),
   coordinates: coordinatesSchema,
 });
@@ -41,9 +40,10 @@ export const createRideSchema = z
     origin: locationSchema,
     destination: locationSchema,
     departureTime: isoDateSchema.refine((date) => new Date(date) > new Date(), {
-        error: "Departure time must be in the future"
+      error: "Departure time must be in the future",
     }),
-    availableSeats: z.int("Available seats must be an integer")
+    availableSeats: z
+      .int("Available seats must be an integer")
       .min(1, "Must have at least 1 available seat")
       .max(8, "Cannot have more than 8 seats"),
     pricePerSeat: z
@@ -62,7 +62,7 @@ export const createRideSchema = z
     },
     {
       path: ["destination"],
-        error: "Origin and destination cities must be different"
+      error: "Origin and destination cities must be different",
     }
   );
 
@@ -113,8 +113,8 @@ export const getRidesQuerySchema = z.object({
 
   // Date and time filters
   departureDate: isoDateSchema.refine((date) => new Date(date) > new Date(), {
-      error: "Departure time must be in the future"
-}),
+    error: "Departure time must be in the future",
+  }),
 
   // Seat and price filters
   minSeats: z.string().optional(),
@@ -138,7 +138,8 @@ export const getRidesQuerySchema = z.object({
 
 // Book ride schema (for future use)
 export const bookRideSchema = z.object({
-  seatsRequested: z.int("Seats must be an integer")
+  seatsRequested: z
+    .int("Seats must be an integer")
     .min(1, "Must book at least 1 seat")
     .max(8, "Cannot book more than 8 seats"),
   passengerNotes: z.string().trim().max(200).optional(),

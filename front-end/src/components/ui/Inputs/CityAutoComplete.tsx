@@ -38,8 +38,8 @@ const CityAutoComplete = ({
         isLoading
           ? "Loading..."
           : searchInput.length <= 2
-          ? "Type at least 3 characters to search"
-          : "No cities found"
+            ? "Type at least 3 characters to search"
+            : "No cities found"
       }
       optionsKeyName="coordinates"
       {...rest}
