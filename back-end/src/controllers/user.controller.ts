@@ -295,7 +295,7 @@ export class UserController {
         };
       } else {
         // For passengers, exclude the passengers field
-        const { passengers, ...rideWithoutPassengers } = rideBase;
+        const { passengers: _, ...rideWithoutPassengers } = rideBase;
         responseData = { ride: rideWithoutPassengers };
       }
 

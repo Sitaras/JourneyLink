@@ -1,4 +1,4 @@
-import * as Express from "express";
+import * as _Express from "express";
 
 declare global {
   namespace Express {
