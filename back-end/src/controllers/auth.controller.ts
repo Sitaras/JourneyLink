@@ -8,10 +8,11 @@ import {
   IRefreshTokenPayload,
 } from "../types/user.types";
 import { verifyRefreshToken } from "../utils/token.utils";
+import { Types } from "mongoose";
 
 export class AuthController {
   static async register(
-    req: Request<{}, {}, IUserRegistration>,
+    req: Request<unknown, unknown, IUserRegistration>,
     res: Response
   ) {
     try {
@@ -53,18 +54,20 @@ export class AuthController {
         phoneNumber,
       });
 
-      user.profile = profile._id as any;
+      user.profile = profile._id as Types.ObjectId;
 
       await Promise.all([user.save(), profile.save()]);
 
       res.success(req.body, "User registered successfully");
     } catch (error) {
-      console.error("Registration error:", error);
       res.error("An error occurred", 500);
     }
   }
 
-  static async login(req: Request<{}, {}, IUserLogin>, res: Response) {
+  static async login(
+    req: Request<unknown, unknown, IUserLogin>,
+    res: Response
+  ) {
     try {
       const { email, password } = req.body;
 
@@ -108,7 +111,7 @@ export class AuthController {
   }
 
   static async refreshToken(
-    req: Request<{}, {}, IRefreshTokenPayload>,
+    req: Request<unknown, unknown, IRefreshTokenPayload>,
     res: Response
   ) {
     try {

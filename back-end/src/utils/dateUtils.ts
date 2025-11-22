@@ -136,9 +136,8 @@ export const getDateDifference = (
   const startDateParsed =
     typeof dateToCompare === "string" ? parseISO(dateToCompare) : dateToCompare;
 
-  // @ts-ignore
   const differenceFunction = precisionFunctions[precision];
-  // @ts-ignore
+
   return Math.abs(differenceFunction(dateParsed, startDateParsed));
 };
 
@@ -180,8 +179,10 @@ export const isDateBetween = (
   if (!parsedDate || !parsedFromDate || !parsedToDate) return false;
 
   const _date = startOfDay(parsedDate);
-  // @ts-ignore
-  return startOfDay(parsedFromDate) <= _date && _date <= endOfDay(parsedToDate);
+
+  return (
+    startOfDay(parsedFromDate)! <= _date! && _date! <= endOfDay(parsedToDate)!
+  );
 };
 
 export const isBetween = (

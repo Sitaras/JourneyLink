@@ -140,7 +140,7 @@ export class RideController {
   //   );
   // }
 
-  private static buildMatchStage(query: IGetRideQueryPayload): any {
+  private static buildMatchStage(query: IGetRideQueryPayload) {
     const { departureDate, maxPrice, smokingAllowed, petsAllowed } = query;
 
     const matchStage: any = {
@@ -196,7 +196,7 @@ export class RideController {
   }
 
   static getRide = async (
-    req: Request<{}, {}, {}, IGetRideQueryPayload>,
+    req: Request<unknown, unknown, unknown, IGetRideQueryPayload>,
     res: Response
   ) => {
     try {
@@ -323,7 +323,7 @@ export class RideController {
   };
 
   static createRide = async (
-    req: AuthRequest<{}, {}, ICreateRidePayload>,
+    req: AuthRequest<unknown, unknown, ICreateRidePayload>,
     res: Response
   ) => {
     try {
