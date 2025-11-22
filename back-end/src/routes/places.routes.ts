@@ -13,5 +13,4 @@ router.post(
   PlacesController.cityAutocomplete
 );
 
-
 export const placesRoutes = router;

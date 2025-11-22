@@ -43,8 +43,8 @@ export const parseDate = (
     format && typeof date === "string"
       ? parse(date, format, new Date())
       : typeof date === "number"
-      ? fromUnixTime(date)
-      : parseISO(date);
+        ? fromUnixTime(date)
+        : parseISO(date);
 
   if (isValid(_parsedDate) && getYear(_parsedDate) > 1) {
     return _parsedDate;

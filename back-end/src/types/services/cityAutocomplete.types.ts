@@ -27,5 +27,4 @@ export type CityAutocompleteResponse = {
   query: string;
 };
 
-
 export type ICityAutoCompletePayload = z.infer<typeof cityAutocompleteSchema>;

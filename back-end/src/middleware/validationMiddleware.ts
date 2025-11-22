@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { z, ZodError, ZodSchema } from "zod";
+import { ZodError, ZodSchema } from "zod";
 import { StatusCodes } from "http-status-codes";
 
 type ValidationTarget = "body" | "query" | "params";
