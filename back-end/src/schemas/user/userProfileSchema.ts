@@ -4,25 +4,36 @@ import { isoDateSchema } from "../isoDateSchema";
 const greekPhoneNumber = new RegExp(/^(?:[0-9]{10})$/);
 
 export const updateProfileSchema = z.object({
-  firstName: z.string().trim().min(1, {
-      error: "required"
-}).optional(),
+  firstName: z
+    .string()
+    .trim()
+    .min(1, {
+      error: "required",
+    })
+    .optional(),
 
-  lastName: z.string().trim().min(1, {
-      error: "required"
-}).optional(),
+  lastName: z
+    .string()
+    .trim()
+    .min(1, {
+      error: "required",
+    })
+    .optional(),
 
   dateOfBirth: isoDateSchema.optional(),
 
-  email: z.email({
-        error: "emailError"
-  }).trim().optional(),
+  email: z
+    .email({
+      error: "emailError",
+    })
+    .trim()
+    .optional(),
 
   phoneNumber: z
     .string()
     .trim()
     .regex(greekPhoneNumber, {
-        error: "Invalid format"
+      error: "Invalid format",
     })
     .optional(),
 

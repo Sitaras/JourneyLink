@@ -57,7 +57,7 @@ export class UserController {
   }
 
   static async updateProfile(
-    req: AuthRequest<{}, {}, UpdateProfilePayload>,
+    req: AuthRequest<unknown, unknown, UpdateProfilePayload>,
     res: Response
   ) {
     try {
@@ -84,7 +84,7 @@ export class UserController {
   }
 
   static async getRides(
-    req: AuthRequest<{}, {}, {}, IGetUserRidesQueryPayload>,
+    req: AuthRequest<unknown, unknown, unknown, IGetUserRidesQueryPayload>,
     res: Response
   ) {
     try {
@@ -295,7 +295,7 @@ export class UserController {
         };
       } else {
         // For passengers, exclude the passengers field
-        const { passengers, ...rideWithoutPassengers } = rideBase;
+        const { passengers: _, ...rideWithoutPassengers } = rideBase;
         responseData = { ride: rideWithoutPassengers };
       }
 

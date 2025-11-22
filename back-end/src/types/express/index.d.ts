@@ -1,5 +1,4 @@
-import * as Express from "express";
-import { CustomSuccessResponse } from "../successResponse.types";
+import * as _Express from "express";
 
 declare global {
   namespace Express {

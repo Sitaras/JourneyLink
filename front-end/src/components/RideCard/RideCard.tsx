@@ -46,8 +46,8 @@ const RideCard = ({
         isCompleted
           ? "border-l-green-500/50 hover:border-l-green-500"
           : isCancelled
-          ? "border-l-red-500/50 hover:border-l-red-500"
-          : "border-l-primary/20 hover:border-l-primary",
+            ? "border-l-red-500/50 hover:border-l-red-500"
+            : "border-l-primary/20 hover:border-l-primary",
         className
       )}
     >

@@ -4,7 +4,7 @@ import { ICityAutoCompletePayload } from "../types/services/cityAutocomplete.typ
 
 export class PlacesController {
   static async cityAutocomplete(
-    req: Request<{}, {}, ICityAutoCompletePayload>,
+    req: Request<unknown, unknown, ICityAutoCompletePayload>,
     res: Response
   ) {
     const { query, maxResults, language } = req.body;

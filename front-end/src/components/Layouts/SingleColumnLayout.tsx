@@ -1,4 +1,4 @@
-import styles from './SingleColumnLayout.module.scss';
+import styles from "./SingleColumnLayout.module.scss";
 
 const SingleColumnLayout = ({
   children,

@@ -10,7 +10,7 @@ import { BookingStatus } from "../types/booking.types";
 
 export class BookingController {
   static async createBooking(
-    req: AuthRequest<{}, {}, ICreateBookingPayload>,
+    req: AuthRequest<unknown, unknown, ICreateBookingPayload>,
     res: Response
   ) {
     try {

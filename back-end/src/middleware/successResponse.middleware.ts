@@ -4,7 +4,6 @@ import {
   CustomSuccessResponse,
 } from "../types/successResponse.types";
 
-
 export const successResponse = <T>(
   req: Request,
   res: Response,

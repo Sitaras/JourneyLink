@@ -49,7 +49,7 @@ export default function CreateRide() {
         description: "Your ride is now available for passengers to book.",
       });
     },
-    onError: (err: Error) => {
+    onError: () => {
       toast.error("Failed to create ride");
     },
   });

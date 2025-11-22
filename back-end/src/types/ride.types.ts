@@ -27,7 +27,7 @@ export interface IRide extends Document {
       user: Types.ObjectId;
       seatsBooked: number;
       status: BookingStatus;
-    }
+    },
   ];
   vehicleInfo: {
     make: string;

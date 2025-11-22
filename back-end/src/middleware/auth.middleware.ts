@@ -9,7 +9,7 @@ export interface AuthRequest<
   ResBody = any,
   ReqBody = any,
   ReqQuery = core.Query,
-  Locals extends Record<string, any> = Record<string, any>
+  Locals extends Record<string, any> = Record<string, any>,
 > extends Request<P, ResBody, ReqBody, ReqQuery, Locals> {
   user?: ITokenPayload;
 }

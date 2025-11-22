@@ -21,7 +21,7 @@ import { Label } from "./label";
 
 interface DatePickerProps<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > {
   control: Control<TFieldValues>;
   name: TName;
@@ -48,7 +48,7 @@ interface DatePickerProps<
 
 export function DatePicker<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >({
   control,
   name,

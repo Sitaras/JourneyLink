@@ -16,5 +16,5 @@ export const config = {
       expiry: process.env.REFRESH_TOKEN_EXPIRY || "7d",
     },
   },
-  placeKitApiKey: process.env.PLACE_KIT_KEY || '',
+  placeKitApiKey: process.env.PLACE_KIT_KEY || "",
 };
