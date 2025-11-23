@@ -2,13 +2,12 @@ import { Request, Response } from "express";
 import { User } from "../models/user.model";
 import { Profile } from "../models/profile.model";
 import * as tokenUtils from "../utils/token.utils";
-import {
-  IUserRegistration,
-  IUserLogin,
-  IRefreshTokenPayload,
-} from "../types/user.types";
+import { IUserRegistration, IUserLogin } from "../types/user.types";
 import { verifyRefreshToken } from "../utils/token.utils";
 import { Types } from "mongoose";
+import { AuthRequest } from "../middleware/auth.middleware";
+import { StatusCodes } from "http-status-codes";
+import { IRefreshTokenPayload } from "../schemas/auth/refreshTokenSchema";
 
 export class AuthController {
   static async register(
@@ -60,7 +59,7 @@ export class AuthController {
 
       res.success(req.body, "User registered successfully");
     } catch (error) {
-      res.error("An error occurred", 500);
+      res.error("An error occurred", StatusCodes.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -106,7 +105,7 @@ export class AuthController {
         "Successfully logged in"
       );
     } catch (error) {
-      res.error("An error occurred", 500);
+      res.error("An error occurred", StatusCodes.INTERNAL_SERVER_ERROR);
     }
   }
 
@@ -122,7 +121,7 @@ export class AuthController {
       });
 
       if (!user) {
-        res.error("Unauthorized", 401);
+        res.error("Unauthorized", StatusCodes.UNAUTHORIZED);
         return;
       }
 
@@ -133,8 +132,7 @@ export class AuthController {
           typeof decoded === "string" ||
           (user._id as string).toString() !== decoded.userId
         ) {
-          res.error("Unauthorized", 401);
-          return;
+          return res.error("Unauthorized", StatusCodes.UNAUTHORIZED);
         }
 
         user.refreshTokens = user.refreshTokens.filter((token) => {
@@ -168,26 +166,28 @@ export class AuthController {
           "Tokens refreshed successfully"
         );
       } catch (error) {
-        res.error("Unauthorized", 401);
-        return;
+        return res.error("Unauthorized", StatusCodes.UNAUTHORIZED);
       }
     } catch (error) {
-      res.error("An error occurred", 500);
+      res.error("An error occurred", StatusCodes.INTERNAL_SERVER_ERROR);
     }
   }
 
-  static async logout(req: Request, res: Response): Promise<void> {
+  static async logout(
+    req: AuthRequest<unknown, unknown, IRefreshTokenPayload>,
+    res: Response
+  ) {
     try {
       const { refreshToken } = req.body;
-
-      if (!refreshToken) {
-        res.error("Refresh token is required", 400);
-        return;
-      }
 
       const user = await User.findOne({
         "refreshTokens.token": refreshToken,
       });
+
+      if (!user) {
+        res.error("Unauthorized", StatusCodes.UNAUTHORIZED);
+        return;
+      }
 
       if (user) {
         user.refreshTokens = user.refreshTokens.filter(
@@ -196,34 +196,42 @@ export class AuthController {
         await user.save();
       }
 
-      res.success(null, "Logged out successfully");
+      return res.success(
+        null,
+        "Logged out successfully",
+        StatusCodes.RESET_CONTENT
+      );
     } catch (error) {
-      console.error("Logout error:", error);
-      res.error("An error occurred during logout", 500);
+      return res.error(
+        "An error occurred during logout",
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
     }
   }
 
   // Logout from all devices
-  static async logoutAll(req: Request, res: Response): Promise<void> {
+  static async logoutAll(req: AuthRequest, res: Response): Promise<void> {
     try {
-      const userId = (req as any).user?.userId;
-
-      if (!userId) {
-        res.error("Unauthorized", 401);
-        return;
-      }
+      const userId = req.user?.userId;
 
       const user = await User.findById(userId);
+
+      if (!user) {
+        res.error("Unauthorized", StatusCodes.UNAUTHORIZED);
+        return;
+      }
 
       if (user) {
         user.refreshTokens = [];
         await user.save();
       }
 
-      res.success(null, "Logged out from all devices successfully");
+      res.success(null, "Logged out successfully", StatusCodes.RESET_CONTENT);
     } catch (error) {
-      console.error("Logout all error:", error);
-      res.error("An error occurred during logout", 500);
+      res.error(
+        "An error occurred during logout",
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
     }
   }
 }

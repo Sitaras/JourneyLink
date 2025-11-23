@@ -1,5 +1,5 @@
 "use server";
-import { api, refreshTokenService } from "./api";
+import { api, refreshTokenService, getAuthApi } from "./api";
 import { formatToUTC } from "@/utils/dateUtils";
 import { authStorage } from "../lib/authStorage";
 import { registerSchema } from "@/schemas/auth/registerSchema";
@@ -15,14 +15,14 @@ export const login = async (body: LoginFormValues) => {
       .url("auth/login")
       .post(body)
       .json((json) => json?.data);
-    
+
     await authStorage.setToken({
       token: response?.tokens?.accessToken,
     });
     await authStorage.setRefreshToken({
       refreshToken: response?.tokens?.refreshToken,
     });
-    
+
     revalidatePath("/", "layout");
     return response;
   } catch (error: any) {
@@ -50,49 +50,35 @@ export const register = async (body: RegisterFormValues) => {
 
 export const logout = async () => {
   try {
-
     const refreshToken = await authStorage.getRefreshToken();
-    
-    if (refreshToken) {
 
-      await api
-        .url("auth/logout")
-        .post({ refreshToken })
-        .res();
-    }
-    
-    await authStorage.clearAuthTokens();
-    revalidatePath("/", "layout");
-    
-    return { success: true };
+    await (await getAuthApi()).url("auth/logout").post({ refreshToken }).res();
   } catch (error: any) {
-    console.error("Logout error:", error);
-    
+    throw error;
+  } finally {
     await authStorage.clearAuthTokens();
     revalidatePath("/", "layout");
-    
-    throw new Error(error?.message || "Logout failed");
   }
 };
 
 export const refreshTokens = async () => {
   const refreshToken = await authStorage.getRefreshToken();
   if (!refreshToken) throw new Error("no_refresh_token");
-  
+
   const res = await refreshTokenService(refreshToken);
   const { accessToken: newToken, refreshToken: newRefreshToken } = res || {};
-  
+
   if (!newRefreshToken || !newToken) {
     await authStorage.clearAuthTokens();
     throw new Error("refresh_failed");
   }
-  
+
   await authStorage.setToken({
     token: newToken,
   });
   await authStorage.setRefreshToken({
     refreshToken: newRefreshToken,
   });
-  
+
   return newToken;
 };

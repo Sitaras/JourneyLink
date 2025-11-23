@@ -13,17 +13,33 @@ import {
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { routes } from "@/configs/routes";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
+import { logout } from "@/api-actions/auth"; // Import the server action
+import { useRouter } from "next/navigation";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function UserMenu() {
-  const { user, logout } = useAuth();
-  
+  const { user } = useAuth();
+  const router = useRouter();
+
+  const queryClient = useQueryClient();
+
   const initials = `${user?.profile?.firstName?.[0] ?? ""}${
     user?.profile?.lastName?.[0] ?? ""
   }`.toUpperCase();
 
-  const handleLogout = async () => {
-    await logout();
+  const onLogoutFinally = () => {
+    router.refresh();
+    toast.success("Logged-out successfully!");
+    queryClient.clear();
   };
+
+  const logoutAction = useMutation({
+    mutationFn: logout,
+    onSuccess: onLogoutFinally,
+    onError: onLogoutFinally,
+  });
 
   return (
     <DropdownMenu>
@@ -46,7 +62,10 @@ export default function UserMenu() {
           </DropdownMenuItem>
         </Link>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer" onClick={handleLogout}>
+        <DropdownMenuItem
+          className="cursor-pointer"
+          onClick={() => logoutAction.mutate()}
+        >
           <LogOut className="mr-2 h-4 w-4" />
           Log out
         </DropdownMenuItem>
