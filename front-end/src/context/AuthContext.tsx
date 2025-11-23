@@ -1,5 +1,4 @@
 "use client";
-
 import { createContext, useContext, useMemo } from "react";
 import { IUser } from "@/types/user.types";
 import { useQuery } from "@tanstack/react-query";
