@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { limiter } from "../middleware/limiter.middleware";
 import { validateData } from "../middleware/validationMiddleware";
 import { cityAutocompleteSchema } from "../schemas/services/cityAutocompleteSchema";
 import { PlacesController } from "../controllers/places.controller";
@@ -12,6 +11,5 @@ router.post(
   // limiter,
   PlacesController.cityAutocomplete
 );
-
 
 export const placesRoutes = router;

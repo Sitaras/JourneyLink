@@ -5,58 +5,59 @@ const greekPhoneNumber = new RegExp(/^(?:[0-9]{10})$/);
 const passwordSchema = z
   .string()
   .min(1, {
-      error: "required"
-})
+    error: "required",
+  })
   .min(8, {
-      error: "minLengthErrorMessage"
-})
+    error: "minLengthErrorMessage",
+  })
   .max(20, {
-      error: "maxLengthErrorMessage"
-})
+    error: "maxLengthErrorMessage",
+  })
   .refine((password) => /[A-Z]/.test(password), {
-      error: "uppercaseErrorMessage"
-})
+    error: "uppercaseErrorMessage",
+  })
   .refine((password) => /[a-z]/.test(password), {
-      error: "lowercaseErrorMessage"
-})
+    error: "lowercaseErrorMessage",
+  })
   .refine((password) => /[0-9]/.test(password), {
-      error: "numberErrorMessage"
-})
+    error: "numberErrorMessage",
+  })
   .refine((password) => /[!@#$%^&*]/.test(password), {
-      error: "specialCharacterErrorMessage"
-});
+    error: "specialCharacterErrorMessage",
+  });
 
 export const registerSchema = z
   .object({
-    email: z.email({
-                error: "emailError"
-          })
-            .min(1, {
-                error: "required"
-          }),
+    email: z
+      .email({
+        error: "emailError",
+      })
+      .min(1, {
+        error: "required",
+      }),
     firstName: z.string().min(1, {
-        error: "required"
+      error: "required",
     }),
     lastName: z.string().min(1, {
-        error: "required"
+      error: "required",
     }),
     phoneNumber: z
       .string()
       .min(1, {
-          error: "required"
-    })
+        error: "required",
+      })
       .regex(greekPhoneNumber, {
-          error: "phoneNumberError"
-    }),
+        error: "phoneNumberError",
+      }),
     dateOfBirth: z.string().min(1, {
-        error: "required"
+      error: "required",
     }),
     password: passwordSchema,
     verifyPassword: z.string().min(1, {
-        error: "required"
+      error: "required",
     }),
   })
   .refine((data) => data.password === data.verifyPassword, {
     path: ["verifyPassword"],
-      error: "passwordMatch"
-});
+    error: "passwordMatch",
+  });

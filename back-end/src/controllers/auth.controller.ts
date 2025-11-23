@@ -2,18 +2,16 @@ import { Request, Response } from "express";
 import { User } from "../models/user.model";
 import { Profile } from "../models/profile.model";
 import * as tokenUtils from "../utils/token.utils";
-import {
-  IUserRegistration,
-  IUserLogin,
-  IRefreshTokenPayload,
-} from "../types/user.types";
+import { IUserRegistration, IUserLogin } from "../types/user.types";
 import { verifyRefreshToken } from "../utils/token.utils";
-import { AuthRequest } from "@/middleware/auth.middleware";
+import { Types } from "mongoose";
+import { AuthRequest } from "../middleware/auth.middleware";
 import { StatusCodes } from "http-status-codes";
+import { IRefreshTokenPayload } from "../schemas/auth/refreshTokenSchema";
 
 export class AuthController {
   static async register(
-    req: Request<{}, {}, IUserRegistration>,
+    req: Request<unknown, unknown, IUserRegistration>,
     res: Response
   ) {
     try {
@@ -55,18 +53,20 @@ export class AuthController {
         phoneNumber,
       });
 
-      user.profile = profile._id as any;
+      user.profile = profile._id as Types.ObjectId;
 
       await Promise.all([user.save(), profile.save()]);
 
       res.success(req.body, "User registered successfully");
     } catch (error) {
-      console.error("Registration error:", error);
-      res.error("An error occurred", 500);
+      res.error("An error occurred", StatusCodes.INTERNAL_SERVER_ERROR);
     }
   }
 
-  static async login(req: Request<{}, {}, IUserLogin>, res: Response) {
+  static async login(
+    req: Request<unknown, unknown, IUserLogin>,
+    res: Response
+  ) {
     try {
       const { email, password } = req.body;
 
@@ -105,12 +105,12 @@ export class AuthController {
         "Successfully logged in"
       );
     } catch (error) {
-      res.error("An error occurred", 500);
+      res.error("An error occurred", StatusCodes.INTERNAL_SERVER_ERROR);
     }
   }
 
   static async refreshToken(
-    req: Request<{}, {}, IRefreshTokenPayload>,
+    req: Request<unknown, unknown, IRefreshTokenPayload>,
     res: Response
   ) {
     try {
@@ -121,7 +121,7 @@ export class AuthController {
       });
 
       if (!user) {
-        res.error("Unauthorized", 401);
+        res.error("Unauthorized", StatusCodes.UNAUTHORIZED);
         return;
       }
 
@@ -132,8 +132,7 @@ export class AuthController {
           typeof decoded === "string" ||
           (user._id as string).toString() !== decoded.userId
         ) {
-          res.error("Unauthorized", 401);
-          return;
+          return res.error("Unauthorized", StatusCodes.UNAUTHORIZED);
         }
 
         user.refreshTokens = user.refreshTokens.filter((token) => {
@@ -167,39 +166,72 @@ export class AuthController {
           "Tokens refreshed successfully"
         );
       } catch (error) {
-        res.error("Unauthorized", 401);
-        return;
+        return res.error("Unauthorized", StatusCodes.UNAUTHORIZED);
       }
     } catch (error) {
-      res.error("An error occurred", 500);
+      res.error("An error occurred", StatusCodes.INTERNAL_SERVER_ERROR);
     }
   }
 
-  static async logout(req: AuthRequest, res: Response): Promise<void> {
+  static async logout(
+    req: AuthRequest<unknown, unknown, IRefreshTokenPayload>,
+    res: Response
+  ) {
     try {
-      const userId = req.user?.userId;
-      const authHeader = req.headers["authorization"];
-      const token = authHeader?.split(" ")[1];
+      const { refreshToken } = req.body;
 
-      if (!token || !userId) {
-        res.error("Unauthorized", 401);
+      const user = await User.findOne({
+        "refreshTokens.token": refreshToken,
+      });
+
+      if (!user) {
+        res.error("Unauthorized", StatusCodes.UNAUTHORIZED);
         return;
       }
+
+      if (user) {
+        user.refreshTokens = user.refreshTokens.filter(
+          (token) => token.token !== refreshToken
+        );
+        await user.save();
+      }
+
+      return res.success(
+        null,
+        "Logged out successfully",
+        StatusCodes.RESET_CONTENT
+      );
+    } catch (error) {
+      return res.error(
+        "An error occurred during logout",
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
+    }
+  }
+
+  // Logout from all devices
+  static async logoutAll(req: AuthRequest, res: Response): Promise<void> {
+    try {
+      const userId = req.user?.userId;
 
       const user = await User.findById(userId);
 
       if (!user) {
-        res.error("User not found", StatusCodes.NOT_FOUND);
+        res.error("Unauthorized", StatusCodes.UNAUTHORIZED);
         return;
       }
-      
-      user.refreshTokens = [];
-      await user.save();
 
-      res.success({ message: "Logged out successfully" }, "Logout successful");
+      if (user) {
+        user.refreshTokens = [];
+        await user.save();
+      }
+
+      res.success(null, "Logged out successfully", StatusCodes.RESET_CONTENT);
     } catch (error) {
-      console.error("Logout error:", error);
-      res.error("An error occurred", StatusCodes.INTERNAL_SERVER_ERROR);
+      res.error(
+        "An error occurred during logout",
+        StatusCodes.INTERNAL_SERVER_ERROR
+      );
     }
   }
 }

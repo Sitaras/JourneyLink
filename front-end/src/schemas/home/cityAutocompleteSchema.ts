@@ -2,7 +2,8 @@ import { z } from "zod";
 
 export const cityAutocompleteSchema = z.object({
   query: z.string().min(1, "Query cannot be empty").max(200, "Query too long"),
-  maxResults: z.int()
+  maxResults: z
+    .int()
     .min(1)
     .max(10, "Maximum 10 results allowed")
     .prefault(5)

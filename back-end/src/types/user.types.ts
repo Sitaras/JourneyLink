@@ -46,7 +46,3 @@ export interface ITokenPayload {
   userId: string;
   roles: UserRole[];
 }
-
-export interface IRefreshTokenPayload {
-  refreshToken: string;
-}

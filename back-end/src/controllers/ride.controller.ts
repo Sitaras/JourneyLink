@@ -1,5 +1,5 @@
 import { AuthRequest } from "../middleware/auth.middleware";
-import { IRideDocument, Ride } from "../models/ride.model";
+import { Ride } from "../models/ride.model";
 import {
   ICreateRidePayload,
   IDeleteRidePayload,
@@ -140,7 +140,7 @@ export class RideController {
   //   );
   // }
 
-  private static buildMatchStage(query: IGetRideQueryPayload): any {
+  private static buildMatchStage(query: IGetRideQueryPayload) {
     const { departureDate, maxPrice, smokingAllowed, petsAllowed } = query;
 
     const matchStage: any = {
@@ -196,7 +196,7 @@ export class RideController {
   }
 
   static getRide = async (
-    req: Request<{}, {}, {}, IGetRideQueryPayload>,
+    req: Request<unknown, unknown, unknown, IGetRideQueryPayload>,
     res: Response
   ) => {
     try {
@@ -323,7 +323,7 @@ export class RideController {
   };
 
   static createRide = async (
-    req: AuthRequest<{}, {}, ICreateRidePayload>,
+    req: AuthRequest<unknown, unknown, ICreateRidePayload>,
     res: Response
   ) => {
     try {
@@ -394,7 +394,8 @@ export class RideController {
         return res.error("Ride not Found!", StatusCodes.INTERNAL_SERVER_ERROR);
       }
 
-      const { canBook, reason: cannotBookReason } = ride.getBookingStatus(userId);
+      const { canBook, reason: cannotBookReason } =
+        ride.getBookingStatus(userId);
 
       const isDriver = ride.driver.toString() === userId?.toString();
       const isPassenger = ride.passengers?.some(
@@ -403,7 +404,11 @@ export class RideController {
 
       this.applyVisibilityRules(ride, isDriver, isPassenger);
 
-      return res.success({ ride, canBook, cannotBookReason }, "", StatusCodes.OK);
+      return res.success(
+        { ride, canBook, cannotBookReason },
+        "",
+        StatusCodes.OK
+      );
     } catch (error) {
       console.error("Error fetching ride:", error);
       return res.error("An error occurred", StatusCodes.INTERNAL_SERVER_ERROR);
