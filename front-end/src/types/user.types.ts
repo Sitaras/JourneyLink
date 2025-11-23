@@ -1,4 +1,9 @@
-export enum UserRoleEnum {
+export enum UserRideRole {
+  AS_PASSENGER = "asPassenger",
+  AS_DRIVER = "asDriver",
+}
+
+export enum UserRole {
   PASSENGER = "passenger",
   DRIVER = "driver",
 }
@@ -10,7 +15,7 @@ export interface IRefreshToken {
 
 export interface ITokenPayload {
   userId: string;
-  roles: UserRoleEnum[];
+  roles: UserRole[];
 }
 
 export interface IRefreshResponse {
@@ -19,6 +24,6 @@ export interface IRefreshResponse {
 }
 
 export interface IUser {
-  role: UserRoleEnum;
+  role: UserRole;
   profile?: any;
 }

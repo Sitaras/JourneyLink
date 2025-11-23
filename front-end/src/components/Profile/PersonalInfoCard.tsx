@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Pencil,} from "lucide-react";
+import { Pencil } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -17,7 +17,7 @@ import Typography from "@/components/ui/typography";
 import { formatDate } from "@/utils/dateUtils";
 import { DateFormats } from "@/utils/dateFormats";
 import { UseFormRegister } from "react-hook-form";
-import { UpdateProfilePayload } from "@/schemas/profileSchema";
+import { UpdateProfilePayload } from "@/schemas/user/profileSchema";
 import EditFormActions from "./EditFormActions";
 import InfoField from "./InfoField";
 

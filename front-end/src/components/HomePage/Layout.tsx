@@ -46,17 +46,17 @@ export default async function Layout({
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
               <Typography variant="h2" className="text-2xl font-bold">
-                Available Routes
+                Available Rides
               </Typography>
               {hasResults && (
                 <Typography className="text-sm text-muted-foreground mt-1">
-                  Showing {limit} route(s) • Page {page} of {totalPages}
+                  Showing {limit} ride(s) • Page {page} of {totalPages}
                 </Typography>
               )}
             </div>
           </div>
 
-          {/* Routes List */}
+          {/* Rides List */}
           {searchResults}
 
           {/* Pagination */}

@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import jwt from "jsonwebtoken";
-import { ITokenPayload, UserRoleEnum } from "../types/user.types";
+import { ITokenPayload, UserRole } from "../types/user.types";
 import { config } from "../config/config";
 import * as core from "express-serve-static-core";
 
@@ -9,7 +9,7 @@ export interface AuthRequest<
   ResBody = any,
   ReqBody = any,
   ReqQuery = core.Query,
-  Locals extends Record<string, any> = Record<string, any>
+  Locals extends Record<string, any> = Record<string, any>,
 > extends Request<P, ResBody, ReqBody, ReqQuery, Locals> {
   user?: ITokenPayload;
 }
@@ -18,7 +18,7 @@ export const authenticateToken = async (
   req: AuthRequest,
   res: Response,
   next: NextFunction
-): Promise<void> => {
+) => {
   try {
     const authHeader = req.headers["authorization"];
     const token = authHeader?.split(" ")[1];
@@ -45,7 +45,7 @@ export const isDriver = (
   res: Response,
   next: NextFunction
 ): void => {
-  if (!req.user?.roles.includes(UserRoleEnum.DRIVER)) {
+  if (!req.user?.roles.includes(UserRole.DRIVER)) {
     res.status(403).json({
       status: "error",
       message: "Driver access required",

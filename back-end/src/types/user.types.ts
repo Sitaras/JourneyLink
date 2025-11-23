@@ -1,8 +1,13 @@
 import { Types } from "mongoose";
 
-export enum UserRoleEnum {
+export enum UserRole {
   PASSENGER = "passenger",
   DRIVER = "driver",
+}
+
+export enum UserRideRole {
+  AS_PASSENGER = "asPassenger",
+  AS_DRIVER = "asDriver",
 }
 
 export interface IRefreshToken {
@@ -14,7 +19,7 @@ export interface IUser {
   email: string;
   password: string;
   phoneNumber: string;
-  roles: UserRoleEnum[];
+  roles: UserRole[];
   isPhoneVerified: boolean;
   isEmailVerified: boolean;
   refreshTokens: IRefreshToken[];
@@ -39,9 +44,5 @@ export interface IUserLogin {
 
 export interface ITokenPayload {
   userId: string;
-  roles: UserRoleEnum[];
-}
-
-export interface IRefreshTokenPayload {
-  refreshToken: string;
+  roles: UserRole[];
 }

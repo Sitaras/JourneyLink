@@ -31,7 +31,7 @@ export interface AutocompleteOption {
 
 export interface CustomAutocompleteProps<
   TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > {
   control: Control<any>;
   name: TName;
@@ -52,7 +52,7 @@ export interface CustomAutocompleteProps<
 
 export const CustomAutocomplete = <
   TFieldValues extends FieldValues = FieldValues,
-  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>
+  TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 >({
   control,
   name,

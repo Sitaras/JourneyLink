@@ -4,7 +4,7 @@ export const uploadAvatarSchema = z.object({
   avatar: z
     .instanceof(File)
     .refine((file) => file.size <= 2 * 1024 * 1024, {
-      message: "File size must be less than 2MB",
+      error: "File size must be less than 2MB",
     })
     .refine(
       (file) =>
@@ -12,7 +12,7 @@ export const uploadAvatarSchema = z.object({
           file.type
         ),
       {
-        message: "Only JPEG, PNG, and WebP images are allowed",
+        error: "Only JPEG, PNG, and WebP images are allowed",
       }
     ),
 });

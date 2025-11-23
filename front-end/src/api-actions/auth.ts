@@ -1,8 +1,7 @@
 "use server";
-
-import { api, refreshTokenService } from "./api";
+import { api, refreshTokenService, getAuthApi } from "./api";
 import { formatToUTC } from "@/utils/dateUtils";
-import { authStorage } from "./authStorage";
+import { authStorage } from "../lib/authStorage";
 import { registerSchema } from "@/schemas/auth/registerSchema";
 import z from "zod";
 import { loginSchema } from "@/schemas/auth/loginSchema";
@@ -25,7 +24,6 @@ export const login = async (body: LoginFormValues) => {
     });
 
     revalidatePath("/", "layout");
-
     return response;
   } catch (error: any) {
     throw new Error(error?.message || "Login failed");
@@ -36,7 +34,6 @@ type RegisterFormValues = z.infer<typeof registerSchema>;
 
 export const register = async (body: RegisterFormValues) => {
   const dateOfBirthDateISOstring = formatToUTC(body.dateOfBirth);
-
   try {
     const response = await api
       .url("auth/register")
@@ -45,7 +42,6 @@ export const register = async (body: RegisterFormValues) => {
         dateOfBirth: dateOfBirthDateISOstring,
       })
       .json((json) => json?.data);
-
     return response;
   } catch (error: any) {
     throw new Error(error?.message || "Registration failed");
@@ -54,17 +50,14 @@ export const register = async (body: RegisterFormValues) => {
 
 export const logout = async () => {
   try {
-    const response = await fetch("https://your-backend.com/api/signout", {
-      method: "POST",
-      credentials: "include", // Ensure cookies or tokens are included
-    });
+    const refreshToken = await authStorage.getRefreshToken();
 
-    if (!response.ok) {
-      throw new Error("Failed to sign out");
-    }
-  } catch (error) {
-    console.error("Sign-out error:", error);
+    await (await getAuthApi()).url("auth/logout").post({ refreshToken }).res();
+  } catch (error: any) {
     throw error;
+  } finally {
+    await authStorage.clearAuthTokens();
+    revalidatePath("/", "layout");
   }
 };
 
@@ -83,7 +76,6 @@ export const refreshTokens = async () => {
   await authStorage.setToken({
     token: newToken,
   });
-
   await authStorage.setRefreshToken({
     refreshToken: newRefreshToken,
   });

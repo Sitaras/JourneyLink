@@ -4,41 +4,60 @@ const greekPhoneNumber = new RegExp(/^(?:[0-9]{10})$/);
 
 const passwordSchema = z
   .string()
-  .min(1, { message: "required" })
-  .min(8, { message: "minLengthErrorMessage" })
-  .max(20, { message: "maxLengthErrorMessage" })
+  .min(1, {
+    error: "required",
+  })
+  .min(8, {
+    error: "minLengthErrorMessage",
+  })
+  .max(20, {
+    error: "maxLengthErrorMessage",
+  })
   .refine((password) => /[A-Z]/.test(password), {
-    message: "uppercaseErrorMessage",
+    error: "uppercaseErrorMessage",
   })
   .refine((password) => /[a-z]/.test(password), {
-    message: "lowercaseErrorMessage",
+    error: "lowercaseErrorMessage",
   })
   .refine((password) => /[0-9]/.test(password), {
-    message: "numberErrorMessage",
+    error: "numberErrorMessage",
   })
   .refine((password) => /[!@#$%^&*]/.test(password), {
-    message: "specialCharacterErrorMessage",
+    error: "specialCharacterErrorMessage",
   });
 
 export const registerSchema = z
   .object({
     email: z
-      .string()
-      .min(1, { message: "required" })
-      .email({ message: "emailError" }),
-    firstName: z.string().min(1, { message: "required" }),
-    lastName: z.string().min(1, { message: "required" }),
+      .email({
+        error: "emailError",
+      })
+      .min(1, {
+        error: "required",
+      }),
+    firstName: z.string().min(1, {
+      error: "required",
+    }),
+    lastName: z.string().min(1, {
+      error: "required",
+    }),
     phoneNumber: z
       .string()
-      .min(1, { message: "required" })
+      .min(1, {
+        error: "required",
+      })
       .regex(greekPhoneNumber, {
-        message: "phoneNumberError",
+        error: "phoneNumberError",
       }),
-    dateOfBirth: z.string().min(1, { message: "required" }),
+    dateOfBirth: z.string().min(1, {
+      error: "required",
+    }),
     password: passwordSchema,
-    verifyPassword: z.string().min(1, { message: "required" }),
+    verifyPassword: z.string().min(1, {
+      error: "required",
+    }),
   })
   .refine((data) => data.password === data.verifyPassword, {
-    message: "passwordMatch",
     path: ["verifyPassword"],
+    error: "passwordMatch",
   });

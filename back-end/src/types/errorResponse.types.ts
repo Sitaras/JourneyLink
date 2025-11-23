@@ -5,6 +5,6 @@ export interface IErrorResponse {
   stack?: string;
 }
 
-export interface CustomErrorResponse  {
+export interface CustomErrorResponse {
   error: (message: string, statusCode?: number, error?: any) => void;
 }

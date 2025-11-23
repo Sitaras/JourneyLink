@@ -5,33 +5,51 @@ const greekPhoneNumber = new RegExp(/^(?:[0-9]{10})$/);
 
 const passwordSchema = z
   .string()
-  .min(1, { message: "required" })
-  .min(8, { message: "Min length 8 characters" })
-  .max(20, { message: "Max length 20 characters" })
+  .min(1, {
+    error: "required",
+  })
+  .min(8, {
+    error: "Min length 8 characters",
+  })
+  .max(20, {
+    error: "Max length 20 characters",
+  })
   .refine((password) => /[A-Z]/.test(password), {
-    message: "Uppercase letter required",
+    error: "Uppercase letter required",
   })
   .refine((password) => /[a-z]/.test(password), {
-    message: "Lowercase letter required",
+    error: "Lowercase letter required",
   })
   .refine((password) => /[0-9]/.test(password), {
-    message: "Number required",
+    error: "Number required",
   })
   .refine((password) => /[!@#$%^&*]/.test(password), {
-    message: "Special character required",
+    error: "Special character required",
   });
 
 export const registerSchema = z.object({
-  email: z.string().trim().email({ message: "emailError" }),
-  firstName: z.string().min(1, { message: "required" }),
-  lastName: z.string().min(1, { message: "required" }),
+  email: z
+    .email({
+      error: "emailError",
+    })
+    .trim(),
+  firstName: z.string().min(1, {
+    error: "required",
+  }),
+  lastName: z.string().min(1, {
+    error: "required",
+  }),
   phoneNumber: z
     .string()
-    .min(1, { message: "required" })
+    .min(1, {
+      error: "required",
+    })
     .regex(greekPhoneNumber, {
-      message: "Invalid format",
+      error: "Invalid format",
     }),
   dateOfBirth: isoDateSchema,
   password: passwordSchema,
-  verifyPassword: z.string().min(1, { message: "required" }),
+  verifyPassword: z.string().min(1, {
+    error: "required",
+  }),
 });

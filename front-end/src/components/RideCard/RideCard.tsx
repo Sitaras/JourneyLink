@@ -13,12 +13,14 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Calendar, MapPin, Star, User, Users } from "lucide-react";
 import Link from "next/link";
-import type { Ride } from "@/types/ride.types";
-import { getStatusVariant, getStatusLabel } from "@/utils/myRidesUtils";
+import { getRideStatusVariant, getRideStatusLabel } from "@/utils/myRidesUtils";
+import { UserRideRole } from "@/types/user.types";
+import { RideStatus, UserRide } from "@/types/rides.types";
+import { dateTimeFormatter } from "@/utils/formatters";
 
 interface RideCardProps {
-  ride: Ride;
-  viewType: "passenger" | "driver";
+  ride: UserRide;
+  viewType: UserRideRole;
   buttonLabel?: string;
   className?: string;
 }
@@ -29,14 +31,13 @@ const RideCard = ({
   buttonLabel = "View details",
   className,
 }: RideCardProps) => {
-  const cardDateFormatter = new Intl.DateTimeFormat("en-GB", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  });
+  const statusVariant = getRideStatusVariant(ride.status);
+  const statusLabel = getRideStatusLabel(ride.status);
 
-  const statusVariant = getStatusVariant(ride.status);
-  const isCompleted = ride.status === "completed";
-  const isCancelled = ride.status === "cancelled" || ride.status === "rejected";
+  const isCompleted = ride.status === RideStatus.COMPLETED;
+  const isCancelled = ride.status === RideStatus.CANCELLED;
+
+  const departureDate = new Date(ride.departureTime);
 
   return (
     <Card
@@ -45,8 +46,8 @@ const RideCard = ({
         isCompleted
           ? "border-l-green-500/50 hover:border-l-green-500"
           : isCancelled
-          ? "border-l-red-500/50 hover:border-l-red-500"
-          : "border-l-primary/20 hover:border-l-primary",
+            ? "border-l-red-500/50 hover:border-l-red-500"
+            : "border-l-primary/20 hover:border-l-primary",
         className
       )}
     >
@@ -57,13 +58,15 @@ const RideCard = ({
               <MapPin className="w-4 h-4 text-primary" />
             </div>
             <span className="flex items-center gap-2 flex-wrap">
-              <Typography className="font-bold">{ride.origin}</Typography>
+              <Typography className="font-bold">{ride.origin.city}</Typography>
               <ArrowRight className="w-4 h-4 text-muted-foreground flex-shrink-0" />
-              <Typography className="font-bold">{ride.destination}</Typography>
+              <Typography className="font-bold">
+                {ride.destination.city}
+              </Typography>
             </span>
           </CardTitle>
           <Badge variant={statusVariant} className="px-3 py-1 shrink-0">
-            {getStatusLabel(ride.status)}
+            {statusLabel}
           </Badge>
         </div>
       </CardHeader>
@@ -73,36 +76,33 @@ const RideCard = ({
           <div className="flex items-center gap-2 text-sm">
             <Calendar className="w-4 h-4 text-primary flex-shrink-0" />
             <Typography className="font-medium">
-              {cardDateFormatter.format(ride.departureDate)}
+              {dateTimeFormatter.format(departureDate)}
             </Typography>
           </div>
-          {viewType === "passenger" && ride.driver && (
+          {viewType === UserRideRole.AS_PASSENGER && ride.driver && (
             <div className="flex items-center gap-2 rounded-full">
               <User className="w-3.5 h-3.5 text-primary" />
               <Typography className="font-medium">
-                {ride.driver.name}
+                {ride.driver.firstName}
               </Typography>
-              {ride.driver.rating && (
+              {!!ride.driver.rating.average && (
                 <div className="flex items-center gap-1 ml-1">
                   <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
                   <Typography className="font-semibold text-xs">
-                    {ride.driver.rating}
+                    {ride.driver.rating.average}
                   </Typography>
                 </div>
               )}
             </div>
           )}
-          {viewType === "driver" &&
-            ride.passengers &&
-            ride.passengers.length > 0 && (
-              <div className="flex items-center gap-2 pt-2">
-                <Users className="w-4 h-4 text-primary flex-shrink-0" />
-                <Typography className="text-sm text-muted-foreground">
-                  {ride.passengers.length} passenger
-                  {ride.passengers.length !== 1 ? "s" : ""} booked
-                </Typography>
-              </div>
-            )}
+          {viewType === UserRideRole.AS_DRIVER && (
+            <div className="flex items-center gap-2 pt-2">
+              <Users className="w-4 h-4 text-primary flex-shrink-0" />
+              <Typography className="text-sm text-muted-foreground">
+                Booked: {ride.totalPassengersBooked}
+              </Typography>
+            </div>
+          )}
         </div>
       </CardContent>
 
@@ -117,7 +117,7 @@ const RideCard = ({
             per seat
           </Typography>
         </div>
-        <Link href={`/my-rides/${ride.id}`}>
+        <Link href={`/my-rides/${ride._id}`}>
           <Button size="default" className="font-semibold" tabIndex={-1}>
             {buttonLabel}
           </Button>

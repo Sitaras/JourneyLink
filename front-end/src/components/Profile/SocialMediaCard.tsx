@@ -1,6 +1,6 @@
 "use client";
 
-import { UpdateProfilePayload } from "@/schemas/profileSchema";
+import { UpdateProfilePayload } from "@/schemas/user/profileSchema";
 import { UseFormRegister } from "react-hook-form";
 import {
   Card,

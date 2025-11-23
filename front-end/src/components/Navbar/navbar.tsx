@@ -4,7 +4,7 @@ import * as React from "react";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
-import { routes } from "@/data/routes";
+import { routes } from "@/configs/routes";
 import { useAuth } from "@/context/AuthContext";
 import { Button } from "@/components/ui/button";
 import { MenuIcon } from "lucide-react";
@@ -19,7 +19,7 @@ import { DropdownMenu, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
 const defaultLinks: NavbarNavItem[] = [
   { href: routes.home, label: "Home" },
-  { href: routes.createRoute, label: "Create Route", protected: true },
+  { href: routes.createRide, label: "Create Ride", protected: true },
   { href: routes.myRides, label: "My rides", protected: true },
 ];
 

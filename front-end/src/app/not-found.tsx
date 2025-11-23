@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { routes } from "@/data/routes";
+import { routes } from "@/configs/routes";
 
 export default function NotFound() {
   redirect(routes.home);
