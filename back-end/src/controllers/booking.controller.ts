@@ -161,14 +161,14 @@ export class BookingController {
 
       if (booking.driver.toString() !== userId) {
         return res.error(
-          "Unauthorized to accept this booking",
+          "Unauthorized to decline this booking",
           StatusCodes.UNAUTHORIZED
         );
       }
 
       if (booking.status !== BookingStatus.PENDING) {
         return res.error(
-          "Booking cannot be accepted not in Pending Status",
+          "Booking cannot be declined, not in Pending Status",
           StatusCodes.BAD_REQUEST
         );
       }
@@ -283,7 +283,6 @@ export class BookingController {
         status: BookingStatus.PENDING,
       })
         .populate("passenger", "profile email phoneNumber")
-        .populate("ride", "origin destination departureTime pricePerSeat")
         .sort({ createdAt: -1 });
 
       res.success(
