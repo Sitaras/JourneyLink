@@ -14,4 +14,14 @@ router.post(
   BookingController.createBooking
 );
 
+router.put(
+  "/accept/:id",
+  BookingController.acceptBooking
+);
+
+router.put(
+  "/decline/:id",
+  BookingController.declineBooking
+);
+
 export const bookingRides = router;

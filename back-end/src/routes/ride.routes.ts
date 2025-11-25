@@ -1,6 +1,7 @@
 import { RequestHandler, Router } from "express";
 import { authenticateToken } from "../middleware/auth.middleware";
 import { RideController } from "../controllers/ride.controller";
+import { BookingController } from "../controllers/booking.controller";
 import { validateData } from "../middleware/validationMiddleware";
 import {
   createRideSchema,
@@ -68,5 +69,19 @@ router.get(
 //   "/:id",
 //   updateRide
 // );
+
+router.get(
+  "/pending-bookings/:id",
+  authenticateToken,
+  validateData(mongoIdSchema, "params"),
+  BookingController.getPendingBookings
+);
+
+router.get(
+  "/bookings/:id",
+  authenticateToken,
+  validateData(mongoIdSchema, "params"),
+  BookingController.getRideBookings
+);
 
 export const rideRoutes = router;

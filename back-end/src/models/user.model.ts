@@ -1,10 +1,11 @@
 import { Schema, model, Document } from "mongoose";
-import bcrypt from "bcrypt";
 import { IUser, UserRole } from "../types/user.types";
 
 interface IUserDocument extends IUser, Document {
   comparePassword(password: string): Promise<boolean>;
 }
+
+const bcrypt = require('bcrypt');
 
 const userSchema = new Schema<IUserDocument>({
   email: {
