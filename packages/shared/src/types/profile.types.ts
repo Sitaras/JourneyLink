@@ -1,0 +1,31 @@
+// Profile types
+export interface IProfileBase {
+  firstName: string;
+  lastName: string;
+  dateOfBirth: string | Date;
+  email: string;
+  phoneNumber: string;
+  avatar?: string;
+  bio?: string;
+  socials?: {
+    facebook?: string;
+    twitter?: string;
+    linkedIn?: string;
+  };
+  verificationDocuments?: {
+    idCard?: {
+      url: string;
+      verified: boolean;
+    };
+    drivingLicense?: {
+      url: string;
+      verified: boolean;
+    };
+  };
+  rating?: {
+    average: number;
+    count: number;
+  };
+}
+
+export type ProfileResponse = IProfileBase;

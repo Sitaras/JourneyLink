@@ -1,0 +1,44 @@
+{
+  "name": "@journey-link/monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev --parallel",
+    "dev:api": "turbo run dev --filter=@journey-link/api",
+    "dev:web": "turbo run dev --filter=@journey-link/web",
+    "build:api": "turbo run build --filter=@journey-link/api",
+    "build:web": "turbo run build --filter=@journey-link/web",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint:fix",
+    "format": "turbo run format",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "postinstall": "husky"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "eslint": "^9.39.1",
+    "eslint-config-prettier": "^10.1.8",
+    "husky": "^9.1.7",
+    "lint-staged": "^16.2.7",
+    "prettier": "^3.6.2",
+    "turbo": "^2.6.1",
+    "typescript": "^5.7.2"
+  },
+  "packageManager": "yarn@4.10.3",
+  "lint-staged": {
+    "**/*.{js,ts,tsx,jsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "**/*.{json,css,scss,md}": "prettier --write"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=9.0.0"
+  }
+}
