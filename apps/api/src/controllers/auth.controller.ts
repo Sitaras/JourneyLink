@@ -85,7 +85,7 @@ export class AuthController {
       }
 
       const tokenPayload = {
-        userId: user._id as string,
+        userId: user.toString(),
         roles: user.roles,
       };
 
@@ -130,7 +130,7 @@ export class AuthController {
 
         if (
           typeof decoded === "string" ||
-          (user._id as string).toString() !== decoded.userId
+          user._id.toString() !== decoded.userId
         ) {
           return res.error("Unauthorized", StatusCodes.UNAUTHORIZED);
         }
@@ -141,7 +141,7 @@ export class AuthController {
         });
 
         const tokenPayload = {
-          userId: user._id as string,
+          userId: user._id.toString(),
           roles: user.roles,
         };
 

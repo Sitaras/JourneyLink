@@ -4,7 +4,7 @@ import { ITokenPayload } from "@journey-link/shared";
 
 export const generateAccessToken = (payload: ITokenPayload): string => {
   return jwt.sign(payload, config.jwt.accessToken.secret, {
-    expiresIn: config.jwt.accessToken.expiry,
+    expiresIn: config.jwt.accessToken.expiry!,
   });
 };
 

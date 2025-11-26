@@ -19,11 +19,11 @@ export const config = {
   jwt: {
     accessToken: {
       secret: process.env.ACCESS_TOKEN_SECRET || "default-access-secret",
-      expiry: process.env.ACCESS_TOKEN_EXPIRY || "15m",
+      expiry: process.env.ACCESS_TOKEN_EXPIRY || ("15m" as any),
     },
     refreshToken: {
       secret: process.env.REFRESH_TOKEN_SECRET || "default-refresh-secret",
-      expiry: process.env.REFRESH_TOKEN_EXPIRY || "7d",
+      expiry: process.env.REFRESH_TOKEN_EXPIRY || ("7d" as any),
     },
   },
   placeKitApiKey: process.env.PLACE_KIT_KEY || "",
