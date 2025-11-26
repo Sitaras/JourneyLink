@@ -1,23 +1,19 @@
 import { BookingStatus } from "./booking.types";
 
-// Ride status
 export enum RideStatus {
   ACTIVE = "active",
   COMPLETED = "completed",
   CANCELLED = "cancelled",
 }
 
-// Coordinates type
 export type Coordinates = [number, number]; // [longitude, latitude]
 
-// Location type
 export type Location = {
   city: string;
   address: string;
   coordinates: Coordinates;
 };
 
-// Vehicle info
 export interface VehicleInfo {
   make: string;
   model: string;
@@ -26,13 +22,11 @@ export interface VehicleInfo {
   year?: number;
 }
 
-// Ride preferences
 export interface RidePreferences {
   smokingAllowed: boolean;
   petsAllowed: boolean;
 }
 
-// Driver info
 export interface Driver {
   firstName: string;
   lastName: string;
@@ -43,7 +37,6 @@ export interface Driver {
   };
 }
 
-// Ride type for search results
 export interface Ride {
   _id: string;
   driverProfile: Driver;
@@ -60,7 +53,6 @@ export interface Ride {
   remainingSeats: number;
 }
 
-// Ride search response
 export interface RideSearchResponse {
   count: number;
   total: number;
@@ -69,7 +61,6 @@ export interface RideSearchResponse {
   data: Ride[];
 }
 
-// Ride creation response
 export interface RideCreationResponse {
   id: string;
   origin: {
@@ -95,7 +86,6 @@ export interface RideCreationResponse {
   updatedAt: string;
 }
 
-// User ride type
 export interface UserRide {
   _id: string;
   origin: Location;
@@ -110,7 +100,6 @@ export interface UserRide {
   driver?: Driver;
 }
 
-// User rides response
 export interface UserRidesResponse {
   count: number;
   total: number;

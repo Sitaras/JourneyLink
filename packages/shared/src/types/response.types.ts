@@ -1,4 +1,3 @@
-// Success response types
 export interface ISuccessResponse<T> {
   success: boolean;
   message: string;

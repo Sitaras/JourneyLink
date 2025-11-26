@@ -1,4 +1,3 @@
-// Profile types
 export interface IProfileBase {
   firstName: string;
   lastName: string;

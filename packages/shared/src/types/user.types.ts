@@ -1,4 +1,3 @@
-// User roles and authentication types
 export enum UserRole {
   PASSENGER = "passenger",
   DRIVER = "driver",
@@ -44,4 +43,3 @@ export interface IUser {
   role: UserRole;
   profile?: any;
 }
-

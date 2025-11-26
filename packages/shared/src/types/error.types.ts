@@ -1,4 +1,3 @@
-// Error response types
 export interface IErrorResponse {
   success: boolean;
   message: string;

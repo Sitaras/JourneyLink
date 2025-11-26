@@ -1,4 +1,3 @@
-// Booking status and types
 export enum BookingStatus {
   PENDING = "pending",
   CONFIRMED = "confirmed",

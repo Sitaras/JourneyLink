@@ -1,4 +1,3 @@
-// Re-export all shared types from a central location
 export * from "./types/user.types";
 export * from "./types/booking.types";
 export * from "./types/profile.types";
