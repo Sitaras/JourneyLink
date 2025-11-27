@@ -85,7 +85,7 @@ export class AuthController {
       }
 
       const tokenPayload = {
-        userId: user.toString(),
+        userId: user._id.toString(),
         roles: user.roles,
       };
 
