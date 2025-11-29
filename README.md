@@ -50,8 +50,8 @@ You can run the entire stack or individual applications using Turbo.
 -   **Run specific app:**
 
     ```bash
-    yarn workspace @journey-link/api dev
-    yarn workspace @journey-link/web dev
+    yarn dev:api
+    yarn dev:web
     ```
 
 ## Project Structure
