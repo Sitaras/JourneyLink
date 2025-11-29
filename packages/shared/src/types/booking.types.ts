@@ -8,3 +8,8 @@ export enum BookingStatus {
 export interface IBookSeatResponse {
   status: BookingStatus;
 }
+
+export interface IBookSeatPayload {
+  rideId: string;
+  seats: number;
+}

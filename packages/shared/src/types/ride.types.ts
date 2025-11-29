@@ -51,6 +51,7 @@ export interface Ride {
   createdAt: string;
   originDistance: number;
   remainingSeats: number;
+  status: RideStatus;
 }
 
 export interface RideSearchResponse {
