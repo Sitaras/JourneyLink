@@ -4,3 +4,4 @@ export * from "./types/profile.types";
 export * from "./types/ride.types";
 export * from "./types/response.types";
 export * from "./types/error.types";
+export * from "./schemas/profile";

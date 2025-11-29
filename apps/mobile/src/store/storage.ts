@@ -1,0 +1,16 @@
+import { MMKV } from 'react-native-mmkv';
+
+export const storage = new MMKV();
+
+export const getItem = <T>(key: string): T | null => {
+  const value = storage.getString(key);
+  return value ? JSON.parse(value) : null;
+};
+
+export const setItem = <T>(key: string, value: T): void => {
+  storage.set(key, JSON.stringify(value));
+};
+
+export const removeItem = (key: string) => {
+  storage.delete(key);
+};
