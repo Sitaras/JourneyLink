@@ -11,11 +11,11 @@ import Typography from "@/components/ui/typography";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Calendar, MapPin, Star, User, Users } from "lucide-react";
+import { ArrowRight, Calendar, MapPin, Star, User, Users, Pencil } from "lucide-react";
 import Link from "next/link";
 import { getRideStatusVariant, getRideStatusLabel } from "@/utils/myRidesUtils";
-import { UserRideRole } from "@journey-link/shared";
-import { RideStatus, UserRide } from "@journey-link/shared";
+import { UserRideRole } from "@/types/user.types";
+import { RideStatus, UserRide } from  "@journey-link/shared";
 import { dateTimeFormatter } from "@/utils/formatters";
 
 interface RideCardProps {
@@ -23,6 +23,7 @@ interface RideCardProps {
   viewType: UserRideRole;
   buttonLabel?: string;
   className?: string;
+  onEdit?: (ride: UserRide) => void;
 }
 
 const RideCard = ({
@@ -30,12 +31,14 @@ const RideCard = ({
   viewType,
   buttonLabel = "View details",
   className,
+  onEdit,
 }: RideCardProps) => {
   const statusVariant = getRideStatusVariant(ride.status);
   const statusLabel = getRideStatusLabel(ride.status);
 
   const isCompleted = ride.status === RideStatus.COMPLETED;
   const isCancelled = ride.status === RideStatus.CANCELLED;
+  const canEdit = viewType === UserRideRole.AS_DRIVER && !isCompleted && !isCancelled;
 
   const departureDate = new Date(ride.departureTime);
 
@@ -117,11 +120,24 @@ const RideCard = ({
             per seat
           </Typography>
         </div>
-        <Link href={`/my-rides/${ride._id}`}>
-          <Button size="default" className="font-semibold" tabIndex={-1}>
-            {buttonLabel}
-          </Button>
-        </Link>
+        <div className="flex gap-2">
+          {canEdit && onEdit && (
+            <Button
+              size="default"
+              variant="outline"
+              className="font-semibold"
+              onClick={() => onEdit(ride)}
+            >
+              <Pencil className="w-4 h-4 mr-2" />
+              Edit
+            </Button>
+          )}
+          <Link href={`/my-rides/${ride._id}`}>
+            <Button size="default" className="font-semibold" tabIndex={-1}>
+              {buttonLabel}
+            </Button>
+          </Link>
+        </div>
       </CardFooter>
     </Card>
   );

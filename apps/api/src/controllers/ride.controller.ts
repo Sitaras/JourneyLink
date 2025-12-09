@@ -501,4 +501,135 @@ export class RideController {
       return res.error("An error occurred", StatusCodes.INTERNAL_SERVER_ERROR);
     }
   };
+
+  static updateRide = async (
+  req: AuthRequest<MongoIdParam, unknown, ICreateRidePayload>,
+  res: Response
+  ) => {
+    try {
+      const userId = req.user?.userId;
+      const rideId = req.params?.id;
+
+      const ride = await Ride.findById(rideId);
+
+      if (!ride) {
+        return res.error("Ride not found", StatusCodes.NOT_FOUND);
+      }
+
+      // if user is the driver
+      if (ride.driver.toString() !== userId) {
+        return res.error(
+          "Not authorized to update this ride",
+          StatusCodes.FORBIDDEN
+        );
+      }
+
+      // prevent editing completed or cancelled rides
+      if (ride.status === RideStatus.COMPLETED) {
+        return res.error(
+          "Cannot edit a completed ride",
+          StatusCodes.BAD_REQUEST
+        );
+      }
+
+      if (ride.status === RideStatus.CANCELLED) {
+        return res.error(
+          "Cannot edit a cancelled ride",
+          StatusCodes.BAD_REQUEST
+        );
+      }
+
+      if (req.body.availableSeats) {
+        const bookedSeats = ride.passengers
+          .filter((p) => p.status === BookingStatus.CONFIRMED)
+          .reduce((sum, p) => sum + p.seatsBooked, 0);
+
+        if (req.body.availableSeats < bookedSeats) {
+          return res.error(
+            `Cannot reduce seats below ${bookedSeats} (already booked)`,
+            StatusCodes.BAD_REQUEST
+          );
+        }
+      }
+
+      const {
+        departureTime,
+        availableSeats,
+        pricePerSeat,
+        vehicleInfo,
+        preferences,
+        additionalInfo,
+      } = req.body;
+
+      if (departureTime) {
+        ride.departureTime = new Date(departureTime);
+      }
+
+      if (availableSeats !== undefined) {
+        ride.availableSeats = availableSeats;
+      }
+
+      if (pricePerSeat !== undefined) {
+        ride.pricePerSeat = pricePerSeat;
+      }
+
+      if (vehicleInfo) {
+        if (!ride.vehicleInfo) {
+          ride.vehicleInfo = {} as any;
+        }
+        
+        if (vehicleInfo.make !== undefined) {
+          ride.vehicleInfo.make = vehicleInfo.make;
+        }
+        if (vehicleInfo.model !== undefined) {
+          ride.vehicleInfo.model = vehicleInfo.model;
+        }
+        if (vehicleInfo.color !== undefined) {
+          ride.vehicleInfo.color = vehicleInfo.color;
+        }
+        if (vehicleInfo.licensePlate !== undefined) {
+          ride.vehicleInfo.licensePlate = vehicleInfo.licensePlate;
+        }
+      }
+
+      if (preferences) {
+        if (!ride.preferences) {
+          ride.preferences = {} as any;
+        }
+        
+        if (preferences.smokingAllowed !== undefined && ride.preferences) {
+          ride.preferences.smokingAllowed = preferences.smokingAllowed;
+        }
+        if (preferences.petsAllowed !== undefined && ride.preferences) {
+          ride.preferences.petsAllowed = preferences.petsAllowed;
+        }
+      }
+
+      if (additionalInfo !== undefined) {
+        ride.additionalInfo = additionalInfo;
+      }
+
+      await ride.save();
+
+      const pipeline: any[] = [
+        { $match: { _id: new mongoose.Types.ObjectId(rideId) } },
+      ];
+      this.addSeatCalculationStages(pipeline);
+      this.addDriverInfo(pipeline);
+
+      const [updatedRide] = await Ride.aggregate(pipeline);
+
+      return res.success(
+        updatedRide,
+        "Ride updated successfully",
+        StatusCodes.OK
+      );
+    } catch (error) {
+      console.error("Error updating ride:", error);
+      return res.error("An error occurred", StatusCodes.INTERNAL_SERVER_ERROR);
+    }
+  };
 }
+
+
+

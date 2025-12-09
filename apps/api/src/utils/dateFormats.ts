@@ -11,6 +11,7 @@ export enum DateFormats {
   FILE = "ddMMyy",
   DATE_DASH = "dd-MM-yyyy",
   DATE_DASH_REVERSE = "yyyy-MM-dd",
+  DATETIME_LOCAL = "YYYY-MM-DDTHH:mm",
   FULL = "yyyy-MM-dd'T'HH:mm:ss.SSSxxx",
 
   DATE_SLASH_FORMAT = "dd/MM/yyyy",

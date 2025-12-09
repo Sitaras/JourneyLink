@@ -98,6 +98,9 @@ export interface UserRide {
   bookingDate?: string;
   bookingStatus?: BookingStatus;
   driver?: Driver;
+  vehicleInfo?: VehicleInfo;        
+  preferences?: RidePreferences;    
+  additionalInfo?: string;
 }
 
 export interface UserRidesResponse {

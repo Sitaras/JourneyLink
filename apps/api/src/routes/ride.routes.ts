@@ -60,15 +60,14 @@ router.get(
   RideController.getRideById as unknown as RequestHandler
 );
 
-/**
- * @route   PUT /api/ride/:id
- * @desc    Update ride
- * @access  Private (requires authentication + ownership)
- */
-// router.put(
-//   "/:id",
-//   updateRide
-// );
+
+router.put(
+  "/:id",
+  authenticateToken,
+  validateData(mongoIdSchema, "params"),
+  validateData(createRideSchema),
+  RideController.updateRide as unknown as RequestHandler
+);
 
 router.get(
   "/pending-bookings/:id",
