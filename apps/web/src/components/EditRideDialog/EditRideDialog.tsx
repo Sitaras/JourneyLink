@@ -1,6 +1,5 @@
 "use client";
 
-import React from "react";
 import {
   Dialog,
   DialogContent,
@@ -10,22 +9,37 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import { UserRide } from "@journey-link/shared";
+import { Ride } from "@journey-link/shared";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { updateRide } from "@/api-actions/ride";
+import { getRide, updateRide } from "@/api-actions/ride";
 import { toast } from "sonner";
 import { z } from "zod";
+import Typography from "@/components/ui/typography";
+import { DatePicker } from "../ui/datepicker";
+import { CustomInput } from "../ui/Inputs/CustomInput";
+import {
+  Clock8Icon,
+  MapPin,
+  Calendar,
+  Users,
+  Euro,
+  Settings,
+  Info,
+  Car,
+} from "lucide-react";
 import { formatDate } from "@/utils/dateUtils";
 import { DateFormats } from "@/utils/dateFormats";
-import Typography from "@/components/ui/typography";
+import { SeatsSelect } from "@/components/ui/Inputs/SeatSelect";
+import { CustomTextarea } from "@/components/ui/Inputs/CustomTextarea";
+import { Card, CardContent } from "@/components/ui/card";
+import { useQuery } from "@tanstack/react-query";
+import { EditRideDialogSkeleton } from "./EditRideDialogSkeleton";
 
 const editRideSchema = z.object({
+  dateTrip: z.date(),
   departureTime: z.string().min(1, "Departure time is required"),
   availableSeats: z.coerce
     .number()
@@ -53,27 +67,55 @@ const editRideSchema = z.object({
 type EditRideFormData = z.infer<typeof editRideSchema>;
 
 interface EditRideDialogProps {
-  ride: UserRide;
+  rideId: string;
   open: boolean;
   onClose: () => void;
   onSuccess: () => void;
 }
 
 const EditRideDialog = ({
-  ride,
+  rideId,
   open,
   onClose,
   onSuccess,
 }: EditRideDialogProps) => {
+  const {
+    data: ride,
+    isLoading,
+    refetch,
+  } = useQuery<unknown, unknown, Ride>({
+    queryKey: ["api/ride", rideId],
+    queryFn: () => {
+      return getRide(rideId);
+    },
+  });
+
   const mutation = useMutation({
     mutationFn: async (data: EditRideFormData) => {
-      return updateRide(ride._id, data);
+      if (!ride) {
+        throw new Error("Ride not found");
+      }
+
+      const departureDateTime = new Date(data.dateTrip);
+      const [hours, minutes] = data.departureTime.split(":");
+      departureDateTime.setHours(parseInt(hours), parseInt(minutes));
+
+      const payload = {
+        ...data,
+        origin: ride?.origin,
+        destination: ride?.destination,
+        departureTime: departureDateTime.toISOString(),
+        dateTrip: undefined,
+      };
+
+      return updateRide(ride?._id, payload);
     },
     onSuccess: () => {
       toast.success("Ride updated successfully", {
         description: "Your changes have been saved.",
       });
       onSuccess();
+      refetch();
     },
     onError: (error: Error) => {
       toast.error("Failed to update ride", {
@@ -82,21 +124,39 @@ const EditRideDialog = ({
     },
   });
 
+  const formValues: EditRideFormData | undefined = ride
+    ? {
+        dateTrip: new Date(ride.departureTime),
+        departureTime: formatDate(ride.departureTime, DateFormats.TIME),
+        availableSeats: ride.availableSeats,
+        pricePerSeat: ride.pricePerSeat,
+        vehicleInfo: {
+          make: ride.vehicleInfo?.make || "",
+          model: ride.vehicleInfo?.model || "",
+          color: ride.vehicleInfo?.color || "",
+          licensePlate: ride.vehicleInfo?.licensePlate || "",
+        },
+        preferences: {
+          smokingAllowed: ride.preferences?.smokingAllowed || false,
+          petsAllowed: ride.preferences?.petsAllowed || false,
+        },
+        additionalInfo: ride.additionalInfo || "",
+      }
+    : undefined;
+
   const {
     register,
     handleSubmit,
-    watch,
-    setValue,
-    formState: { errors, isDirty },
+    control,
+    formState: { isDirty },
   } = useForm<EditRideFormData>({
     resolver: zodResolver(editRideSchema),
+    values: formValues,
     defaultValues: {
-      departureTime: formatDate(
-        ride.departureTime,
-        DateFormats.DATETIME_LOCAL
-      ),
-      availableSeats: ride.availableSeats || 1,
-      pricePerSeat: ride.pricePerSeat || 0,
+      dateTrip: undefined,
+      departureTime: undefined,
+      availableSeats: 1,
+      pricePerSeat: 0,
       vehicleInfo: {
         make: "",
         model: "",
@@ -111,15 +171,11 @@ const EditRideDialog = ({
     },
   });
 
-  const smokingAllowed = watch("preferences.smokingAllowed");
-  const petsAllowed = watch("preferences.petsAllowed");
-  const additionalInfo = watch("additionalInfo");
-
   const onSubmit = (data: EditRideFormData) => {
     mutation.mutate(data);
   };
 
-  const bookedSeats = ride.totalPassengersBooked || 0;
+  const bookedSeats = ride?.bookedSeats || 0;
   const hasBookings = bookedSeats > 0;
 
   return (
@@ -133,228 +189,232 @@ const EditRideDialog = ({
           </DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-          <div className="space-y-2">
-            <Label className="text-base font-semibold">Route</Label>
-            <div className="p-3 bg-muted rounded-md">
-              <Typography className="text-sm">
-                <span className="font-medium">{ride.origin.city}</span>
-                {ride.origin.address && (
-                  <span className="text-muted-foreground">
-                    {" "}
-                    • {ride.origin.address}
-                  </span>
-                )}
-              </Typography>
-              <Typography className="text-sm text-muted-foreground my-1">
-                ↓
-              </Typography>
-              <Typography className="text-sm">
-                <span className="font-medium">{ride.destination.city}</span>
-                {ride.destination.address && (
-                  <span className="text-muted-foreground">
-                    {" "}
-                    • {ride.destination.address}
-                  </span>
-                )}
-              </Typography>
-            </div>
-          </div>
-
-
-          <div className="space-y-2">
-            <Label htmlFor="departureTime">
-              Departure Time <span className="text-destructive">*</span>
-            </Label>
-            <Input
-              id="departureTime"
-              type="datetime-local"
-              {...register("departureTime")}
-              className={errors.departureTime ? "border-destructive" : ""}
-            />
-            {errors.departureTime && (
-              <p className="text-sm text-destructive">
-                {errors.departureTime.message}
-              </p>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="availableSeats">
-                Available Seats <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                id="availableSeats"
-                type="number"
-                min={hasBookings ? bookedSeats : 1}
-                max="8"
-                {...register("availableSeats")}
-                className={errors.availableSeats ? "border-destructive" : ""}
-              />
-              {hasBookings && (
-                <p className="text-xs text-muted-foreground">
-                  Minimum: {bookedSeats} (already booked)
-                </p>
-              )}
-              {errors.availableSeats && (
-                <p className="text-sm text-destructive">
-                  {errors.availableSeats.message}
-                </p>
-              )}
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="pricePerSeat">
-                Price per Seat (€) <span className="text-destructive">*</span>
-              </Label>
-              <Input
-                id="pricePerSeat"
-                type="number"
-                step="0.01"
-                min="0"
-                {...register("pricePerSeat")}
-                className={errors.pricePerSeat ? "border-destructive" : ""}
-              />
-              {errors.pricePerSeat && (
-                <p className="text-sm text-destructive">
-                  {errors.pricePerSeat.message}
-                </p>
-              )}
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <Label className="text-base font-semibold">
-              Vehicle Information
-            </Label>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="space-y-2">
-                <Label htmlFor="vehicleMake" className="text-sm font-normal">
-                  Make
-                </Label>
-                <Input
-                  id="vehicleMake"
-                  placeholder="e.g., Toyota"
-                  {...register("vehicleInfo.make")}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="vehicleModel" className="text-sm font-normal">
-                  Model
-                </Label>
-                <Input
-                  id="vehicleModel"
-                  placeholder="e.g., Camry"
-                  {...register("vehicleInfo.model")}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="vehicleColor" className="text-sm font-normal">
-                  Color
-                </Label>
-                <Input
-                  id="vehicleColor"
-                  placeholder="e.g., Silver"
-                  {...register("vehicleInfo.color")}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label
-                  htmlFor="vehicleLicense"
-                  className="text-sm font-normal"
-                >
-                  License Plate
-                </Label>
-                <Input
-                  id="vehicleLicense"
-                  placeholder="e.g., ABC-1234"
-                  {...register("vehicleInfo.licensePlate")}
-                />
-              </div>
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            <Label className="text-base font-semibold">Preferences</Label>
-            <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 border rounded-md">
-                <div className="space-y-0.5">
-                  <Label htmlFor="smokingAllowed" className="font-normal">
-                    Smoking Allowed
-                  </Label>
-                  <Typography className="text-xs text-muted-foreground">
-                    Allow passengers to smoke during the ride
+        {isLoading ? (
+          <EditRideDialogSkeleton />
+        ) : (
+          <form
+            onSubmit={handleSubmit(onSubmit)}
+            className="space-y-6"
+            noValidate
+          >
+            <Card className="shadow-sm border-muted">
+              <CardContent className="p-4 space-y-3">
+                <div className="flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-primary" />
+                  <Typography className="font-semibold text-lg">
+                    Route
                   </Typography>
                 </div>
-                <Switch
-                  id="smokingAllowed"
-                  checked={smokingAllowed}
-                  onCheckedChange={(checked) =>
-                    setValue("preferences.smokingAllowed", checked, {
-                      shouldDirty: true,
-                    })
-                  }
-                />
-              </div>
-              <div className="flex items-center justify-between p-3 border rounded-md">
-                <div className="space-y-0.5">
-                  <Label htmlFor="petsAllowed" className="font-normal">
-                    Pets Allowed
-                  </Label>
-                  <Typography className="text-xs text-muted-foreground">
-                    Allow passengers to bring pets
+                <div className="p-3 bg-muted/50 rounded-md space-y-2">
+                  <div className="flex items-start gap-2">
+                    <div className="mt-1.5 w-2 h-2 rounded-full bg-primary shrink-0" />
+                    <div>
+                      <Typography className="font-medium">
+                        {ride?.origin.city}
+                      </Typography>
+                      {ride?.origin.address && (
+                        <Typography className="text-xs text-muted-foreground">
+                          {ride?.origin.address}
+                        </Typography>
+                      )}
+                    </div>
+                  </div>
+                  <div className="ml-[5px] w-0.5 h-4 bg-border" />
+                  <div className="flex items-start gap-2">
+                    <div className="mt-1.5 w-2 h-2 rounded-full bg-primary shrink-0" />
+                    <div>
+                      <Typography className="font-medium">
+                        {ride?.destination.city}
+                      </Typography>
+                      {ride?.destination.address && (
+                        <Typography className="text-xs text-muted-foreground">
+                          {ride?.destination.address}
+                        </Typography>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-sm border-muted">
+              <CardContent className="p-4 space-y-4">
+                <div className="flex items-center gap-2">
+                  <Calendar className="w-5 h-5 text-primary" />
+                  <Typography className="font-semibold text-lg">
+                    When?
                   </Typography>
                 </div>
-                <Switch
-                  id="petsAllowed"
-                  checked={petsAllowed}
-                  onCheckedChange={(checked) =>
-                    setValue("preferences.petsAllowed", checked, {
-                      shouldDirty: true,
-                    })
-                  }
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <DatePicker
+                    control={control}
+                    name="dateTrip"
+                    label="Date"
+                    placeholder="Select a date"
+                    captionLayout="dropdown"
+                    buttonClassName="w-full"
+                  />
+
+                  <div className="relative">
+                    <CustomInput
+                      type="time"
+                      name="departureTime"
+                      id="time-picker"
+                      register={register}
+                      label="Time (24-hour format)"
+                      className="peer bg-background appearance-none pr-9 [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
+                    />
+                    <div className="text-muted-foreground pointer-events-none absolute inset-y-10 right-0 flex items-center justify-center pr-4 peer-disabled:opacity-50">
+                      <Clock8Icon className="size-4 z-10 opacity-50" />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="shadow-sm border-muted">
+              <CardContent className="p-4 space-y-4">
+                <div className="flex items-center gap-2">
+                  <Users className="w-5 h-5 text-primary" />
+                  <Typography className="font-semibold text-lg">
+                    Capacity & Pricing
+                  </Typography>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <SeatsSelect
+                      control={control}
+                      name="availableSeats"
+                      label="Available Seats"
+                      maxSeats={8}
+                      required
+                    />
+                    {hasBookings && (
+                      <p className="text-xs text-muted-foreground px-1">
+                        Minimum: {bookedSeats} (already booked)
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="relative">
+                    <CustomInput
+                      name="pricePerSeat"
+                      label="Price per seat"
+                      register={register}
+                      required
+                      placeholder="0.00"
+                      type="number"
+                      step="0.01"
+                      min="0"
+                    />
+                    <div className="text-muted-foreground pointer-events-none absolute inset-y-10 right-0 flex items-center justify-center pr-4">
+                      <Euro className="size-4 z-10 opacity-50" />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="shadow-sm border-muted">
+              <CardContent className="p-4 space-y-4">
+                <div className="flex items-center gap-2">
+                  <Car className="w-5 h-5 text-primary" />
+                  <Typography className="font-semibold text-lg">
+                    Vehicle Information
+                  </Typography>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <CustomInput
+                    name="vehicleInfo.make"
+                    label="Make"
+                    placeholder="e.g., Toyota"
+                    register={register}
+                  />
+                  <CustomInput
+                    name="vehicleInfo.model"
+                    label="Model"
+                    placeholder="e.g., Camry"
+                    register={register}
+                  />
+                  <CustomInput
+                    name="vehicleInfo.color"
+                    label="Color"
+                    placeholder="e.g., Silver"
+                    register={register}
+                  />
+                  <CustomInput
+                    name="vehicleInfo.licensePlate"
+                    label="License Plate"
+                    placeholder="e.g., ABC-1234"
+                    register={register}
+                  />
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="shadow-sm border-muted">
+              <CardContent className="p-4 space-y-4">
+                <div className="flex items-center gap-2">
+                  <Settings className="w-5 h-5 text-primary" />
+                  <Typography className="font-semibold text-lg">
+                    Preferences
+                  </Typography>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-6">
+                  <Switch
+                    control={control}
+                    name="preferences.smokingAllowed"
+                    label="Smoking allowed"
+                  />
+                  <Switch
+                    control={control}
+                    name="preferences.petsAllowed"
+                    label="Pets allowed"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+            <Card className="shadow-sm border-muted">
+              <CardContent className="p-4 space-y-4">
+                <div className="flex items-center gap-2">
+                  <Info className="w-5 h-5 text-primary" />
+                  <Typography className="font-semibold text-lg">
+                    Additional Information
+                  </Typography>
+                </div>
+
+                <CustomTextarea
+                  name="additionalInfo"
+                  label="Any extra details?"
+                  placeholder="Any additional details passengers should know..."
+                  register={register}
+                  rows={4}
+                  maxLength={500}
                 />
-              </div>
-            </div>
-          </div>
+                <div className="flex justify-end">
+                  <Typography className="text-xs text-muted-foreground">
+                    Max 500 characters
+                  </Typography>
+                </div>
+              </CardContent>
+            </Card>
 
-          <div className="space-y-2">
-            <Label htmlFor="additionalInfo">Additional Information</Label>
-            <Textarea
-              id="additionalInfo"
-              placeholder="Any additional details passengers should know..."
-              maxLength={500}
-              rows={4}
-              {...register("additionalInfo")}
-              className={errors.additionalInfo ? "border-destructive" : ""}
-            />
-            <div className="flex justify-between items-center">
-              <Typography className="text-xs text-muted-foreground">
-                {additionalInfo?.length || 0}/500 characters
-              </Typography>
-              {errors.additionalInfo && (
-                <p className="text-sm text-destructive">
-                  {errors.additionalInfo.message}
-                </p>
-              )}
-            </div>
-          </div>
-
-          <DialogFooter className="gap-2">
-            <Button
-              type="button"
-              variant="outline"
-              onClick={onClose}
-              disabled={mutation.isPending}
-            >
-              Cancel
-            </Button>
-            <Button type="submit" disabled={!isDirty || mutation.isPending}>
-              {mutation.isPending ? "Saving..." : "Save Changes"}
-            </Button>
-          </DialogFooter>
-        </form>
+            <DialogFooter className="gap-2 sm:gap-0">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={onClose}
+                disabled={mutation.isPending}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={!isDirty || mutation.isPending}>
+                {mutation.isPending ? "Saving..." : "Save Changes"}
+              </Button>
+            </DialogFooter>
+          </form>
+        )}
       </DialogContent>
     </Dialog>
   );

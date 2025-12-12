@@ -402,10 +402,10 @@ export class RideController {
         (p: any) => p.user?.toString() === userId?.toString()
       );
 
-      this.applyVisibilityRules(ride, isDriver, isPassenger);
+      this.applyVisibilityRules(rideAgg, isDriver, isPassenger);
 
       return res.success(
-        { canBook, cannotBookReason, ...ride },
+        { canBook, cannotBookReason, ...rideAgg },
         "",
         StatusCodes.OK
       );
@@ -503,8 +503,8 @@ export class RideController {
   };
 
   static updateRide = async (
-  req: AuthRequest<MongoIdParam, unknown, ICreateRidePayload>,
-  res: Response
+    req: AuthRequest<MongoIdParam, unknown, ICreateRidePayload>,
+    res: Response
   ) => {
     try {
       const userId = req.user?.userId;
@@ -577,7 +577,7 @@ export class RideController {
         if (!ride.vehicleInfo) {
           ride.vehicleInfo = {} as any;
         }
-        
+
         if (vehicleInfo.make !== undefined) {
           ride.vehicleInfo.make = vehicleInfo.make;
         }
@@ -596,7 +596,7 @@ export class RideController {
         if (!ride.preferences) {
           ride.preferences = {} as any;
         }
-        
+
         if (preferences.smokingAllowed !== undefined && ride.preferences) {
           ride.preferences.smokingAllowed = preferences.smokingAllowed;
         }
@@ -630,6 +630,3 @@ export class RideController {
     }
   };
 }
-
-
-

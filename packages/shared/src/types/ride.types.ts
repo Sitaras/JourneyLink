@@ -51,6 +51,7 @@ export interface Ride {
   createdAt: string;
   originDistance: number;
   remainingSeats: number;
+  bookedSeats: number;
 }
 
 export interface RideSearchResponse {

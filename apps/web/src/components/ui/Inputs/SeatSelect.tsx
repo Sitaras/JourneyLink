@@ -40,7 +40,10 @@ export const SeatsSelect: React.FC<SeatsSelectProps> = ({
         name={name}
         rules={{ required }}
         render={({ field }) => (
-          <Select onValueChange={field.onChange}>
+          <Select
+            onValueChange={field.onChange}
+            defaultValue={field.value?.toString()}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Select number of seats" />
             </SelectTrigger>

@@ -18,7 +18,7 @@ type RidesListProps = {
 };
 
 const UserRidesList = ({ type, className }: RidesListProps) => {
-  const [editingRide, setEditingRide] = useState<UserRide | null>(null);
+  const [editingRide, setEditingRide] = useState("");
 
   const {
     data,
@@ -44,16 +44,16 @@ const UserRidesList = ({ type, className }: RidesListProps) => {
   });
 
   const handleEdit = (ride: UserRide) => {
-    setEditingRide(ride);
+    setEditingRide(ride._id);
   };
 
   const handleCloseEdit = () => {
-    setEditingRide(null);
+    setEditingRide("");
   };
 
   const handleSaveSuccess = () => {
     refetch();
-    setEditingRide(null);
+    setEditingRide("");
   };
 
   if (isLoading) {
@@ -112,7 +112,9 @@ const UserRidesList = ({ type, className }: RidesListProps) => {
                 ride={ride}
                 viewType={type}
                 buttonLabel="View details"
-                onEdit={type === UserRideRole.AS_DRIVER ? handleEdit : undefined}
+                onEdit={
+                  type === UserRideRole.AS_DRIVER ? handleEdit : undefined
+                }
               />
             ))}
           </React.Fragment>
@@ -126,7 +128,7 @@ const UserRidesList = ({ type, className }: RidesListProps) => {
 
       {editingRide && (
         <EditRideDialog
-          ride={editingRide}
+          rideId={editingRide}
           open={!!editingRide}
           onClose={handleCloseEdit}
           onSuccess={handleSaveSuccess}

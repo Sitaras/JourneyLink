@@ -1,5 +1,5 @@
 "use server";
-import { api, fetcher, postFetcher } from "./api";
+import { api, fetcher, postFetcher, putFetcher } from "./api";
 import {
   getRidesQuerySchema,
   ICreateRidePayload,
@@ -11,7 +11,6 @@ import {
   RideSearchResponse,
 } from "@journey-link/shared";
 import { generateQueryString } from "@/utils/genericUtils";
-import { authStorage } from "../lib/authStorage";
 
 export const getRides = async (parameters: IGetRidesQueryPayload) => {
   const parsedParams = getRidesQuerySchema.parse(parameters);
@@ -53,20 +52,13 @@ export const getRide = async (id: string) => {
   }
 };
 
-export const updateRide = async (rideId: string, data: any) => {
+export const updateRide = async (rideId: string, data: ICreateRidePayload) => {
   try {
-    const token = await authStorage.getAccessToken();
-    
-    if (!token) {
-      throw new Error("Not authenticated");
-    }
-    
-    const response = await api
-      .url(`routes/${rideId}`)
-      .auth(`Bearer ${token}`)
-      .put(data)
-      .json((json) => json?.data);
-    
+    const response = await putFetcher<ICreateRidePayload, Ride>(
+      `ride/${rideId}`,
+      data
+    );
+
     return response;
   } catch (error: any) {
     console.error("Update ride error:", error);
