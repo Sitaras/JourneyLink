@@ -6,7 +6,7 @@ export const createRideSchema = z
   .object({
     departureLocation: citySchema,
     arrivalLocation: citySchema,
-    dateTrip: z.date(),
+    dateTrip: z.coerce.date(),
     time: z.string().min(1, {
       error: "required",
     }),

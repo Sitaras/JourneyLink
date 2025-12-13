@@ -5,7 +5,7 @@ export const api = wretch(process.env.NEXT_PUBLIC_BASE_URL)
   .customError(async (error, response) => {
     return { ...error, json: await response.json() };
   })
-  .catcherFallback((err) => {
+  .catcherFallback((err: any) => {
     throw err.json;
   });
 
@@ -121,7 +121,7 @@ export const getAuthApi = async () => {
           throw err;
         })
     )
-    .catcherFallback((err) => {
+    .catcherFallback((err: any) => {
       throw err.json;
     });
 };

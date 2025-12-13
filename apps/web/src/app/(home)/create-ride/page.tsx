@@ -6,14 +6,17 @@ import { Card, CardContent } from "@/components/ui/card";
 import { DatePicker } from "@/components/ui/datepicker";
 import CityAutoComplete from "@/components/ui/Inputs/CityAutoComplete";
 import { CustomInput } from "@/components/ui/Inputs/CustomInput";
-import { createRideSchema } from "@/schemas/home/createRideSchema";
+import {
+  createRideSchema,
+  CreateRideFormValues,
+} from "@/schemas/home/createRideSchema";
+import { ICreateRidePayload } from "@journey-link/shared";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { FieldErrors, useForm } from "react-hook-form";
+import { FieldErrors, useForm, Resolver } from "react-hook-form";
 import { toast } from "sonner";
-import { CreateRideFormValues } from "@/schemas/home/createRideSchema";
 import { Switch } from "@/components/ui/switch";
-import { ICreateRidePayload } from "@/schemas/rideSchema";
+
 import { combineDateAndTime } from "@/utils/dateUtils";
 import { parsePrice } from "@/utils/moneysUtils";
 import Typography from "@/components/ui/typography";
@@ -32,7 +35,7 @@ import { onError } from "@/utils/formUtils";
 
 export default function CreateRide() {
   const { register, control, handleSubmit } = useForm<CreateRideFormValues>({
-    resolver: zodResolver(createRideSchema),
+    resolver: zodResolver(createRideSchema) as Resolver<CreateRideFormValues>,
     defaultValues: {
       smoking: false,
       petsAllowed: false,
@@ -84,8 +87,8 @@ export default function CreateRide() {
 
   const handleOnError = (errors: FieldErrors) => {
     const FIELD_LABELS: Record<string, string> = {
-      departureLocation: "Departure location",
-      arrivalLocation: "Arrival location",
+      departureLocation: "Departure city",
+      arrivalLocation: "Arrival city",
       dateTrip: "Travel Date",
       time: "Time",
       availableSeats: "Available seats",
@@ -154,7 +157,7 @@ export default function CreateRide() {
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <DatePicker
-                  control={control}
+                  register={register}
                   name="dateTrip"
                   label="Date"
                   placeholder="Select a date"

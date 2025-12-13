@@ -1,91 +1,51 @@
-import { RequestHandler, Router } from "express";
-import { authenticateToken } from "../middleware/auth.middleware";
-import { RideController } from "../controllers/ride.controller";
-import { BookingController } from "../controllers/booking.controller";
+import { Router, RequestHandler } from "express";
+import { rideController } from "../controllers/ride.controller";
 import { validateData } from "../middleware/validationMiddleware";
 import {
   createRideSchema,
-  deleteRideSchema,
-  getRideQuerySchema,
   updateRideSchema,
-} from "../schemas/rideSchema";
+  getRideQuerySchema,
+  deleteRideSchema,
+} from "@journey-link/shared";
+import { authenticateToken } from "../middleware/auth.middleware";
 import { mongoIdSchema } from "../schemas/idSchema";
 
 const router = Router();
 
-/**
- * @route   POST /api/ride
- * @desc    Create new ride
- * @access  Private (requires authentication)
- */
+router.get(
+  "/all",
+  validateData(getRideQuerySchema, "query"),
+  rideController.getRides as unknown as RequestHandler
+);
+
 router.post(
   "/",
   authenticateToken,
   validateData(createRideSchema),
-  RideController.createRide
+  rideController.createRide as unknown as RequestHandler
 );
 
-/**
- * @route   DELETE /api/ride/:id
- * @desc    Cancel/delete ride
- * @access  Private (requires authentication + ownership)
- */
+router.get(
+  "/:id",
+  authenticateToken,
+  validateData(mongoIdSchema, "params"),
+  rideController.getRideById as unknown as RequestHandler
+);
+
 router.delete(
   "/:id",
   authenticateToken,
   validateData(mongoIdSchema, "params"),
-  validateData(deleteRideSchema, "body"),
-  RideController.deleteRide
+  validateData(deleteRideSchema),
+  rideController.deleteRide as unknown as RequestHandler
 );
 
-/**
- * @route   GET /api/ride/all
- * @desc    Get all rides
- * @access  Public
- */
-router.get(
-  "/all",
-  validateData(getRideQuerySchema, "query"),
-  RideController.getRide as unknown as RequestHandler
-);
-
-/**
- * @route   GET /api/ride/:id
- * @desc    Get single ride by ID
- * @access  Private (requires authentication)
- */
-router.get(
-  "/:id",
-  authenticateToken,
-  validateData(mongoIdSchema, "params"),
-  RideController.getRideById as unknown as RequestHandler
-);
-
-/**
- * @route   PUT /api/ride/:id
- * @desc    Update ride details
- * @access  Private (requires authentication + ownership)
- */
 router.put(
   "/:id",
   authenticateToken,
   validateData(mongoIdSchema, "params"),
   validateData(updateRideSchema),
-  RideController.updateRide as unknown as RequestHandler
+  rideController.updateRide as unknown as RequestHandler
 );
 
-router.get(
-  "/pending-bookings/:id",
-  authenticateToken,
-  validateData(mongoIdSchema, "params"),
-  BookingController.getPendingBookings
-);
-
-router.get(
-  "/bookings/:id",
-  authenticateToken,
-  validateData(mongoIdSchema, "params"),
-  BookingController.getRideBookings
-);
-
-export const rideRoutes = router;
+export default router;

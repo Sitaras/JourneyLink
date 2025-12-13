@@ -1,19 +1,17 @@
 "use server";
 import { api, fetcher, postFetcher, putFetcher } from "./api";
 import {
-  getRidesQuerySchema,
+  getRideQuerySchema,
+  IGetRideQueryInput,
   ICreateRidePayload,
-  IGetRidesQueryPayload,
-} from "@/schemas/rideSchema";
-import {
   Ride,
   RideCreationResponse,
   RideSearchResponse,
 } from "@journey-link/shared";
 import { generateQueryString } from "@/utils/genericUtils";
 
-export const getRides = async (parameters: IGetRidesQueryPayload) => {
-  const parsedParams = getRidesQuerySchema.parse(parameters);
+export const getRides = async (parameters: IGetRideQueryInput) => {
+  const parsedParams = getRideQuerySchema.parse(parameters);
 
   const queryString = generateQueryString(parsedParams);
 

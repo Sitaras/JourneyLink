@@ -1,6 +1,6 @@
 "use client";
 
-import { UpdateProfilePayload } from "@/schemas/user/profileSchema";
+import { UpdateProfilePayload } from "@journey-link/shared";
 import { UseFormRegister } from "react-hook-form";
 import {
   Card,

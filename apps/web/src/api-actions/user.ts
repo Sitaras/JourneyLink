@@ -2,7 +2,7 @@
 
 import { ProfileResponse } from "@journey-link/shared";
 import { fetcher, patchFetcher } from "./api";
-import { UpdateProfilePayload } from "@/schemas/user/profileSchema";
+import { UpdateProfilePayload } from "@journey-link/shared";
 import { formatToUTC } from "@/utils/dateUtils";
 import {
   getUserRidesQuerySchema,
@@ -32,7 +32,9 @@ export const getUserProfile = async () => {
 };
 
 export const updateUserProfile = async (body: UpdateProfilePayload) => {
-  const dateOfBirthDateISOstring = formatToUTC(body.dateOfBirth);
+  const dateOfBirthDateISOstring = body.dateOfBirth
+    ? formatToUTC(body.dateOfBirth)
+    : undefined;
 
   try {
     const response = await patchFetcher<UpdateProfilePayload, ProfileResponse>(

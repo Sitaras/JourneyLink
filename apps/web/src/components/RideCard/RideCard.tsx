@@ -11,11 +11,20 @@ import Typography from "@/components/ui/typography";
 import { Separator } from "@/components/ui/separator";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Calendar, MapPin, Star, User, Users, Pencil } from "lucide-react";
+import {
+  ArrowRight,
+  Calendar,
+  MapPin,
+  Star,
+  User,
+  Users,
+  Pencil,
+} from "lucide-react";
 import Link from "next/link";
 import { getRideStatusVariant, getRideStatusLabel } from "@/utils/myRidesUtils";
+import { isPast } from "@/utils/dateUtils";
 import { UserRideRole } from "@/types/user.types";
-import { RideStatus, UserRide } from  "@journey-link/shared";
+import { RideStatus, UserRide } from "@journey-link/shared";
 import { dateTimeFormatter } from "@/utils/formatters";
 
 interface RideCardProps {
@@ -38,7 +47,11 @@ const RideCard = ({
 
   const isCompleted = ride.status === RideStatus.COMPLETED;
   const isCancelled = ride.status === RideStatus.CANCELLED;
-  const canEdit = viewType === UserRideRole.AS_DRIVER && !isCompleted && !isCancelled;
+  const canEdit =
+    viewType === UserRideRole.AS_DRIVER &&
+    !isCompleted &&
+    !isCancelled &&
+    !isPast(ride.departureTime);
 
   const departureDate = new Date(ride.departureTime);
 
@@ -111,7 +124,7 @@ const RideCard = ({
 
       <Separator />
 
-      <CardFooter className="flex justify-between items-center pt-4">
+      <CardFooter className="flex justify-between items-center gap-4 pt-4 flex-wrap">
         <div className="flex flex-col gap-1">
           <Typography className="text-2xl font-bold text-primary">
             €{ride.pricePerSeat?.toFixed(2)}

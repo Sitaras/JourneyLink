@@ -11,12 +11,11 @@ import {
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { Ride } from "@journey-link/shared";
-import { useForm } from "react-hook-form";
+import { useForm, Resolver, FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { getRide, updateRide } from "@/api-actions/ride";
 import { toast } from "sonner";
-import { z } from "zod";
 import Typography from "@/components/ui/typography";
 import { DatePicker } from "../ui/datepicker";
 import { CustomInput } from "../ui/Inputs/CustomInput";
@@ -37,34 +36,9 @@ import { CustomTextarea } from "@/components/ui/Inputs/CustomTextarea";
 import { Card, CardContent } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { EditRideDialogSkeleton } from "./EditRideDialogSkeleton";
+import { onError } from "@/utils/formUtils";
 
-const editRideSchema = z.object({
-  dateTrip: z.date(),
-  departureTime: z.string().min(1, "Departure time is required"),
-  availableSeats: z.coerce
-    .number()
-    .min(1, "At least 1 seat is required")
-    .max(8, "Maximum 8 seats allowed"),
-  pricePerSeat: z.coerce
-    .number()
-    .min(0, "Price cannot be negative")
-    .max(1000, "Price seems too high"),
-  vehicleInfo: z
-    .object({
-      make: z.string().optional(),
-      model: z.string().optional(),
-      color: z.string().optional(),
-      licensePlate: z.string().optional(),
-    })
-    .optional(),
-  preferences: z.object({
-    smokingAllowed: z.boolean(),
-    petsAllowed: z.boolean(),
-  }),
-  additionalInfo: z.string().max(500, "Maximum 500 characters").optional(),
-});
-
-type EditRideFormData = z.infer<typeof editRideSchema>;
+import { editRideSchema, EditRideFormData } from "@/schemas/editRideSchema";
 
 interface EditRideDialogProps {
   rideId: string;
@@ -126,7 +100,7 @@ const EditRideDialog = ({
 
   const formValues: EditRideFormData | undefined = ride
     ? {
-        dateTrip: new Date(ride.departureTime),
+        dateTrip: formatDate(ride.departureTime, DateFormats.DATE_DASH_REVERSE),
         departureTime: formatDate(ride.departureTime, DateFormats.TIME),
         availableSeats: ride.availableSeats,
         pricePerSeat: ride.pricePerSeat,
@@ -150,10 +124,10 @@ const EditRideDialog = ({
     control,
     formState: { isDirty },
   } = useForm<EditRideFormData>({
-    resolver: zodResolver(editRideSchema),
+    resolver: zodResolver(editRideSchema) as Resolver<EditRideFormData>,
     values: formValues,
     defaultValues: {
-      dateTrip: undefined,
+      dateTrip: "",
       departureTime: undefined,
       availableSeats: 1,
       pricePerSeat: 0,
@@ -170,6 +144,23 @@ const EditRideDialog = ({
       additionalInfo: "",
     },
   });
+
+  const handleOnError = (errors: FieldErrors) => {
+    const FIELD_LABELS: Record<string, string> = {
+      dateTrip: "Trip Date",
+      departureTime: "Departure Time",
+      availableSeats: "Available Seats",
+      pricePerSeat: "Price Per Seat",
+      "vehicleInfo.make": "Vehicle Make",
+      "vehicleInfo.model": "Vehicle Model",
+      "vehicleInfo.color": "Vehicle Color",
+      "vehicleInfo.licensePlate": "License Plate",
+      "preferences.smokingAllowed": "Smoking Allowed",
+      "preferences.petsAllowed": "Pets Allowed",
+      additionalInfo: "Additional Information",
+    };
+    onError(FIELD_LABELS, errors);
+  };
 
   const onSubmit = (data: EditRideFormData) => {
     mutation.mutate(data);
@@ -193,7 +184,7 @@ const EditRideDialog = ({
           <EditRideDialogSkeleton />
         ) : (
           <form
-            onSubmit={handleSubmit(onSubmit)}
+            onSubmit={handleSubmit(onSubmit, handleOnError)}
             className="space-y-6"
             noValidate
           >
@@ -248,7 +239,8 @@ const EditRideDialog = ({
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <DatePicker
-                    control={control}
+                    disabled
+                    register={register}
                     name="dateTrip"
                     label="Date"
                     placeholder="Select a date"

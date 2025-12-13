@@ -1,14 +1,10 @@
 "use client";
 
-import React, { useState } from "react";
+import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getUserProfile, updateUserProfile } from "@/api-actions/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldErrors, useForm } from "react-hook-form";
-import {
-  UpdateProfilePayload,
-  updateProfileSchema,
-} from "@/schemas/user/profileSchema";
 import z from "zod";
 import { toast } from "sonner";
 import { formatDate } from "@/utils/dateUtils";
@@ -19,6 +15,10 @@ import PageLoader from "@/components/PageLoader/PageLoader";
 import ProfileHeader from "@/components/Profile/ProfileHeader";
 import PersonalInfoCard from "@/components/Profile/PersonalInfoCard";
 import SocialMediaCard from "@/components/Profile/SocialMediaCard";
+import {
+  updateProfileSchema,
+  UpdateProfilePayload,
+} from "@journey-link/shared";
 
 type EditSection = "personal" | "social" | null;
 
@@ -93,6 +93,7 @@ const Profile = () => {
       email: "Email",
       dateOfBirth: "Date of birth",
       bio: "Bio",
+      phoneNumber: "Phone number",
       "socials.facebook": "Facebook",
       "socials.twitter": "Twitter",
       "socials.linkedIn": "LinkedIn",

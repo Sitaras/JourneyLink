@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { BookingStatus } from "@journey-link/shared";
+import { BookingStatus } from "../types/booking.types";
 
 export const createBookingSchema = z.object({
   rideId: z.string().regex(/^[0-9a-fA-F]{24}$/, "Invalid id"),

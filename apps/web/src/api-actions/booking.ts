@@ -1,15 +1,14 @@
 "use server";
 
-import { IBookSeatPayload } from "@/schemas/bookingSchema";
+import { ICreateBookingPayload, IBookSeatResponse } from "@journey-link/shared";
 import { postFetcher } from "./api";
-import { IBookSeatResponse } from "@journey-link/shared";
 
-export const bookSeat = async (body: IBookSeatPayload) => {
+export const bookSeat = async (body: ICreateBookingPayload) => {
   try {
-    const response = await postFetcher<IBookSeatPayload, IBookSeatResponse>(
-      "booking",
-      body
-    );
+    const response = await postFetcher<
+      ICreateBookingPayload,
+      IBookSeatResponse
+    >("booking", body);
 
     return response;
   } catch (error: any) {
