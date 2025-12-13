@@ -1,15 +1,8 @@
 import { Router } from "express";
-import { validateData } from "../middleware/validationMiddleware";
-import { cityAutocompleteSchema } from "../schemas/services/cityAutocompleteSchema";
-import { PlacesController } from "../controllers/places.controller";
+import { placesController } from "../controllers/places.controller";
 
 const router = Router();
 
-router.post(
-  "/city-autocomplete",
-  validateData(cityAutocompleteSchema),
-  // limiter,
-  PlacesController.cityAutocomplete
-);
+router.post("/city-autocomplete", placesController.cityAutocomplete);
 
-export const placesRoutes = router;
+export default router;

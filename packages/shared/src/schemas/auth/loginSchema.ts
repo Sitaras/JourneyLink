@@ -12,3 +12,5 @@ export const loginSchema = z.object({
     error: "required",
   }),
 });
+
+export type LoginInput = z.infer<typeof loginSchema>;

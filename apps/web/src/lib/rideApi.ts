@@ -1,6 +1,5 @@
 import { getRides, getRide } from "@/api-actions/ride";
-import type { IGetRidesQueryPayload } from "@/schemas/rideSchema";
-import { Ride } from "@journey-link/shared";
+import { IGetRideQueryInput, Ride } from "@journey-link/shared";
 
 export interface SearchRidesResult {
   pageData: Ride[];
@@ -9,7 +8,7 @@ export interface SearchRidesResult {
 }
 
 export async function searchRides(
-  baseParams: IGetRidesQueryPayload,
+  baseParams: IGetRideQueryInput,
   page = 1,
   limit = 3
 ): Promise<SearchRidesResult> {
@@ -18,7 +17,11 @@ export async function searchRides(
   }
 
   try {
-    const response = await getRides({ ...baseParams, page, limit });
+    const response = await getRides({
+      ...baseParams,
+      page: page.toString(),
+      limit: limit.toString(),
+    });
 
     return {
       pageData: response.data ?? [],

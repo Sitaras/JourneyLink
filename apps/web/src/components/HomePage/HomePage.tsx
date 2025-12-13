@@ -1,10 +1,11 @@
 import SearchRidesForm from "@/components/SearchRidesForm/SearchRidesForm";
 import RidesList from "../RoutesList/RidesList";
 import PaginationBar from "../PaginationBar/PaginationBar";
-import { parseDateFlexible } from "@/utils/dateUtils";
+import { parseDateFlexible, formatDate } from "@/utils/dateUtils";
 import { getCityAutocomplete } from "@/lib/cityApi";
 import { searchRides, SearchRidesResult } from "@/lib/rideApi";
 import Layout from "./Layout";
+import { DateFormats } from "@/utils/dateFormats";
 
 interface HomePageProps {
   searchParams: {
@@ -86,7 +87,13 @@ export default async function HomePage({ searchParams }: HomePageProps) {
       hasResults={hasResults}
       searchForm={
         <SearchRidesForm
-          values={{ departureLocation, arrivalLocation, dateTrip }}
+          values={{
+            departureLocation,
+            arrivalLocation,
+            dateTrip: dateTrip
+              ? formatDate(dateTrip, DateFormats.DATE_DASH_REVERSE)
+              : undefined,
+          }}
           serviceError={searchResult.error}
         />
       }

@@ -27,29 +27,36 @@ const passwordSchema = z
     error: "Special character required",
   });
 
-export const registerSchema = z.object({
-  email: z
-    .email({
-      error: "emailError",
-    })
-    .trim(),
-  firstName: z.string().min(1, {
-    error: "required",
-  }),
-  lastName: z.string().min(1, {
-    error: "required",
-  }),
-  phoneNumber: z
-    .string()
-    .min(1, {
+export const registerSchema = z
+  .object({
+    email: z
+      .email({
+        error: "emailError",
+      })
+      .trim(),
+    firstName: z.string().min(1, {
       error: "required",
-    })
-    .regex(greekPhoneNumber, {
-      error: "Invalid format",
     }),
-  dateOfBirth: isoDateSchema,
-  password: passwordSchema,
-  verifyPassword: z.string().min(1, {
-    error: "required",
-  }),
-});
+    lastName: z.string().min(1, {
+      error: "required",
+    }),
+    phoneNumber: z
+      .string()
+      .min(1, {
+        error: "required",
+      })
+      .regex(greekPhoneNumber, {
+        error: "Invalid format",
+      }),
+    dateOfBirth: isoDateSchema,
+    password: passwordSchema,
+    verifyPassword: z.string().min(1, {
+      error: "required",
+    }),
+  })
+  .refine((data) => data.password === data.verifyPassword, {
+    path: ["verifyPassword"],
+    error: "Passwords do not match",
+  });
+
+export type RegisterInput = z.infer<typeof registerSchema>;

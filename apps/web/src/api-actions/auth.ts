@@ -2,12 +2,10 @@
 import { api, refreshTokenService, getAuthApi } from "./api";
 import { formatToUTC } from "@/utils/dateUtils";
 import { authStorage } from "../lib/authStorage";
-import { registerSchema } from "@/schemas/auth/registerSchema";
-import z from "zod";
-import { loginSchema } from "@/schemas/auth/loginSchema";
+import { LoginInput, RegisterInput } from "@journey-link/shared";
 import { revalidatePath } from "next/cache";
 
-type LoginFormValues = z.infer<typeof loginSchema>;
+type LoginFormValues = LoginInput;
 
 export const login = async (body: LoginFormValues) => {
   try {
@@ -31,7 +29,7 @@ export const login = async (body: LoginFormValues) => {
   }
 };
 
-type RegisterFormValues = z.infer<typeof registerSchema>;
+type RegisterFormValues = RegisterInput;
 
 export const register = async (body: RegisterFormValues) => {
   const dateOfBirthDateISOstring = formatToUTC(body.dateOfBirth);

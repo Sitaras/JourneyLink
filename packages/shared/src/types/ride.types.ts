@@ -51,6 +51,7 @@ export interface Ride {
   createdAt: string;
   originDistance: number;
   remainingSeats: number;
+  bookedSeats: number;
 }
 
 export interface RideSearchResponse {
@@ -98,6 +99,9 @@ export interface UserRide {
   bookingDate?: string;
   bookingStatus?: BookingStatus;
   driver?: Driver;
+  vehicleInfo?: VehicleInfo;        
+  preferences?: RidePreferences;    
+  additionalInfo?: string;
 }
 
 export interface UserRidesResponse {

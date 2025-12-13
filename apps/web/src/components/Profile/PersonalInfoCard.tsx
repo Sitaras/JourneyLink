@@ -17,7 +17,7 @@ import Typography from "@/components/ui/typography";
 import { formatDate } from "@/utils/dateUtils";
 import { DateFormats } from "@/utils/dateFormats";
 import { UseFormRegister } from "react-hook-form";
-import { UpdateProfilePayload } from "@/schemas/user/profileSchema";
+import { UpdateProfilePayload } from "@journey-link/shared";
 import EditFormActions from "./EditFormActions";
 import InfoField from "./InfoField";
 

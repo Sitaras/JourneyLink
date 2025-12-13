@@ -138,6 +138,13 @@ rideSchema.virtual("remainingSeats").get(function () {
   return this.availableSeats - bookedSeats;
 });
 
+rideSchema.virtual("bookedSeats").get(function () {
+  const bookedSeats = this.passengers
+    .filter((p) => p.status === BookingStatus.CONFIRMED)
+    .reduce((sum, p) => sum + p.seatsBooked, 0);
+  return bookedSeats;
+});
+
 rideSchema.methods.isBookable = function (requestedSeats = 1) {
   return (
     this.status === RideStatus.ACTIVE &&

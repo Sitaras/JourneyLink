@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { isoDateSchema } from "./isoDateSchema";
-import { RideStatus } from "@journey-link/shared";
+import { RideStatus } from "../types/ride.types";
 
 const coordinatesSchema = z
   .array(z.number())
@@ -283,5 +283,6 @@ export const deleteRideSchema = z
 export type ICreateRidePayload = z.infer<typeof createRideSchema>;
 export type UpdateRideInput = z.infer<typeof updateRideSchema>;
 export type IGetRideQueryPayload = z.infer<typeof getRideQuerySchema>;
+export type IGetRideQueryInput = z.input<typeof getRideQuerySchema>;
 export type BookRideInput = z.infer<typeof bookRideSchema>;
 export type IDeleteRidePayload = z.infer<typeof deleteRideSchema>;

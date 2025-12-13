@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import useIntersectionObserver from "@/hooks/useIntersectionObserver";
 import { MapPin, AlertCircle } from "lucide-react";
@@ -7,8 +7,10 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import LoadingState from "@/components/LoadingState/LoadingState";
 import RideCard from "@/components/RideCard/RideCard";
-import { UserRideRole } from "@journey-link/shared";
+import { UserRideRole } from "@/types/user.types";
 import { getUserRides } from "@/api-actions/user";
+import { UserRide } from "@journey-link/shared";
+import EditRideDialog from "@/components/EditRideDialog/EditRideDialog";
 
 type RidesListProps = {
   type: UserRideRole;
@@ -16,6 +18,8 @@ type RidesListProps = {
 };
 
 const UserRidesList = ({ type, className }: RidesListProps) => {
+  const [editingRide, setEditingRide] = useState("");
+
   const {
     data,
     fetchNextPage,
@@ -23,6 +27,7 @@ const UserRidesList = ({ type, className }: RidesListProps) => {
     isLoading,
     isFetchingNextPage,
     error,
+    refetch,
   } = useInfiniteQuery({
     queryKey: ["me/user-rides", type],
     queryFn: ({ pageParam }) => getUserRides({ type, page: pageParam }),
@@ -37,6 +42,19 @@ const UserRidesList = ({ type, className }: RidesListProps) => {
       fetchNextPage();
     }
   });
+
+  const handleEdit = (ride: UserRide) => {
+    setEditingRide(ride._id);
+  };
+
+  const handleCloseEdit = () => {
+    setEditingRide("");
+  };
+
+  const handleSaveSuccess = () => {
+    refetch();
+    setEditingRide("");
+  };
 
   if (isLoading) {
     return <LoadingState />;
@@ -84,26 +102,39 @@ const UserRidesList = ({ type, className }: RidesListProps) => {
   }
 
   return (
-    <section className={cn("space-y-4", className)}>
-      {data?.pages.map((page, pageIndex) => (
-        <React.Fragment key={pageIndex}>
-          {page.data.map((ride) => (
-            <RideCard
-              key={ride._id}
-              ride={ride}
-              viewType={type}
-              buttonLabel="View details"
-            />
-          ))}
-        </React.Fragment>
-      ))}
+    <>
+      <section className={cn("space-y-4", className)}>
+        {data?.pages.map((page, pageIndex) => (
+          <React.Fragment key={pageIndex}>
+            {page.data.map((ride) => (
+              <RideCard
+                key={ride._id}
+                ride={ride}
+                viewType={type}
+                buttonLabel="View details"
+                onEdit={
+                  type === UserRideRole.AS_DRIVER ? handleEdit : undefined
+                }
+              />
+            ))}
+          </React.Fragment>
+        ))}
+        {(hasNextPage || isFetchingNextPage) && (
+          <div ref={ref}>
+            <LoadingState />
+          </div>
+        )}
+      </section>
 
-      {(hasNextPage || isFetchingNextPage) && (
-        <div ref={ref}>
-          <LoadingState />
-        </div>
+      {editingRide && (
+        <EditRideDialog
+          rideId={editingRide}
+          open={!!editingRide}
+          onClose={handleCloseEdit}
+          onSuccess={handleSaveSuccess}
+        />
       )}
-    </section>
+    </>
   );
 };
 

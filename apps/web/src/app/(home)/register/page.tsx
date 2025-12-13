@@ -13,7 +13,7 @@ import { FieldErrors, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { registerSchema } from "@/schemas/auth/registerSchema";
+import { registerSchema } from "@journey-link/shared";
 import { CustomInput } from "@/components/ui/Inputs/CustomInput";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";

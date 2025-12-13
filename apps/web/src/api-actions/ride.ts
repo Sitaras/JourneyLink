@@ -1,19 +1,17 @@
 "use server";
-import { api, fetcher, postFetcher } from "./api";
+import { api, fetcher, postFetcher, putFetcher } from "./api";
 import {
-  getRidesQuerySchema,
+  getRideQuerySchema,
+  IGetRideQueryInput,
   ICreateRidePayload,
-  IGetRidesQueryPayload,
-} from "@/schemas/rideSchema";
-import {
   Ride,
   RideCreationResponse,
   RideSearchResponse,
 } from "@journey-link/shared";
 import { generateQueryString } from "@/utils/genericUtils";
 
-export const getRides = async (parameters: IGetRidesQueryPayload) => {
-  const parsedParams = getRidesQuerySchema.parse(parameters);
+export const getRides = async (parameters: IGetRideQueryInput) => {
+  const parsedParams = getRideQuerySchema.parse(parameters);
 
   const queryString = generateQueryString(parsedParams);
 
@@ -49,5 +47,19 @@ export const getRide = async (id: string) => {
     return response;
   } catch (error: any) {
     throw error?.message;
+  }
+};
+
+export const updateRide = async (rideId: string, data: ICreateRidePayload) => {
+  try {
+    const response = await putFetcher<ICreateRidePayload, Ride>(
+      `ride/${rideId}`,
+      data
+    );
+
+    return response;
+  } catch (error: any) {
+    console.error("Update ride error:", error);
+    throw new Error(error?.message || "Failed to update ride");
   }
 };

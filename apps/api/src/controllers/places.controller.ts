@@ -1,19 +1,28 @@
 import { Request, Response } from "express";
-import { cityAutocomplete } from "../services/cityAutocomplete";
 import { ICityAutoCompletePayload } from "../types/services/cityAutocomplete.types";
+import { PlacesService, placesService } from "../services/places.service";
 
 export class PlacesController {
-  static async cityAutocomplete(
+  constructor(private placesService: PlacesService) {}
+
+  cityAutocomplete = async (
     req: Request<unknown, unknown, ICityAutoCompletePayload>,
-    res: Response
-  ) {
+    res: Response,
+    next: any
+  ) => {
     const { query, maxResults, language } = req.body;
     try {
-      const data = await cityAutocomplete(query, maxResults, language);
+      const data = await this.placesService.cityAutocomplete(
+        query,
+        maxResults,
+        language
+      );
 
       res.success(data);
     } catch (error) {
-      res.error("An error occurred", 500);
+      next(error);
     }
-  }
+  };
 }
+
+export const placesController = new PlacesController(placesService);

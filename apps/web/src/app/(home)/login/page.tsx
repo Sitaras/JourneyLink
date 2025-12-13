@@ -9,7 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { login } from "@/api-actions/auth";
-import { loginSchema } from "@/schemas/auth/loginSchema";
+import { loginSchema } from "@journey-link/shared";
 import { FieldErrors, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";

@@ -1,23 +1,25 @@
 import { Router } from "express";
-import { AuthController } from "../controllers/auth.controller";
-import { limiter } from "../middleware/limiter.middleware";
+import { authController } from "../controllers/auth.controller";
 import { validateData } from "../middleware/validationMiddleware";
-import { registerSchema } from "../schemas/auth/registerSchema";
-import { loginSchema } from "../schemas/auth/loginSchema";
-import { authenticateToken } from "../middleware/auth.middleware";
+import { registerSchema, loginSchema } from "@journey-link/shared";
 import { refreshTokenSchema } from "../schemas/auth/refreshTokenSchema";
+import { authenticateToken } from "../middleware/auth.middleware";
 
 const router = Router();
 
-router.post("/login", validateData(loginSchema), limiter, AuthController.login);
-router.post("/register", validateData(registerSchema), AuthController.register);
-router.post("/refresh-token", limiter, AuthController.refreshToken);
+router.post("/register", validateData(registerSchema), authController.register);
+router.post("/login", validateData(loginSchema), authController.login);
+router.post(
+  "/refresh-token",
+  validateData(refreshTokenSchema),
+  authController.refreshToken
+);
 router.post(
   "/logout",
   authenticateToken,
   validateData(refreshTokenSchema),
-  AuthController.logout
+  authController.logout
 );
-router.post("/logout-all", authenticateToken, AuthController.logoutAll);
+router.post("/logout-all", authenticateToken, authController.logoutAll);
 
-export const authRoutes = router;
+export default router;

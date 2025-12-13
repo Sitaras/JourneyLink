@@ -1,6 +1,5 @@
 import { DateFormats } from "@/utils/dateFormats";
 import { formatDate } from "@/utils/dateUtils";
-import React from "react";
 import { CustomInput, CustomInputProps } from "./CustomInput";
 
 const BirthdayInput = (props: CustomInputProps) => {
