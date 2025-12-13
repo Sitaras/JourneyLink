@@ -7,6 +7,7 @@ import {
   createRideSchema,
   deleteRideSchema,
   getRideQuerySchema,
+  updateRideSchema,
 } from "../schemas/rideSchema";
 import { mongoIdSchema } from "../schemas/idSchema";
 
@@ -60,12 +61,16 @@ router.get(
   RideController.getRideById as unknown as RequestHandler
 );
 
-
+/**
+ * @route   PUT /api/ride/:id
+ * @desc    Update ride details
+ * @access  Private (requires authentication + ownership)
+ */
 router.put(
   "/:id",
   authenticateToken,
   validateData(mongoIdSchema, "params"),
-  validateData(createRideSchema),
+  validateData(updateRideSchema),
   RideController.updateRide as unknown as RequestHandler
 );
 
