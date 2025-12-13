@@ -161,7 +161,6 @@ export default function CreateRide() {
                   name="dateTrip"
                   label="Date"
                   placeholder="Select a date"
-                  captionLayout="dropdown"
                   buttonClassName="w-full"
                 />
 

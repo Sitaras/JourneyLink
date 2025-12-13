@@ -244,7 +244,6 @@ const EditRideDialog = ({
                     name="dateTrip"
                     label="Date"
                     placeholder="Select a date"
-                    captionLayout="dropdown"
                     buttonClassName="w-full"
                   />
 

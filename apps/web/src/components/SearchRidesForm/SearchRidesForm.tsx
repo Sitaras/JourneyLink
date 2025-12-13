@@ -120,9 +120,7 @@ export default function SearchRidesForm({
                     name="dateTrip"
                     label="When"
                     placeholder="Select date"
-                    captionLayout="dropdown"
                     buttonClassName="w-full border-0 shadow-none hover:bg-transparent focus:ring-0 px-0 h-auto text-left justify-start"
-                    displayIcon={false}
                   />
                 </div>
               </div>
