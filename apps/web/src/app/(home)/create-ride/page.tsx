@@ -28,12 +28,16 @@ import {
   Euro,
   Settings,
   Info,
+  Car,
 } from "lucide-react";
 import { SeatsSelect } from "@/components/ui/Inputs/SeatSelect";
 import { CustomTextarea } from "@/components/ui/Inputs/CustomTextarea";
 import { onError } from "@/utils/formUtils";
 
+import { useRouter } from "next/navigation";
+
 export default function CreateRide() {
+  const router = useRouter();
   const { register, control, handleSubmit } = useForm<CreateRideFormValues>({
     resolver: zodResolver(createRideSchema) as Resolver<CreateRideFormValues>,
     defaultValues: {
@@ -51,6 +55,7 @@ export default function CreateRide() {
       toast.success("Ride created successfully!", {
         description: "Your ride is now available for passengers to book.",
       });
+      router.push("/my-rides");
     },
     onError: () => {
       toast.error("Failed to create ride");
@@ -80,6 +85,7 @@ export default function CreateRide() {
         petsAllowed: data.petsAllowed,
       },
       additionalInfo: data.additionalInfo,
+      vehicleInfo: data.vehicleInfo,
     };
 
     mutation.mutate(body);
@@ -96,6 +102,10 @@ export default function CreateRide() {
       smoking: "Smoking",
       petsAllowed: "Pets allowed",
       additionalInfo: "Additional info",
+      "vehicleInfo.make": "Vehicle Make",
+      "vehicleInfo.model": "Vehicle Model",
+      "vehicleInfo.color": "Vehicle Color",
+      "vehicleInfo.licensePlate": "License Plate",
     };
 
     onError(FIELD_LABELS, errors);
@@ -135,6 +145,7 @@ export default function CreateRide() {
                 label="Departure location"
                 placeholder="e.g. Athens"
                 buttonClassName="w-full"
+                required
               />
 
               <CityAutoComplete
@@ -143,6 +154,7 @@ export default function CreateRide() {
                 label="Arrival location"
                 placeholder="e.g. Thessaloniki"
                 buttonClassName="w-full"
+                required
               />
             </CardContent>
           </Card>
@@ -161,8 +173,8 @@ export default function CreateRide() {
                   name="dateTrip"
                   label="Date"
                   placeholder="Select a date"
-                  captionLayout="dropdown"
                   buttonClassName="w-full"
+                  required
                 />
 
                 <div className="relative">
@@ -217,6 +229,49 @@ export default function CreateRide() {
             </CardContent>
           </Card>
 
+          {/* Vehicle Information Section */}
+          <Card className="shadow-sm">
+            <CardContent className="p-6 space-y-5">
+              <div className="flex items-center gap-2 mb-2">
+                <Car className="w-5 h-5 text-primary" />
+                <Typography className="font-semibold text-lg">
+                  Vehicle Information
+                </Typography>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <CustomInput
+                  name="vehicleInfo.make"
+                  label="Make"
+                  placeholder="e.g., Toyota"
+                  register={register}
+                  required={false}
+                />
+                <CustomInput
+                  name="vehicleInfo.model"
+                  label="Model"
+                  placeholder="e.g., Camry"
+                  register={register}
+                  required={false}
+                />
+                <CustomInput
+                  name="vehicleInfo.color"
+                  label="Color"
+                  placeholder="e.g., Silver"
+                  register={register}
+                  required={false}
+                />
+                <CustomInput
+                  name="vehicleInfo.licensePlate"
+                  label="License Plate"
+                  placeholder="e.g., ABC-1234"
+                  register={register}
+                  required={false}
+                />
+              </div>
+            </CardContent>
+          </Card>
+
           {/* Preferences Section */}
           <Card className="shadow-sm">
             <CardContent className="p-6 space-y-5">
@@ -258,6 +313,7 @@ export default function CreateRide() {
                 placeholder="e.g. Planning a coffee stop, flexible departure time, luggage space available..."
                 register={register}
                 rows={4}
+                required={false}
               />
             </CardContent>
           </Card>

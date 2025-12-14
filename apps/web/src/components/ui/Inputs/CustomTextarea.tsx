@@ -29,6 +29,7 @@ const CustomTextarea = ({
       {label && (
         <Label htmlFor={name} className={labelClassName}>
           {label}
+          {required && <span className="text-destructive ml-1">*</span>}
         </Label>
       )}
       <Textarea id={name} required={required} {...register?.(name)} {...rest} />

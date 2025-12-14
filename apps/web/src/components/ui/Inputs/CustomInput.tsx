@@ -31,6 +31,7 @@ const CustomInput = ({
       {label && (
         <Label htmlFor={name} className={labelClassName}>
           {label}
+          {required && <span className="text-destructive ml-1">*</span>}
         </Label>
       )}
       <Input

@@ -10,7 +10,7 @@ const CityAutoComplete = ({
 }: Omit<
   CustomAutocompleteProps,
   "options" | "onSearchChange" | "optionsKeyName"
-> & { defaultSearchInput?: string }) => {
+> & { defaultSearchInput?: string; required?: boolean }) => {
   const [searchInput, setSearchInput] = useState("");
   const debouncedSearchInput =
     useDebounce<string>(searchInput || defaultSearchInput, 300) || "";

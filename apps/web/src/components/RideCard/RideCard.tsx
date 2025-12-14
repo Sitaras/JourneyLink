@@ -43,7 +43,7 @@ const RideCard = ({
   onEdit,
 }: RideCardProps) => {
   const statusVariant = getRideStatusVariant(ride.status);
-  const statusLabel = getRideStatusLabel(ride.status);
+  const statusLabel = getRideStatusLabel(ride.status, ride.departureTime);
 
   const isCompleted = ride.status === RideStatus.COMPLETED;
   const isCancelled = ride.status === RideStatus.CANCELLED;

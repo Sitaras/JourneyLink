@@ -11,6 +11,8 @@ import { UserRideRole } from "@/types/user.types";
 import { getUserRides } from "@/api-actions/user";
 import { UserRide } from "@journey-link/shared";
 import EditRideDialog from "@/components/EditRideDialog/EditRideDialog";
+import { Button } from "@/components/ui/button";
+import { isPast } from "@/utils/dateUtils";
 
 type RidesListProps = {
   type: UserRideRole;
@@ -19,6 +21,7 @@ type RidesListProps = {
 
 const UserRidesList = ({ type, className }: RidesListProps) => {
   const [editingRide, setEditingRide] = useState("");
+  const [showPastRides, setShowPastRides] = useState(false);
 
   const {
     data,
@@ -101,30 +104,73 @@ const UserRidesList = ({ type, className }: RidesListProps) => {
     );
   }
 
+  // Filter rides based on showPastRides toggle
+  const filteredPages = data?.pages.map((page) => ({
+    ...page,
+    data: page.data.filter((ride) => {
+      const rideIsPast = isPast(ride.departureTime);
+      return showPastRides ? rideIsPast : !rideIsPast;
+    }),
+  }));
+
+  const hasRides = filteredPages?.some((page) => page.data.length > 0);
+
   return (
     <>
-      <section className={cn("space-y-4", className)}>
-        {data?.pages.map((page, pageIndex) => (
-          <React.Fragment key={pageIndex}>
-            {page.data.map((ride) => (
-              <RideCard
-                key={ride._id}
-                ride={ride}
-                viewType={type}
-                buttonLabel="View details"
-                onEdit={
-                  type === UserRideRole.AS_DRIVER ? handleEdit : undefined
-                }
-              />
-            ))}
-          </React.Fragment>
-        ))}
-        {(hasNextPage || isFetchingNextPage) && (
-          <div ref={ref}>
-            <LoadingState />
-          </div>
-        )}
-      </section>
+      <div className="flex justify-end mb-4">
+        <Button
+          variant="outline"
+          onClick={() => setShowPastRides(!showPastRides)}
+          size="sm"
+        >
+          {showPastRides ? "Show Upcoming Rides" : "Show Past Rides"}
+        </Button>
+      </div>
+
+      {!hasRides && (
+        <Card className="shadow-sm w-full">
+          <CardContent className="flex flex-col items-center justify-center py-12 gap-3">
+            <MapPin className="w-12 h-12 text-muted-foreground/50" />
+            <div className="text-center">
+              <Typography className="font-semibold text-lg mb-1">
+                {showPastRides ? "No past rides" : "No upcoming rides"}
+              </Typography>
+              <Typography className="text-muted-foreground text-sm">
+                {showPastRides
+                  ? "You don't have any completed rides yet"
+                  : type === UserRideRole.AS_PASSENGER
+                    ? "You haven't booked any upcoming rides"
+                    : "You haven't created any upcoming rides"}
+              </Typography>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {hasRides && (
+        <section className={cn("space-y-4", className)}>
+          {filteredPages?.map((page, pageIndex) => (
+            <React.Fragment key={pageIndex}>
+              {page.data.map((ride) => (
+                <RideCard
+                  key={ride._id}
+                  ride={ride}
+                  viewType={type}
+                  buttonLabel="View details"
+                  onEdit={
+                    type === UserRideRole.AS_DRIVER ? handleEdit : undefined
+                  }
+                />
+              ))}
+            </React.Fragment>
+          ))}
+          {(hasNextPage || isFetchingNextPage) && (
+            <div ref={ref}>
+              <LoadingState />
+            </div>
+          )}
+        </section>
+      )}
 
       {editingRide && (
         <EditRideDialog

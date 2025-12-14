@@ -1,12 +1,21 @@
 import wretch, { WretchError, WretchResponse } from "wretch";
 import { authStorage } from "../lib/authStorage";
 
-export const api = wretch(process.env.NEXT_PUBLIC_BASE_URL)
+console.log("API Base URL:", process.env.NEXT_PUBLIC_BASE_URL);
+
+const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL?.replace(/\/$/, "") + "/";
+
+export const api = wretch(BASE_URL)
   .customError(async (error, response) => {
-    return { ...error, json: await response.json() };
+    const text = await response.text();
+    try {
+      return { ...error, json: JSON.parse(text) };
+    } catch {
+      return { ...error, text };
+    }
   })
   .catcherFallback((err: any) => {
-    throw err.json;
+    throw err.json || err;
   });
 
 const state = {
@@ -15,7 +24,7 @@ const state = {
 };
 
 export const refreshTokenService = async (refreshToken: string) => {
-  return wretch(process.env.NEXT_PUBLIC_BASE_URL)
+  return wretch(BASE_URL)
     .url("auth/refresh-token")
     .post({ refreshToken })
     .json((json) => json?.data);
@@ -24,7 +33,7 @@ export const refreshTokenService = async (refreshToken: string) => {
 export const getAuthApi = async () => {
   const accessToken = await authStorage.getAccessToken();
 
-  return wretch(process.env.NEXT_PUBLIC_BASE_URL)
+  return wretch(BASE_URL)
     .auth(`Bearer ${accessToken}`)
     .customError(async (error, response) => {
       return { ...error, json: await response.json() };

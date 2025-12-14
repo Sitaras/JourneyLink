@@ -48,6 +48,7 @@ export interface CustomAutocompleteProps<
   error?: FieldError;
   disabled?: boolean;
   onSearchChange?: (search: string) => void;
+  required?: boolean;
 }
 
 export const CustomAutocomplete = <
@@ -69,6 +70,7 @@ export const CustomAutocomplete = <
   optionsKeyName,
   disabled = false,
   onSearchChange,
+  required = false,
 }: CustomAutocompleteProps<TFieldValues, TName>) => {
   const [open, setOpen] = React.useState(false);
   const [searchValue, setSearchValue] = React.useState("");
@@ -85,6 +87,7 @@ export const CustomAutocomplete = <
       {label && (
         <Label className={labelClassName} htmlFor={name}>
           {label}
+          {required && <span className="text-destructive ml-1">*</span>}
         </Label>
       )}
       <Controller

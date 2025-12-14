@@ -91,6 +91,7 @@ export default function SearchRidesForm({
                 placeholder="Departure city"
                 className="px-4 lg:pl-12 lg:pr-6 py-4 hover:bg-gray-50/50 transition-colors"
                 buttonClassName="w-full border-0 shadow-none hover:bg-transparent focus:ring-0 px-0 h-auto text-left justify-start"
+                required
               />
             </div>
 
@@ -106,6 +107,7 @@ export default function SearchRidesForm({
                 placeholder="Arrival city"
                 className="px-4 lg:pl-12 lg:pr-6 py-4 hover:bg-gray-50/50 transition-colors"
                 buttonClassName="w-full border-0 shadow-none hover:bg-transparent focus:ring-0 px-0 h-auto text-left justify-start"
+                required
               />
             </div>
 
@@ -120,9 +122,8 @@ export default function SearchRidesForm({
                     name="dateTrip"
                     label="When"
                     placeholder="Select date"
-                    captionLayout="dropdown"
                     buttonClassName="w-full border-0 shadow-none hover:bg-transparent focus:ring-0 px-0 h-auto text-left justify-start"
-                    displayIcon={false}
+                    required
                   />
                 </div>
               </div>

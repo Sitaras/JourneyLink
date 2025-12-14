@@ -51,6 +51,14 @@ export const createRideSchema = z
       ),
     smoking: z.boolean(),
     petsAllowed: z.boolean(),
+    vehicleInfo: z
+      .object({
+        make: z.string().optional(),
+        model: z.string().optional(),
+        color: z.string().optional(),
+        licensePlate: z.string().optional(),
+      })
+      .optional(),
     additionalInfo: z.string().optional(),
   })
   .refine(

@@ -33,6 +33,7 @@ export const SeatsSelect: React.FC<SeatsSelectProps> = ({
       {label && (
         <Label htmlFor={name} className={labelClassName}>
           {label}
+          {required && <span className="text-destructive ml-1">*</span>}
         </Label>
       )}
       <Controller
