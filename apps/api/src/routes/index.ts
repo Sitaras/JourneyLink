@@ -4,6 +4,7 @@ import userRoutes from "./user.routes";
 import placesRoutes from "./places.routes";
 import bookingRides from "./booking.routes";
 import rideRoutes from "./ride.routes";
+import notificationRoutes from "./notification.routes";
 
 const router = Router();
 
@@ -16,5 +17,7 @@ router.use("/", placesRoutes);
 router.use("/ride", rideRoutes);
 
 router.use("/booking", bookingRides);
+
+router.use("/notification", notificationRoutes);
 
 export default router;

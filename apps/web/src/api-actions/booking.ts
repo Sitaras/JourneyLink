@@ -52,3 +52,15 @@ export const declineBooking = async (bookingId: string) => {
     throw error?.message;
   }
 };
+
+export const cancelBooking = async (bookingId: string) => {
+  try {
+    const response = await postFetcher<
+      Record<string, never>,
+      { status: string }
+    >(`booking/${bookingId}/cancel`, {});
+    return response;
+  } catch (error: any) {
+    throw error?.message || "Failed to cancel booking";
+  }
+};

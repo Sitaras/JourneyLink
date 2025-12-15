@@ -88,7 +88,7 @@ export class UserService {
   async getRides(userId: string, query: IGetUserRidesQueryPayload) {
     const {
       type = UserRideRole.AS_PASSENGER,
-      sortOrder = "asc",
+      sortOrder = "desc",
       page = 1,
       limit = 10,
     } = query || {};
@@ -194,6 +194,7 @@ export class UserService {
               $cond: {
                 if: { $ne: ["$driverProfile", null] },
                 then: {
+                  _id: "$user._id",
                   firstName: "$driverProfile.firstName",
                   rating: "$driverProfile.rating",
                 },
@@ -235,74 +236,6 @@ export class UserService {
       pages: Math.ceil(totalCount / limit),
       data,
     };
-  }
-
-  async getRideById(rideId: string, userId: string) {
-    if (!Types.ObjectId.isValid(rideId)) {
-      throw { statusCode: StatusCodes.BAD_REQUEST, message: "Invalid Ride ID" };
-    }
-
-    const rideBase = await Ride.findById(rideId)
-      .populate("driver", "email phoneNumber roles profile")
-      .lean();
-
-    if (!rideBase) {
-      throw { statusCode: StatusCodes.NOT_FOUND, message: "Ride not found" };
-    }
-
-    const isDriver = rideBase.driver?._id?.toString() === userId?.toString();
-    const isPassenger = rideBase.passengers?.some(
-      (p) => p.user?._id?.toString() === userId?.toString()
-    );
-
-    if (!isDriver && !isPassenger) {
-      throw {
-        statusCode: StatusCodes.FORBIDDEN,
-        message: "Not authorized to view this ride",
-      };
-    }
-
-    const userHasRequested = rideBase.passengers?.some(
-      (p) => p.user?.toString() === userId?.toString()
-    );
-
-    const noAvailableSeats = (rideBase.availableSeats ?? 0) <= 0;
-
-    const rideInactive = ["completed", "cancelled"].includes(
-      rideBase.status?.toLowerCase()
-    );
-
-    const canBook = !(
-      isDriver ||
-      userHasRequested ||
-      noAvailableSeats ||
-      rideInactive
-    );
-
-    let responseData;
-    if (isDriver) {
-      const rideWithPassengers = await Ride.findById(rideId)
-        .populate("passengers.user", "email phoneNumber profile")
-        .lean();
-
-      responseData = {
-        ride: {
-          ...rideBase,
-          passengers: rideWithPassengers?.passengers || [],
-          canBook,
-        },
-      };
-    } else {
-      const { passengers: _passengers, ...rideWithoutPassengers } = rideBase;
-      responseData = {
-        ride: {
-          ...rideWithoutPassengers,
-          canBook,
-        },
-      };
-    }
-
-    return responseData;
   }
 }
 

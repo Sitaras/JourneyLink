@@ -73,21 +73,6 @@ export class UserController {
       next(error);
     }
   };
-
-  getRideById = async (
-    req: AuthRequest<MongoIdParam>,
-    res: Response,
-    next: any
-  ) => {
-    try {
-      const { id } = req.params;
-      const userId = req.user?.userId;
-      const result = await this.userService.getRideById(id, userId!);
-      return res.success(result, "Ride details fetched successfully");
-    } catch (error) {
-      next(error);
-    }
-  };
 }
 
 export const userController = new UserController(userService);

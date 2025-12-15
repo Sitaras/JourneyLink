@@ -10,6 +10,8 @@ import {
 import mongoose from "mongoose";
 import { StatusCodes } from "http-status-codes";
 import { agenda, JobTypes } from "../config/agenda";
+import { notificationService } from "./notification.service";
+import { NotificationType } from "@journey-link/shared";
 
 export class RideService {
   async checkAndCompleteRides(rideId?: string) {
@@ -579,6 +581,23 @@ export class RideService {
     }
 
     await ride.save();
+
+    // Notify Passengers about the update
+    const affectedPassengers = ride.passengers.filter((p) =>
+      [BookingStatus.PENDING, BookingStatus.CONFIRMED].includes(p.status as any)
+    );
+
+    for (const passenger of affectedPassengers) {
+      if (passenger.user) {
+        await notificationService.createNotification(
+          passenger.user.toString(),
+          NotificationType.RIDE_UPDATED,
+          "Ride Updated",
+          `The ride from ${ride.origin.city} to ${ride.destination.city} has been updated by the driver.`,
+          { rideId: ride._id }
+        );
+      }
+    }
 
     const pipeline: any[] = [
       { $match: { _id: new mongoose.Types.ObjectId(rideId) } },

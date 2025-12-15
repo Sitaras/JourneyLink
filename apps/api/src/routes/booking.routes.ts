@@ -28,6 +28,13 @@ router.post(
   bookingController.declineBooking
 );
 
+router.post(
+  "/:id/cancel",
+  authenticateToken,
+  validateData(mongoIdSchema, "params"),
+  bookingController.cancelBooking
+);
+
 router.get(
   "/ride/:id",
   authenticateToken,

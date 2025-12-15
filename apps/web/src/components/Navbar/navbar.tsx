@@ -12,6 +12,7 @@ import { MenuIcon } from "lucide-react";
 import DesktopNav from "./DesktopNav";
 import MobileNav from "./MobileNav";
 import UserMenu from "./UserMenu";
+import { Notifications } from "../ Notifications/Notifications";
 import Logo from "./Logo";
 import type { NavbarProps, NavbarNavItem } from "./types";
 import Link from "next/link";
@@ -121,7 +122,10 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
 
           {!isLoading &&
             (isAuthenticated ? (
-              <UserMenu />
+              <div className="flex items-center gap-2">
+                <Notifications />
+                <UserMenu />
+              </div>
             ) : (
               <div className="flex gap-2">
                 <Button

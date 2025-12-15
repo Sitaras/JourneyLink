@@ -1,55 +1,103 @@
 "use client";
 
-import React from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { Button } from "../ui/button";
-import Typography from "../ui/typography";
 import { bookSeat } from "@/api-actions/booking";
+import { useRouter } from "next/navigation";
+import { LucideIcon, RotateCcw } from "lucide-react";
+import { cn } from "@/lib/utils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { useState } from "react";
+
+interface BookingButtonProps {
+  rideId: string;
+  canBook?: boolean;
+  variant?: "default" | "icon";
+  className?: string;
+  Icon?: LucideIcon;
+}
 
 const BookingButton = ({
   rideId,
-  isBookingAvailable,
-}: {
-  rideId: string;
-  isBookingAvailable: boolean;
-}) => {
+  canBook = true,
+  variant = "default",
+  className,
+  Icon = RotateCcw,
+}: BookingButtonProps) => {
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const [isInvalidating, setIsInvalidating] = useState(false);
+
   const mutation = useMutation({
     mutationFn: async (rideId: string) => {
       return bookSeat({ rideId });
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      setIsInvalidating(true);
       toast.success(
         "Booking request sent! The driver will contact you shortly."
       );
+
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["ride-bookings", rideId] }),
+        queryClient.invalidateQueries({ queryKey: ["api/ride", rideId] }),
+        queryClient.invalidateQueries({ queryKey: ["me/user-rides"] }),
+      ]);
+
+      router.refresh();
+      setIsInvalidating(false);
     },
     onError: (err: Error) => {
       toast.error(err.message || "Failed to book seat. Please try again.");
     },
   });
 
-  return (
-    <>
-      <Button
-        size="lg"
-        type="button"
-        className="w-full text-base font-semibold"
-        disabled={mutation.isPending || !isBookingAvailable}
-        loading={mutation.isPending}
-        onClick={() => {
-          mutation.mutate(rideId);
-        }}
-      >
-        {isBookingAvailable ? "Book Your Seat" : "Fully Booked"}
-      </Button>
-      {!isBookingAvailable && (
-        <Typography className="text-sm text-center text-muted-foreground mt-2">
-          This ride is unavailable. Try searching for other available rides or
-          check back later.
-        </Typography>
+  const isIcon = variant === "icon";
+  const isLoading = mutation.isPending || isInvalidating;
+
+  const button = (
+    <Button
+      size={isIcon ? "icon" : "lg"}
+      type="button"
+      className={cn(!isIcon && "w-full text-base font-semibold", className)}
+      disabled={isLoading || !canBook}
+      loading={isLoading}
+      onClick={() => {
+        mutation.mutate(rideId);
+      }}
+    >
+      {isIcon ? (
+        !isLoading ? (
+          <Icon className="h-4 w-4" />
+        ) : null
+      ) : canBook ? (
+        "Book Your Seat"
+      ) : (
+        "Unavailable"
       )}
-    </>
+    </Button>
   );
+
+  if (isIcon) {
+    return (
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger asChild>{button}</TooltipTrigger>
+          <TooltipContent>
+            <p>Request to book again</p>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    );
+  }
+
+  return button;
 };
 
 export default BookingButton;

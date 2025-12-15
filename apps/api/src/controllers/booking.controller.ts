@@ -111,6 +111,25 @@ export class BookingController {
       next(error);
     }
   };
+  cancelBooking = async (
+    req: AuthRequest<MongoIdParam>,
+    res: Response,
+    next: any
+  ) => {
+    try {
+      const { id } = req.params;
+      const userId = req.user?.userId;
+      const result = await this.bookingService.cancelBooking(id, userId!);
+
+      return res.success(
+        result,
+        "Booking cancelled successfully.",
+        StatusCodes.OK
+      );
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export const bookingController = new BookingController(bookingService);

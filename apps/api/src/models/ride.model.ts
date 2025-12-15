@@ -160,8 +160,17 @@ rideSchema.methods.getBookingStatus = function (
   const isDriver = this.driver?.toString() === userId.toString();
   if (isDriver) return { canBook: false, reason: "USER_IS_DRIVER" };
 
+  const isBooked = this.passengers?.some(
+    (p: any) =>
+      p.user?.toString() === userId.toString() &&
+      p.status === BookingStatus.CONFIRMED
+  );
+  if (isBooked) return { canBook: false, reason: "ALREADY_BOOKED" };
+
   const hasRequested = this.passengers?.some(
-    (p: any) => p.user?.toString() === userId.toString()
+    (p: any) =>
+      p.user?.toString() === userId.toString() &&
+      p.status === BookingStatus.PENDING
   );
   if (hasRequested) return { canBook: false, reason: "ALREADY_REQUESTED" };
 

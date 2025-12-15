@@ -52,7 +52,7 @@ const BookingRequestCard = ({
     <div className="bg-card rounded-lg border p-4 shadow-sm transition-all hover:shadow-md">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <Link
-          href={`/profile/${booking.passenger._id}`}
+          href={`/users/${booking.passenger._id}/profile`}
           className="flex items-center gap-4 group"
         >
           <Avatar className="w-12 h-12 border-2 border-primary/10 group-hover:border-primary/30 transition-colors">

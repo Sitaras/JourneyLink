@@ -31,6 +31,16 @@ export const getUserProfile = async () => {
   }
 };
 
+export const getUserProfileById = async (userId: string) => {
+  try {
+    const response = await fetcher<ProfileResponse>(`me/${userId}/profile`);
+
+    return response;
+  } catch (error: any) {
+    throw error?.message;
+  }
+};
+
 export const updateUserProfile = async (body: UpdateProfilePayload) => {
   const dateOfBirthDateISOstring = body.dateOfBirth
     ? formatToUTC(body.dateOfBirth)

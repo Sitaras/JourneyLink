@@ -18,7 +18,6 @@ export default function Providers({
         defaultOptions: {
           queries: {
             staleTime: 1 * 60 * 1000,
-            // refetchOnWindowFocus: false,
             retry: (failureCount, error: any) => {
               // Don't retry on 404 or 401 errors
               if (error?.status === 404 || error?.status === 401) {

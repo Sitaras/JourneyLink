@@ -28,11 +28,5 @@ router.get(
   validateData(getUserRidesQuerySchema, "query"),
   userController.getRides
 );
-router.get(
-  "/rides/:id",
-  authenticateToken,
-  validateData(mongoIdSchema, "params"),
-  userController.getRideById
-);
 
 export default router;

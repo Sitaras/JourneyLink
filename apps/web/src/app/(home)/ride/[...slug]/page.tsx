@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import Typography from "@/components/ui/typography";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { BookingDisclaimer } from "@/components/BookingDisclaimer/BookingDisclaimer";
 import BookingButton from "@/components/BookingButton/BookingButton";
 import { dateFormatter, timeFormatter } from "@/utils/formatters";
 
@@ -55,6 +56,12 @@ export default async function Ride({
   return (
     <section className="flex flex-col gap-8 items-center w-full py-8 px-4">
       <div className="flex flex-col gap-6 max-w-xl w-full">
+        {/* Info Banner */}
+        <BookingDisclaimer
+          canBook={rideData.canBook ?? false}
+          cannotBookReason={rideData.cannotBookReason}
+        />
+
         {/* Driver Card */}
         <Card className="shadow-sm hover:shadow-md transition-shadow">
           <CardContent className="flex items-center p-6 gap-4">
@@ -216,7 +223,7 @@ export default async function Ride({
           </CardContent>
         </Card>
 
-        <BookingButton rideId={rideData._id} isBookingAvailable />
+        <BookingButton rideId={rideData._id} canBook={rideData.canBook} />
       </div>
     </section>
   );

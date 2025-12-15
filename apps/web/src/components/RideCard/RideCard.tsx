@@ -146,9 +146,12 @@ const RideCard = ({
             </Typography>
           </div>
           {viewType === UserRideRole.AS_PASSENGER && ride.driver && (
-            <div className="flex items-center gap-2 rounded-full">
+            <Link
+              href={`/users/${ride.driver._id}/profile`}
+              className="flex items-center gap-2 rounded-full hover:bg-muted/50 transition-colors p-1 -ml-1 pr-3 w-fit"
+            >
               <User className="w-3.5 h-3.5 text-primary" />
-              <Typography className="font-medium">
+              <Typography className="font-medium hover:underline">
                 {ride.driver.firstName}
               </Typography>
               {!!ride.driver.rating.average && (
@@ -159,7 +162,7 @@ const RideCard = ({
                   </Typography>
                 </div>
               )}
-            </div>
+            </Link>
           )}
           {viewType === UserRideRole.AS_DRIVER && (
             <div className="flex items-center gap-2 pt-2">

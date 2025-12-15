@@ -28,6 +28,7 @@ export interface RidePreferences {
 }
 
 export interface Driver {
+  _id: string;
   firstName: string;
   lastName: string;
   avatar?: string;
@@ -55,6 +56,8 @@ export interface Ride {
   remainingSeats: number;
   bookedSeats: number;
   myBooking?: IBooking;
+  canBook?: boolean;
+  cannotBookReason?: string | null;
 }
 
 export interface RideSearchResponse {

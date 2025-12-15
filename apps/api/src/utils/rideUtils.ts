@@ -11,7 +11,11 @@ export const isUserInRide = async (userId: string, rideId: string) => {
   const ride = await Ride.findById(rideId);
   if (!ride) return false;
 
-  const inRide = ride.passengers.some((p: any) => p.user.toString() === userId);
+  const inRide = ride.passengers.some(
+    (p) =>
+      p.user.toString() === userId &&
+      [BookingStatus.PENDING, BookingStatus.CONFIRMED].includes(p.status)
+  );
   if (inRide) return true;
 
   // Check if user has a pending booking for the ride
