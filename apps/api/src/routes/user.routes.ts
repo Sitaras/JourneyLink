@@ -10,6 +10,12 @@ const router = Router();
 
 router.get("/user-info", authenticateToken, userController.getUserInfo);
 router.get("/profile", authenticateToken, userController.getProfile);
+router.get(
+  "/:id/profile",
+  authenticateToken,
+  validateData(mongoIdSchema, "params"),
+  userController.getUserProfile
+);
 router.patch(
   "/profile",
   authenticateToken,

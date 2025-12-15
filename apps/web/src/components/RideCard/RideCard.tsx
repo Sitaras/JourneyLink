@@ -1,4 +1,3 @@
-import React from "react";
 import {
   Card,
   CardContent,
@@ -19,9 +18,22 @@ import {
   User,
   Users,
   Pencil,
+  Car,
+  Ticket,
 } from "lucide-react";
 import Link from "next/link";
-import { getRideStatusVariant, getRideStatusLabel } from "@/utils/myRidesUtils";
+import {
+  getRideStatusVariant,
+  getRideStatusLabel,
+  getBookingStatusVariant,
+  getBookingStatusLabel,
+} from "@/utils/myRidesUtils";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { isPast } from "@/utils/dateUtils";
 import { UserRideRole } from "@/types/user.types";
 import { RideStatus, UserRide } from "@journey-link/shared";
@@ -81,9 +93,47 @@ const RideCard = ({
               </Typography>
             </span>
           </CardTitle>
-          <Badge variant={statusVariant} className="px-3 py-1 shrink-0">
-            {statusLabel}
-          </Badge>
+          <TooltipProvider delayDuration={0}>
+            <div className="flex gap-2">
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <div className="flex items-center">
+                    <Badge
+                      variant={statusVariant}
+                      className="px-3 py-1 shrink-0 flex items-center gap-1 cursor-default"
+                    >
+                      <Car className="w-3 h-3" />
+                      {statusLabel}
+                    </Badge>
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p>Ride Status: {statusLabel}</p>
+                </TooltipContent>
+              </Tooltip>
+
+              {viewType === UserRideRole.AS_PASSENGER && ride.bookingStatus && (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div className="flex items-center">
+                      <Badge
+                        variant={getBookingStatusVariant(ride.bookingStatus)}
+                        className="px-3 py-1 shrink-0 flex items-center gap-1 cursor-default"
+                      >
+                        <Ticket className="w-3 h-3" />
+                        {getBookingStatusLabel(ride.bookingStatus)}
+                      </Badge>
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>
+                      Your Request: {getBookingStatusLabel(ride.bookingStatus)}
+                    </p>
+                  </TooltipContent>
+                </Tooltip>
+              )}
+            </div>
+          </TooltipProvider>
         </div>
       </CardHeader>
 

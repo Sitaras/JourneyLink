@@ -180,8 +180,15 @@ export class BookingService {
     }
 
     return await Booking.find({ ride: rideId })
-      .populate("passenger", "profile email phoneNumber")
-      .populate("ride", "origin destination departureTime pricePerSeat")
+      .select("-ride -driver -updatedAt -__v")
+      .populate({
+        path: "passenger",
+        select: "profile email phoneNumber",
+        populate: {
+          path: "profile",
+          select: "firstName lastName avatar rating",
+        },
+      })
       .sort({ createdAt: -1 });
   }
 
@@ -206,7 +213,15 @@ export class BookingService {
       ride: rideId,
       status: BookingStatus.PENDING,
     })
-      .populate("passenger", "profile email phoneNumber")
+      .select("-ride -driver -updatedAt -__v")
+      .populate({
+        path: "passenger",
+        select: "profile email phoneNumber",
+        populate: {
+          path: "profile",
+          select: "firstName lastName avatar rating",
+        },
+      })
       .sort({ createdAt: -1 });
   }
 }

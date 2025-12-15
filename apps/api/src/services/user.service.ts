@@ -11,7 +11,7 @@ import { StatusCodes } from "http-status-codes";
 export class UserService {
   async getUserInfo(userId: string) {
     const user = await User.findById(userId)
-      .select("-password -refreshTokens -__v -_id")
+      .select("-password -refreshTokens -__v")
       .populate({
         path: "profile",
         select: "-__v -createdAt -updatedAt -_id",
@@ -32,6 +32,43 @@ export class UserService {
     }
 
     return profile;
+  }
+
+  async getUserProfile(requesterId: string, targetUserId: string) {
+    if (requesterId === targetUserId) {
+      return this.getProfile(requesterId);
+    }
+
+    const canView = await this.canViewProfile(requesterId, targetUserId);
+    if (!canView) {
+      throw {
+        statusCode: StatusCodes.FORBIDDEN,
+        message:
+          "You can only view profiles of users you have a confirmed ride with.",
+      };
+    }
+
+    const profile = await Profile.findOne({ user: targetUserId });
+    if (!profile) {
+      throw { statusCode: StatusCodes.NOT_FOUND, message: "Profile not found" };
+    }
+
+    return profile;
+  }
+
+  private async canViewProfile(
+    requesterId: string,
+    targetUserId: string
+  ): Promise<boolean> {
+    const booking = await Booking.findOne({
+      status: BookingStatus.CONFIRMED,
+      $or: [
+        { driver: requesterId, passenger: targetUserId },
+        { driver: targetUserId, passenger: requesterId },
+      ],
+    });
+
+    return !!booking;
   }
 
   async updateProfile(userId: string, updateData: UpdateProfilePayload) {

@@ -28,6 +28,24 @@ export class UserController {
     }
   };
 
+  getUserProfile = async (
+    req: AuthRequest<MongoIdParam>,
+    res: Response,
+    next: any
+  ) => {
+    try {
+      const requesterId = req.user?.userId;
+      const targetUserId = req.params.id;
+      const result = await this.userService.getUserProfile(
+        requesterId!,
+        targetUserId
+      );
+      return res.success(result, "Profile fetched successfully");
+    } catch (error) {
+      next(error);
+    }
+  };
+
   updateProfile = async (
     req: AuthRequest<unknown, unknown, UpdateProfilePayload>,
     res: Response,

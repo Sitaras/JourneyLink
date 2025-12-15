@@ -1,4 +1,4 @@
-import { BookingStatus } from "./booking.types";
+import { BookingStatus, IBooking } from "./booking.types";
 
 export enum RideStatus {
   ACTIVE = "active",
@@ -39,10 +39,12 @@ export interface Driver {
 
 export interface Ride {
   _id: string;
+  driver: string;
   driverProfile: Driver;
   origin: Location;
   destination: Location;
   departureTime: string;
+  status: RideStatus;
   availableSeats: number;
   pricePerSeat: number;
   vehicleInfo: VehicleInfo;
@@ -52,6 +54,7 @@ export interface Ride {
   originDistance: number;
   remainingSeats: number;
   bookedSeats: number;
+  myBooking?: IBooking;
 }
 
 export interface RideSearchResponse {
@@ -99,8 +102,8 @@ export interface UserRide {
   bookingDate?: string;
   bookingStatus?: BookingStatus;
   driver?: Driver;
-  vehicleInfo?: VehicleInfo;        
-  preferences?: RidePreferences;    
+  vehicleInfo?: VehicleInfo;
+  preferences?: RidePreferences;
   additionalInfo?: string;
 }
 

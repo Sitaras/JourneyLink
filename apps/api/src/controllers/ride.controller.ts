@@ -3,7 +3,7 @@ import {
   ICreateRidePayload,
   IGetRideQueryPayload,
   IDeleteRidePayload,
-} from "@/schemas/rideSchema";
+} from "@journey-link/shared";
 import { AuthRequest } from "../middleware/auth.middleware";
 import { StatusCodes } from "http-status-codes";
 import { MongoIdParam } from "../schemas/idSchema";

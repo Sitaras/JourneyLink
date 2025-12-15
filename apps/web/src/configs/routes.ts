@@ -14,6 +14,9 @@ const routes = {
   profile: "/profile",
 } as const;
 
+export type RouteKey = keyof typeof routes;
+export type RoutePath = (typeof routes)[RouteKey];
+
 const routeConfig = {
   protected: {
     paths: [
@@ -22,8 +25,7 @@ const routeConfig = {
       routes.profile,
       routes.myRides,
     ] as string[],
-    // Note: /ride is protected, but we'll handle dynamic routes separately
-    patterns: [/^\/ride\/.+/], // Regex to match /ride/* paths
+    prefixes: [routes.viewRide, routes.myRides],
     redirectTo: routes.login,
   },
   auth: {
@@ -46,9 +48,11 @@ const routeConfig = {
 } as const;
 
 const isProtectedRoute = (path: string): boolean => {
+  const { paths, prefixes } = routeConfig.protected;
+
   return (
-    routeConfig.protected.paths.includes(path) ||
-    routeConfig.protected.patterns.some((pattern) => pattern.test(path))
+    paths.includes(path) ||
+    prefixes.some((prefix) => path === prefix || path.startsWith(`${prefix}/`))
   );
 };
 
@@ -74,6 +78,3 @@ export {
   isAuthRoute,
   isPublicRoute,
 };
-
-export type RoutePath = (typeof routes)[keyof typeof routes];
-export type RouteKey = keyof typeof routes;

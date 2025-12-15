@@ -13,20 +13,29 @@ import { FieldErrors, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
-import { registerSchema } from "@journey-link/shared";
+import { registerSchemaBase } from "@journey-link/shared";
 import { CustomInput } from "@/components/ui/Inputs/CustomInput";
 import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { onError } from "@/utils/formUtils";
 import BirthdayInput from "@/components/ui/Inputs/BirthdayInput";
 
-type RegisterFormValues = z.infer<typeof registerSchema>;
+const registerFormSchema = registerSchemaBase
+  .extend({
+    dateOfBirth: z.string().min(1, {
+      error: "Date of birth is required",
+    }),
+  })
+  .refine((data) => data.password === data.verifyPassword, {
+    path: ["verifyPassword"],
+    error: "Passwords do not match",
+  });
+
+type RegisterFormValues = z.infer<typeof registerFormSchema>;
 
 export default function RegisterPage() {
-  const { register: _register, handleSubmit } = useForm<
-    z.output<typeof registerSchema>
-  >({
-    resolver: zodResolver(registerSchema),
+  const { register: _register, handleSubmit } = useForm<RegisterFormValues>({
+    resolver: zodResolver(registerFormSchema),
   });
 
   const mutation = useMutation({

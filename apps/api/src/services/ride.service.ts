@@ -1,14 +1,74 @@
 import { Ride } from "../models/ride.model";
+import { Booking } from "../models/booking.model";
 import {
+  BookingStatus,
+  RideStatus,
   ICreateRidePayload,
   IGetRideQueryPayload,
   IDeleteRidePayload,
-} from "@/schemas/rideSchema";
-import { BookingStatus, RideStatus } from "@journey-link/shared";
+} from "@journey-link/shared";
 import mongoose from "mongoose";
 import { StatusCodes } from "http-status-codes";
+import { agenda, JobTypes } from "../config/agenda";
 
 export class RideService {
+  async checkAndCompleteRides(rideId?: string) {
+    try {
+      const now = new Date();
+      const query: any = {
+        status: RideStatus.ACTIVE,
+        departureTime: { $lt: now.toISOString() },
+      };
+
+      if (rideId) {
+        query._id = rideId;
+      }
+
+      const ridesToComplete = await Ride.find(query);
+
+      if (ridesToComplete.length > 0) {
+        for (const ride of ridesToComplete) {
+          ride.status = RideStatus.COMPLETED;
+          await ride.save();
+
+          await Booking.updateMany(
+            {
+              ride: ride._id,
+              status: BookingStatus.PENDING,
+            },
+            {
+              status: BookingStatus.DECLINED,
+            }
+          );
+        }
+      }
+    } catch (error) {
+      console.error("RideService: Error updating ride statuses", error);
+    }
+  }
+
+  async completeRide(rideId: string) {
+    try {
+      const ride = await Ride.findById(rideId);
+      if (!ride || ride.status !== RideStatus.ACTIVE) return;
+
+      ride.status = RideStatus.COMPLETED;
+      await ride.save();
+
+      await Booking.updateMany(
+        {
+          ride: rideId,
+          status: BookingStatus.PENDING,
+        },
+        {
+          status: BookingStatus.DECLINED,
+        }
+      );
+    } catch (error) {
+      console.error(`RideService: Error completing ride ${rideId}`, error);
+    }
+  }
+
   private addSeatCalculationStages(pipeline: any[]): void {
     pipeline.push(
       {
@@ -280,10 +340,20 @@ export class RideService {
       additionalInfo,
     });
 
+    try {
+      await agenda.schedule(ride.departureTime, JobTypes.COMPLETE_RIDE, {
+        rideId: ride._id.toString(),
+      });
+    } catch (error) {
+      console.error("RideService: Failed to schedule completion job", error);
+    }
+
     return await Ride.findById(ride._id).populate("driver", "name email phone");
   }
 
   async getRideById(id: string, userId: string) {
+    await this.checkAndCompleteRides(id);
+
     const pipeline: any[] = [
       { $match: { _id: new mongoose.Types.ObjectId(id) } },
     ];
@@ -302,12 +372,23 @@ export class RideService {
 
     const isDriver = ride.driver.toString() === userId?.toString();
     const isPassenger = ride.passengers?.some(
-      (p: any) => p.user?.toString() === userId?.toString()
+      (p) => p.user?.toString() === userId?.toString()
     );
 
     this.applyVisibilityRules(rideAgg, isDriver, isPassenger);
 
-    return { canBook, cannotBookReason, ...rideAgg };
+    let myBooking = null;
+    if (isPassenger) {
+      const booking = await Booking.findOne({
+        ride: id,
+        passenger: userId,
+      }).select("status createdAt seatsBooked");
+      if (booking) {
+        myBooking = booking;
+      }
+    }
+
+    return { canBook, cannotBookReason, myBooking, ...rideAgg };
   }
 
   private applyVisibilityRules(
@@ -379,6 +460,15 @@ export class RideService {
 
     if (data?.notifyPassengers) {
       // TODO: notification
+    }
+
+    try {
+      await agenda.cancel({
+        name: JobTypes.COMPLETE_RIDE,
+        "data.rideId": rideId.toString(),
+      });
+    } catch (error) {
+      console.error("RideService: Failed to cancel completion job", error);
     }
 
     return ride;
@@ -497,6 +587,23 @@ export class RideService {
     this.addDriverInfo(pipeline);
 
     const [updatedRide] = await Ride.aggregate(pipeline);
+
+    if (departureTime) {
+      try {
+        await agenda.cancel({
+          name: JobTypes.COMPLETE_RIDE,
+          "data.rideId": rideId.toString(),
+        });
+        await agenda.schedule(new Date(departureTime), JobTypes.COMPLETE_RIDE, {
+          rideId: rideId.toString(),
+        });
+      } catch (error) {
+        console.error(
+          "RideService: Failed to reschedule completion job",
+          error
+        );
+      }
+    }
 
     return updatedRide;
   }

@@ -2,15 +2,34 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Typography from "@/components/ui/typography";
-import { useState } from "react";
 import UserRidesList from "@/components/UserRidesList/UserRidesList";
 import { Car, User } from "lucide-react";
 import { UserRideRole } from "@journey-link/shared";
+import { useSearchParams, useRouter, usePathname } from "next/navigation";
+import { useCallback } from "react";
 
 const MyRidesPage = () => {
-  const [activeTab, setActiveTab] = useState<UserRideRole>(
-    UserRideRole.AS_PASSENGER
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const viewParam = searchParams.get("view");
+  const activeTab =
+    viewParam === "driver" ? UserRideRole.AS_DRIVER : UserRideRole.AS_PASSENGER;
+
+  const createQueryString = useCallback(
+    (name: string, value: string) => {
+      const params = new URLSearchParams(searchParams.toString());
+      params.set(name, value);
+      return params.toString();
+    },
+    [searchParams]
   );
+
+  const handleTabChange = (value: string) => {
+    const viewValue = value === UserRideRole.AS_DRIVER ? "driver" : "passenger";
+    router.push(pathname + "?" + createQueryString("view", viewValue));
+  };
 
   const tabs = [
     {
@@ -39,7 +58,7 @@ const MyRidesPage = () => {
 
         <Tabs
           value={activeTab}
-          onValueChange={(value) => setActiveTab(value as UserRideRole)}
+          onValueChange={handleTabChange}
           className="w-full"
         >
           <TabsList className="w-full p-0 border-b rounded-none bg-transparent h-auto">

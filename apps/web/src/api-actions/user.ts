@@ -9,11 +9,11 @@ import {
   IGetUserRidesQueryPayload,
 } from "@/schemas/user/userRideSchema";
 import { generateQueryString } from "@/utils/genericUtils";
-import { UserRidesResponse } from "@journey-link/shared";
+import { UserRidesResponse, IUser } from "@journey-link/shared";
 
 export const getUserInfo = async () => {
   try {
-    const response = await fetcher("me/user-info");
+    const response = await fetcher<IUser>("me/user-info");
 
     return response;
   } catch (error: any) {

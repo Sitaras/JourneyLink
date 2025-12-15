@@ -40,6 +40,7 @@ export interface IRefreshResponse {
 
 // Frontend user type
 export interface IUser {
+  _id: string;
   role: UserRole;
   profile?: any;
 }

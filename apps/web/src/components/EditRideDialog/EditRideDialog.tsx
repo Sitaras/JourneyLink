@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
-import { Ride } from "@journey-link/shared";
 import { useForm, Resolver, FieldErrors } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
@@ -57,7 +56,7 @@ const EditRideDialog = ({
     data: ride,
     isLoading,
     refetch,
-  } = useQuery<unknown, unknown, Ride>({
+  } = useQuery({
     queryKey: ["api/ride", rideId],
     queryFn: () => {
       return getRide(rideId);
