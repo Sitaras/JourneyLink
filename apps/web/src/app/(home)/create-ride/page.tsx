@@ -1,5 +1,8 @@
 "use client";
 
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/context/AuthContext";
+
 import { createRide } from "@/api-actions/ride";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -34,6 +37,25 @@ import { CustomTextarea } from "@/components/ui/Inputs/CustomTextarea";
 import { onError } from "@/utils/formUtils";
 
 export default function CreateRide() {
+  const router = useRouter();
+  const { user, isLoading } = useAuth();
+
+  const profile = user?.profile as any;
+  const hasSocials =
+    profile?.socials &&
+    (profile.socials.facebook ||
+      profile.socials.twitter ||
+      profile.socials.linkedIn);
+
+  const isProfileComplete =
+    profile &&
+    profile.firstName &&
+    profile.lastName &&
+    profile.email &&
+    profile.phoneNumber &&
+    profile.bio &&
+    hasSocials;
+
   const { register, control, handleSubmit } = useForm<CreateRideFormValues>({
     resolver: zodResolver(createRideSchema) as Resolver<CreateRideFormValues>,
     defaultValues: {
@@ -119,7 +141,18 @@ export default function CreateRide() {
           className="flex flex-col gap-6 w-full"
           noValidate
         >
-          {/* Ride Section */}
+          {!isProfileComplete && !isLoading && (
+            <div className="bg-destructive/10 border border-destructive/20 text-destructive p-3 rounded-md text-sm text-center">
+              Please complete your profile (Name, Bio, Email, Phone, Social
+              Media) to publish a ride.
+              <span
+                onClick={() => router.push("/profile")}
+                className="underline cursor-pointer font-medium"
+              >
+                Go to Profile
+              </span>
+            </div>
+          )}
           <Card className="shadow-sm">
             <CardContent className="p-6 space-y-5">
               <div className="flex items-center gap-2 mb-2">
@@ -267,7 +300,7 @@ export default function CreateRide() {
             loading={mutation.isPending}
             size="lg"
             className="w-full text-base font-semibold"
-            disabled={mutation.isPending}
+            disabled={mutation.isPending || !isProfileComplete}
           >
             {mutation.isPending ? "Creating ride..." : "Publish Ride"}
           </Button>

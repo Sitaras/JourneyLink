@@ -1,4 +1,5 @@
 import { Ride } from "../models/ride.model";
+import { User } from "../models/user.model";
 import { Booking } from "../models/booking.model";
 import {
   BookingStatus,
@@ -319,6 +320,35 @@ export class RideService {
   }
 
   async createRide(userId: string, data: ICreateRidePayload) {
+    const user = await User.findById(userId).populate("profile");
+
+    if (!user) {
+      throw { statusCode: StatusCodes.NOT_FOUND, message: "User not found" };
+    }
+
+    const profile = user.profile as any;
+    const hasSocials =
+      profile?.socials &&
+      (profile.socials.facebook ||
+        profile.socials.twitter ||
+        profile.socials.linkedIn);
+
+    if (
+      !profile ||
+      !profile.firstName ||
+      !profile.lastName ||
+      !profile.email ||
+      !profile.phoneNumber ||
+      !profile.bio ||
+      !hasSocials
+    ) {
+      throw {
+        statusCode: StatusCodes.FORBIDDEN,
+        message:
+          "To create a ride, your profile must include: First Name, Last Name, Email, Phone, Bio, and at least one Social Media link.",
+      };
+    }
+
     const {
       origin,
       destination,

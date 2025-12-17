@@ -72,6 +72,40 @@ export class UserService {
   }
 
   async updateProfile(userId: string, updateData: UpdateProfilePayload) {
+    const userUpdates: any = {};
+    if (updateData.phoneNumber)
+      userUpdates.phoneNumber = updateData.phoneNumber;
+
+    if (updateData.email) userUpdates.email = updateData.email;
+
+    if (Object.keys(userUpdates).length > 0) {
+      const orConditions = [];
+      if (userUpdates.email) orConditions.push({ email: userUpdates.email });
+      if (userUpdates.phoneNumber)
+        orConditions.push({ phoneNumber: userUpdates.phoneNumber });
+
+      const existingUser = await User.findOne({
+        $or: orConditions,
+        _id: { $ne: userId },
+      });
+
+      if (existingUser) {
+        let message = "User already exists";
+        if (existingUser.email === userUpdates.email) {
+          message = "Email already in use";
+        } else if (existingUser.phoneNumber === userUpdates.phoneNumber) {
+          message = "Phone number already in use";
+        }
+
+        throw {
+          statusCode: StatusCodes.BAD_REQUEST,
+          message,
+        };
+      }
+
+      await User.findByIdAndUpdate(userId, userUpdates);
+    }
+
     const profile = await Profile.findOneAndUpdate(
       { user: userId },
       { $set: updateData },

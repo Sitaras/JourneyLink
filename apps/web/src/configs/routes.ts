@@ -12,6 +12,7 @@ const routes = {
   forgotPassword: "/forgot-password",
   resetPassword: "/reset-password",
   profile: "/profile",
+  users: "/users",
 } as const;
 
 export type RouteKey = keyof typeof routes;
@@ -23,9 +24,10 @@ const routeConfig = {
       routes.settings,
       routes.createRide,
       routes.profile,
+      routes.users,
       routes.myRides,
     ] as string[],
-    prefixes: [routes.viewRide, routes.myRides],
+    prefixes: [routes.viewRide, routes.myRides, routes.users],
     redirectTo: routes.login,
   },
   auth: {

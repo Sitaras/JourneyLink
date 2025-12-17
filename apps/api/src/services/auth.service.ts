@@ -31,9 +31,16 @@ export class AuthService {
     });
 
     if (existingUser) {
+      let message = "User already exists";
+      if (existingUser.email === email) {
+        message = "Email already in use";
+      } else if (existingUser.phoneNumber === phoneNumber) {
+        message = "Phone number already in use";
+      }
+
       throw {
         statusCode: StatusCodes.BAD_REQUEST,
-        message: "User already exists",
+        message,
       };
     }
 
