@@ -6,11 +6,12 @@ import { Controller, Control } from "react-hook-form";
 import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 
-interface SwitchProps
-  extends React.ComponentPropsWithoutRef<typeof SwitchPrimitives.Root> {
+interface SwitchProps extends React.ComponentPropsWithoutRef<
+  typeof SwitchPrimitives.Root
+> {
   name?: string;
   control?: Control<any>;
-  label?: string;
+  label?: React.ReactNode;
   labelClassName?: string;
 }
 

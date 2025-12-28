@@ -36,8 +36,14 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useQuery } from "@tanstack/react-query";
 import { EditRideDialogSkeleton } from "./EditRideDialogSkeleton";
 import { onError } from "@/utils/formUtils";
+import { t } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
 
-import { editRideSchema, EditRideFormData } from "@/schemas/editRideSchema";
+import {
+  createEditRideSchema,
+  EditRideFormData,
+} from "@/schemas/editRideSchema";
+import { useMemo } from "react";
 
 interface EditRideDialogProps {
   rideId: string;
@@ -84,15 +90,15 @@ const EditRideDialog = ({
       return updateRide(ride?._id, payload);
     },
     onSuccess: () => {
-      toast.success("Ride updated successfully", {
-        description: "Your changes have been saved.",
+      toast.success(t`Ride updated successfully`, {
+        description: t`Your changes have been saved.`,
       });
       onSuccess();
       refetch();
     },
     onError: (error: Error) => {
-      toast.error("Failed to update ride", {
-        description: error.message || "Please try again later.",
+      toast.error(t`Failed to update ride`, {
+        description: error.message || t`Please try again later.`,
       });
     },
   });
@@ -123,7 +129,9 @@ const EditRideDialog = ({
     control,
     formState: { isDirty },
   } = useForm<EditRideFormData>({
-    resolver: zodResolver(editRideSchema) as Resolver<EditRideFormData>,
+    resolver: zodResolver(
+      useMemo(() => createEditRideSchema(), [])
+    ) as Resolver<EditRideFormData>,
     values: formValues,
     defaultValues: {
       dateTrip: "",
@@ -172,10 +180,14 @@ const EditRideDialog = ({
     <Dialog open={open} onOpenChange={(isOpen) => !isOpen && onClose()}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle>Edit Ride</DialogTitle>
+          <DialogTitle>
+            <Trans>Edit Ride</Trans>
+          </DialogTitle>
           <DialogDescription>
-            Update the details of your ride. Note that you cannot change the
-            origin and destination.
+            <Trans>
+              Update the details of your ride. Note that you cannot change the
+              origin and destination.
+            </Trans>
           </DialogDescription>
         </DialogHeader>
 
@@ -192,7 +204,7 @@ const EditRideDialog = ({
                 <div className="flex items-center gap-2">
                   <MapPin className="w-5 h-5 text-primary" />
                   <Typography className="font-semibold text-lg">
-                    Route
+                    <Trans>Route</Trans>
                   </Typography>
                 </div>
                 <div className="p-3 bg-muted/50 rounded-md space-y-2">
@@ -232,7 +244,7 @@ const EditRideDialog = ({
                 <div className="flex items-center gap-2">
                   <Calendar className="w-5 h-5 text-primary" />
                   <Typography className="font-semibold text-lg">
-                    When?
+                    <Trans>When?</Trans>
                   </Typography>
                 </div>
 
@@ -241,8 +253,8 @@ const EditRideDialog = ({
                     disabled
                     register={register}
                     name="dateTrip"
-                    label="Date"
-                    placeholder="Select a date"
+                    label={<Trans>Date</Trans>}
+                    placeholder={t`Select a date`}
                     buttonClassName="w-full"
                   />
 
@@ -252,7 +264,7 @@ const EditRideDialog = ({
                       name="departureTime"
                       id="time-picker"
                       register={register}
-                      label="Time (24-hour format)"
+                      label={<Trans>Time (24-hour format)</Trans>}
                       className="peer bg-background appearance-none pr-9 [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
                     />
                     <div className="text-muted-foreground pointer-events-none absolute inset-y-10 right-0 flex items-center justify-center pr-4 peer-disabled:opacity-50">
@@ -267,7 +279,7 @@ const EditRideDialog = ({
                 <div className="flex items-center gap-2">
                   <Users className="w-5 h-5 text-primary" />
                   <Typography className="font-semibold text-lg">
-                    Capacity & Pricing
+                    <Trans>Capacity & Pricing</Trans>
                   </Typography>
                 </div>
 
@@ -276,13 +288,13 @@ const EditRideDialog = ({
                     <SeatsSelect
                       control={control}
                       name="availableSeats"
-                      label="Available Seats"
+                      label={<Trans>Available Seats</Trans>}
                       maxSeats={8}
                       required
                     />
                     {hasBookings && (
                       <p className="text-xs text-muted-foreground px-1">
-                        Minimum: {bookedSeats} (already booked)
+                        <Trans>Minimum: {bookedSeats} (already booked)</Trans>
                       </p>
                     )}
                   </div>
@@ -290,7 +302,7 @@ const EditRideDialog = ({
                   <div className="relative">
                     <CustomInput
                       name="pricePerSeat"
-                      label="Price per seat"
+                      label={<Trans>Price per seat</Trans>}
                       register={register}
                       required
                       placeholder="0.00"
@@ -311,32 +323,32 @@ const EditRideDialog = ({
                 <div className="flex items-center gap-2">
                   <Car className="w-5 h-5 text-primary" />
                   <Typography className="font-semibold text-lg">
-                    Vehicle Information
+                    <Trans>Vehicle Information</Trans>
                   </Typography>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <CustomInput
                     name="vehicleInfo.make"
-                    label="Make"
-                    placeholder="e.g., Toyota"
+                    label={<Trans>Make</Trans>}
+                    placeholder={t`e.g., Toyota`}
                     register={register}
                   />
                   <CustomInput
                     name="vehicleInfo.model"
-                    label="Model"
-                    placeholder="e.g., Camry"
+                    label={<Trans>Model</Trans>}
+                    placeholder={t`e.g., Camry`}
                     register={register}
                   />
                   <CustomInput
                     name="vehicleInfo.color"
-                    label="Color"
-                    placeholder="e.g., Silver"
+                    label={<Trans>Color</Trans>}
+                    placeholder={t`e.g., Silver`}
                     register={register}
                   />
                   <CustomInput
                     name="vehicleInfo.licensePlate"
-                    label="License Plate"
-                    placeholder="e.g., ABC-1234"
+                    label={<Trans>License Plate</Trans>}
+                    placeholder={t`e.g., ABC-1234`}
                     register={register}
                   />
                 </div>
@@ -347,7 +359,7 @@ const EditRideDialog = ({
                 <div className="flex items-center gap-2">
                   <Settings className="w-5 h-5 text-primary" />
                   <Typography className="font-semibold text-lg">
-                    Preferences
+                    <Trans>Preferences</Trans>
                   </Typography>
                 </div>
 
@@ -355,12 +367,12 @@ const EditRideDialog = ({
                   <Switch
                     control={control}
                     name="preferences.smokingAllowed"
-                    label="Smoking allowed"
+                    label={<Trans>Smoking allowed</Trans>}
                   />
                   <Switch
                     control={control}
                     name="preferences.petsAllowed"
-                    label="Pets allowed"
+                    label={<Trans>Pets allowed</Trans>}
                   />
                 </div>
               </CardContent>
@@ -370,21 +382,21 @@ const EditRideDialog = ({
                 <div className="flex items-center gap-2">
                   <Info className="w-5 h-5 text-primary" />
                   <Typography className="font-semibold text-lg">
-                    Additional Information
+                    <Trans>Additional Information</Trans>
                   </Typography>
                 </div>
 
                 <CustomTextarea
                   name="additionalInfo"
-                  label="Any extra details?"
-                  placeholder="Any additional details passengers should know..."
+                  label={<Trans>Any extra details?</Trans>}
+                  placeholder={t`Any additional details passengers should know...`}
                   register={register}
                   rows={4}
                   maxLength={500}
                 />
                 <div className="flex justify-end">
                   <Typography className="text-xs text-muted-foreground">
-                    Max 500 characters
+                    <Trans>Max 500 characters</Trans>
                   </Typography>
                 </div>
               </CardContent>
@@ -397,10 +409,10 @@ const EditRideDialog = ({
                 onClick={onClose}
                 disabled={mutation.isPending}
               >
-                Cancel
+                <Trans>Cancel</Trans>
               </Button>
               <Button type="submit" disabled={!isDirty || mutation.isPending}>
-                {mutation.isPending ? "Saving..." : "Save Changes"}
+                {mutation.isPending ? t`Saving...` : t`Save Changes`}
               </Button>
             </DialogFooter>
           </form>

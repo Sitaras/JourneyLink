@@ -4,6 +4,7 @@ import Typography from "@/components/ui/typography";
 import { Ride } from "@journey-link/shared";
 import { User } from "lucide-react";
 import Link from "next/link";
+import { Trans } from "@lingui/react/macro";
 
 interface PassengerDriverCardProps {
   ride: Ride;
@@ -13,7 +14,9 @@ export const PassengerDriverCard = ({ ride }: PassengerDriverCardProps) => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Driver</CardTitle>
+        <CardTitle>
+          <Trans>Driver</Trans>
+        </CardTitle>
       </CardHeader>
       <CardContent>
         <Link
@@ -31,11 +34,11 @@ export const PassengerDriverCard = ({ ride }: PassengerDriverCardProps) => {
             </Typography>
             <div className="flex items-center gap-1 text-yellow-500">
               <span className="text-sm font-bold">
-                {ride.driverProfile.rating?.average || "New"}
+                {ride.driverProfile.rating?.average || <Trans>New</Trans>}
               </span>
               {ride.driverProfile.rating?.count > 0 && (
                 <span className="text-xs text-muted-foreground">
-                  ({ride.driverProfile.rating.count} reviews)
+                  (<Trans>{ride.driverProfile.rating.count} reviews</Trans>)
                 </span>
               )}
             </div>

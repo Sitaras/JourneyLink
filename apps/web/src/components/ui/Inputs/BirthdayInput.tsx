@@ -1,6 +1,7 @@
 import { DateFormats } from "@/utils/dateFormats";
 import { formatDate } from "@/utils/dateUtils";
 import { CustomInput, CustomInputProps } from "./CustomInput";
+import { Trans } from "@lingui/react/macro";
 
 const BirthdayInput = (props: CustomInputProps) => {
   const today = new Date();
@@ -17,7 +18,7 @@ const BirthdayInput = (props: CustomInputProps) => {
   return (
     <CustomInput
       {...props}
-      label="Date of birth"
+      label={props.label || <Trans>Date of birth</Trans>}
       type="date"
       max={formatDate(maxDate, DateFormats.DATE_DASH_REVERSE)}
       min={formatDate(minDate, DateFormats.DATE_DASH_REVERSE)}

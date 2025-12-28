@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { authController } from "../controllers/auth.controller";
 import { validateData } from "../middleware/validationMiddleware";
-import { registerSchema, loginSchema } from "@journey-link/shared";
+import { loginSchema, registerSchema } from "@journey-link/shared";
 import { refreshTokenSchema } from "../schemas/auth/refreshTokenSchema";
 import { authenticateToken } from "../middleware/auth.middleware";
 

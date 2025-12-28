@@ -1,5 +1,7 @@
 import { FieldErrors } from "react-hook-form";
 import { toast } from "sonner";
+import { getValidationMessage } from "@/utils/validationMessages";
+import { t } from "@lingui/core/macro";
 
 /**
  * @param fieldLabels - A mapping of field paths to human-readable labels
@@ -68,8 +70,8 @@ export const onError = (
 
   if (result) {
     const fieldLabel = fieldLabels[result.path] || result.path;
-    toast.error(`${fieldLabel}: ${result.message}`);
+    toast.error(`${fieldLabel}: ${getValidationMessage(result.message)}`);
   } else {
-    toast.error("Please check the form for errors");
+    toast.error(t`Please check the form for errors`);
   }
 };

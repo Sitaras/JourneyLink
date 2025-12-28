@@ -1,6 +1,6 @@
 export interface NavbarNavItem {
   href: string;
-  label: string;
+  label: React.ReactNode;
   external?: boolean;
   protected?: boolean;
 }
@@ -9,9 +9,9 @@ export interface NavbarProps extends React.HTMLAttributes<HTMLElement> {
   logo?: React.ReactNode;
   logoHref?: string;
   navigationLinks?: NavbarNavItem[];
-  signInText?: string;
+  signInText?: React.ReactNode;
   signInHref?: string;
-  ctaText?: string;
+  ctaText?: React.ReactNode;
   ctaHref?: string;
   onSignInClick?: () => void;
   onCtaClick?: () => void;

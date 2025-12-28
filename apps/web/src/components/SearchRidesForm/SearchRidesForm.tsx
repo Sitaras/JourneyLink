@@ -4,18 +4,20 @@ import { Button } from "@/components/ui/button";
 import { useForm, Resolver, FieldErrors } from "react-hook-form";
 import { DatePicker } from "@/components/ui/datepicker";
 import CityAutoComplete from "@/components/ui/Inputs/CityAutoComplete";
-import { rideSearchSchema } from "@/schemas/home/rideSearchSchema";
+import { createRideSearchSchema } from "@/schemas/home/rideSearchSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
 import type { z } from "zod";
 import { toast } from "sonner";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { Search, MapPin, Calendar } from "lucide-react";
+import { t } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
 import { shortDateFormatter } from "@/utils/formatters";
 import { onError } from "@/utils/formUtils";
 
-type RideSearchFormValues = z.infer<typeof rideSearchSchema>;
+type RideSearchFormValues = z.infer<ReturnType<typeof createRideSearchSchema>>;
 
 interface SearchRidesFormProps {
   values?: RideSearchFormValues;
@@ -34,7 +36,9 @@ export default function SearchRidesForm({
 
   const { control, handleSubmit, watch, register } =
     useForm<RideSearchFormValues>({
-      resolver: zodResolver(rideSearchSchema) as Resolver<RideSearchFormValues>,
+      resolver: zodResolver(
+        useMemo(() => createRideSearchSchema(), [])
+      ) as Resolver<RideSearchFormValues>,
       defaultValues: values || {
         departureLocation: undefined,
         arrivalLocation: undefined,
@@ -44,7 +48,7 @@ export default function SearchRidesForm({
 
   useEffect(() => {
     if (serviceError) {
-      toast.error("Search failed", {
+      toast.error(t`Search failed`, {
         description: serviceError,
       });
     }
@@ -86,9 +90,9 @@ export default function SearchRidesForm({
               <CityAutoComplete
                 control={control}
                 name="departureLocation"
-                label="From"
+                label={<Trans>From</Trans>}
                 defaultSearchInput={departureLocation?.label}
-                placeholder="Departure city"
+                placeholder={t`Departure city`}
                 className="px-4 lg:pl-12 lg:pr-6 py-4 hover:bg-gray-50/50 transition-colors"
                 buttonClassName="w-full border-0 shadow-none hover:bg-transparent focus:ring-0 px-0 h-auto text-left justify-start"
               />
@@ -101,9 +105,9 @@ export default function SearchRidesForm({
               <CityAutoComplete
                 control={control}
                 name="arrivalLocation"
-                label="To"
+                label={<Trans>To</Trans>}
                 defaultSearchInput={arrivalLocation?.label}
-                placeholder="Arrival city"
+                placeholder={t`Arrival city`}
                 className="px-4 lg:pl-12 lg:pr-6 py-4 hover:bg-gray-50/50 transition-colors"
                 buttonClassName="w-full border-0 shadow-none hover:bg-transparent focus:ring-0 px-0 h-auto text-left justify-start"
               />
@@ -118,8 +122,8 @@ export default function SearchRidesForm({
                   <DatePicker
                     register={register}
                     name="dateTrip"
-                    label="When"
-                    placeholder="Select date"
+                    label={<Trans>When</Trans>}
+                    placeholder={t`Select date`}
                     buttonClassName="w-full border-0 shadow-none hover:bg-transparent focus:ring-0 px-0 h-auto text-left justify-start"
                   />
                 </div>
@@ -147,7 +151,7 @@ export default function SearchRidesForm({
               className="w-full h-12 rounded-lg font-semibold gap-2"
             >
               <Search className="h-5 w-5" />
-              Search Rides
+              <Trans>Search Rides</Trans>
             </Button>
           </div>
         </form>

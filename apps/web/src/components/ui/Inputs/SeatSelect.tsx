@@ -1,4 +1,5 @@
 import * as React from "react";
+import { Trans } from "@lingui/react/macro";
 import {
   Select,
   SelectContent,
@@ -12,7 +13,7 @@ import { Label } from "../label";
 interface SeatsSelectProps {
   control: Control<any>;
   name: string;
-  label: string;
+  label: React.ReactNode;
   maxSeats?: number;
   required?: boolean;
   labelClassName?: string;
@@ -45,7 +46,9 @@ export const SeatsSelect: React.FC<SeatsSelectProps> = ({
             defaultValue={field.value?.toString()}
           >
             <SelectTrigger>
-              <SelectValue placeholder="Select number of seats" />
+              <SelectValue
+                placeholder={<Trans>Select number of seats</Trans>}
+              />
             </SelectTrigger>
             <SelectContent>
               {options.map((num) => (

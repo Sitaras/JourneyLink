@@ -4,6 +4,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import Typography from "@/components/ui/typography";
 import UserRidesList from "@/components/UserRidesList/UserRidesList";
 import { Car, User } from "lucide-react";
+import { Trans } from "@lingui/react/macro";
 import { UserRideRole } from "@journey-link/shared";
 import { useSearchParams, useRouter, usePathname } from "next/navigation";
 import { useCallback } from "react";
@@ -33,16 +34,16 @@ const MyRidesPage = () => {
 
   const tabs = [
     {
-      name: "As Passenger",
+      name: <Trans>As Passenger</Trans>,
       value: UserRideRole.AS_PASSENGER,
       icon: User,
-      description: "Rides you've booked",
+      description: <Trans>Rides you&apos;ve booked</Trans>,
     },
     {
-      name: "As Driver",
+      name: <Trans>As Driver</Trans>,
       value: UserRideRole.AS_DRIVER,
       icon: Car,
-      description: "Rides you're offering",
+      description: <Trans>Rides you&apos;re offering</Trans>,
     },
   ];
 
@@ -50,9 +51,11 @@ const MyRidesPage = () => {
     <section className="flex justify-center w-full py-8 px-4">
       <div className="flex flex-col gap-8 max-w-4xl w-full">
         <div className="flex flex-col gap-2">
-          <Typography variant="h2">My Rides</Typography>
+          <Typography variant="h2">
+            <Trans>My Rides</Trans>
+          </Typography>
           <Typography className="text-muted-foreground">
-            Manage your upcoming and past journeys
+            <Trans>Manage your upcoming and past journeys</Trans>
           </Typography>
         </div>
 
@@ -76,9 +79,11 @@ const MyRidesPage = () => {
                   </span>
                   <span className="sm:hidden">
                     <Typography className="font-medium">
-                      {tab.value === UserRideRole.AS_PASSENGER
-                        ? "Passenger"
-                        : "Driver"}
+                      {tab.value === UserRideRole.AS_PASSENGER ? (
+                        <Trans>Passenger</Trans>
+                      ) : (
+                        <Trans>Driver</Trans>
+                      )}
                     </Typography>
                   </span>
                 </TabsTrigger>

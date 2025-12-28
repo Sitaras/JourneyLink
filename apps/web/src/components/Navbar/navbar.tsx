@@ -1,6 +1,7 @@
 "use client";
 
 import * as React from "react";
+import { Trans } from "@lingui/react/macro";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 import { usePathname } from "next/navigation";
@@ -15,13 +16,18 @@ import UserMenu from "./UserMenu";
 import { Notifications } from "../ Notifications/Notifications";
 import Logo from "./Logo";
 import type { NavbarProps, NavbarNavItem } from "./types";
+import { LanguageSwitcher } from "../LanguageSwitcher";
 import Link from "next/link";
 import { DropdownMenu, DropdownMenuTrigger } from "../ui/dropdown-menu";
 
 const defaultLinks: NavbarNavItem[] = [
-  { href: routes.home, label: "Home" },
-  { href: routes.createRide, label: "Create Ride", protected: true },
-  { href: routes.myRides, label: "My rides", protected: true },
+  { href: routes.home, label: <Trans>Home</Trans> },
+  {
+    href: routes.createRide,
+    label: <Trans>Create Ride</Trans>,
+    protected: true,
+  },
+  { href: routes.myRides, label: <Trans>My rides</Trans>, protected: true },
 ];
 
 const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
@@ -31,9 +37,9 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
       logo,
       logoHref = "/",
       navigationLinks = defaultLinks,
-      signInText = "Sign in",
+      signInText = <Trans>Sign in</Trans>,
       signInHref = routes.login,
-      ctaText = "Get Started",
+      ctaText = <Trans>Get Started</Trans>,
       ctaHref = routes.register,
       onSignInClick,
       onCtaClick,
@@ -123,11 +129,13 @@ const Navbar = React.forwardRef<HTMLElement, NavbarProps>(
           {!isLoading &&
             (isAuthenticated ? (
               <div className="flex items-center gap-2">
+                <LanguageSwitcher />
                 <Notifications />
                 <UserMenu />
               </div>
             ) : (
-              <div className="flex gap-2">
+              <div className="flex gap-2 items-center">
+                <LanguageSwitcher />
                 <Button
                   variant="ghost"
                   size="sm"

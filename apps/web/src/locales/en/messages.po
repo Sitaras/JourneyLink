@@ -1,0 +1,600 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-12-17 10:28+0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: en\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#. placeholder {0}: rideData.driverProfile.rating.count + "rides"
+msgid "{0} )"
+msgstr "{0} )"
+
+#. placeholder {0}: rideData.remainingSeats
+#. placeholder {1}: rideData.availableSeats
+msgid "{0} of {1} left"
+msgstr "{0} of {1} left"
+
+#. placeholder {0}: ride.driverProfile.rating.count
+msgid "{0} reviews"
+msgstr "{0} reviews"
+
+msgid "{bioCharCount}/{MAX_BIO_LENGTH} characters"
+msgstr "{bioCharCount}/{MAX_BIO_LENGTH} characters"
+
+msgid "About"
+msgstr "About"
+
+msgid "Additional Information"
+msgstr "Additional Information"
+
+msgid "All rights reserved."
+msgstr "All rights reserved."
+
+msgid "Any additional details passengers should know..."
+msgstr "Any additional details passengers should know..."
+
+msgid "Any extra details?"
+msgstr "Any extra details?"
+
+msgid "Are you sure you want to cancel your booking?"
+msgstr "Are you sure you want to cancel your booking?"
+
+msgid "Arrival city"
+msgstr "Arrival city"
+
+msgid "Arrival location"
+msgstr "Arrival location"
+
+msgid "As Driver"
+msgstr "As Driver"
+
+msgid "As Passenger"
+msgstr "As Passenger"
+
+msgid "At least 1 seat is required"
+msgstr "At least 1 seat is required"
+
+msgid "Available Rides"
+msgstr "Available Rides"
+
+msgid "Available Seats"
+msgstr "Available Seats"
+
+msgid "Bio"
+msgstr "Bio"
+
+msgid "Booked"
+msgstr "Booked"
+
+msgid "Booked on"
+msgstr "Booked on"
+
+msgid "Born"
+msgstr "Born"
+
+msgid "By publishing this ride, you agree to our terms of service and community guidelines."
+msgstr "By publishing this ride, you agree to our terms of service and community guidelines."
+
+msgid "Cancel"
+msgstr "Cancel"
+
+msgid "Cancel booking"
+msgstr "Cancel booking"
+
+msgid "Capacity & Pricing"
+msgstr "Capacity & Pricing"
+
+msgid "Color"
+msgstr "Color"
+
+msgid "Connect with drivers heading your way. Share the journey, split the costs, and travel sustainably."
+msgstr "Connect with drivers heading your way. Share the journey, split the costs, and travel sustainably."
+
+msgid "Connecting travelers and reducing carbon footprints, one ride at a time."
+msgstr "Connecting travelers and reducing carbon footprints, one ride at a time."
+
+msgid "Contact details and social links are only visible because you have a confirmed ride with this user."
+msgstr "Contact details and social links are only visible because you have a confirmed ride with this user."
+
+msgid "Contact Information"
+msgstr "Contact Information"
+
+msgid "Contact Us"
+msgstr "Contact Us"
+
+msgid "Cookie Policy"
+msgstr "Cookie Policy"
+
+msgid "Cookies"
+msgstr "Cookies"
+
+msgid "Create Ride"
+msgstr "Create Ride"
+
+msgid "Creating ride..."
+msgstr "Creating ride..."
+
+msgid "Date"
+msgstr "Date"
+
+msgid "Date is required"
+msgstr "Date is required"
+
+msgid "Date is too far in the future"
+msgstr "Date is too far in the future"
+
+msgid "Date must be in the future"
+msgstr "Date must be in the future"
+
+msgid "Date of birth"
+msgstr "Date of birth"
+
+msgid "Date of birth is required"
+msgstr "Date of birth is required"
+
+msgid "Departure and arrival locations must be different"
+msgstr "Departure and arrival locations must be different"
+
+msgid "Departure city"
+msgstr "Departure city"
+
+msgid "Departure location"
+msgstr "Departure location"
+
+msgid "Departure time is required"
+msgstr "Departure time is required"
+
+msgid "Driver"
+msgstr "Driver"
+
+msgid "e.g. Athens"
+msgstr "e.g. Athens"
+
+msgid "e.g. Planning a coffee stop, flexible departure time, luggage space available..."
+msgstr "e.g. Planning a coffee stop, flexible departure time, luggage space available..."
+
+msgid "e.g. Thessaloniki"
+msgstr "e.g. Thessaloniki"
+
+msgid "e.g., ABC-1234"
+msgstr "e.g., ABC-1234"
+
+msgid "e.g., Camry"
+msgstr "e.g., Camry"
+
+msgid "e.g., Silver"
+msgstr "e.g., Silver"
+
+msgid "e.g., Toyota"
+msgstr "e.g., Toyota"
+
+msgid "Edit"
+msgstr "Edit"
+
+msgid "Edit Ride"
+msgstr "Edit Ride"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Email is required"
+msgstr "Email is required"
+
+msgid "Facebook"
+msgstr "Facebook"
+
+msgid "Failed to create ride"
+msgstr "Failed to create ride"
+
+msgid "Failed to update profile"
+msgstr "Failed to update profile"
+
+msgid "Failed to update ride"
+msgstr "Failed to update ride"
+
+msgid "Find a Ride"
+msgstr "Find a Ride"
+
+msgid "Find Your Perfect Ride"
+msgstr "Find Your Perfect Ride"
+
+msgid "First name"
+msgstr "First name"
+
+msgid "From"
+msgstr "From"
+
+msgid "Get Started"
+msgstr "Get Started"
+
+msgid "Go back"
+msgstr "Go back"
+
+msgid "Go to Profile"
+msgstr "Go to Profile"
+
+msgid "Have a car? Offer a ride!"
+msgstr "Have a car? Offer a ride!"
+
+msgid "Help Center"
+msgstr "Help Center"
+
+msgid "Home"
+msgstr "Home"
+
+msgid "How it Works"
+msgstr "How it Works"
+
+msgid "Invalid email address"
+msgstr "Invalid email address"
+
+msgid "Invalid format"
+msgstr "Invalid format"
+
+msgid "Last name"
+msgstr "Last name"
+
+msgid "Legal"
+msgstr "Legal"
+
+msgid "License Plate"
+msgstr "License Plate"
+
+msgid "LinkedIn"
+msgstr "LinkedIn"
+
+msgid "Loading..."
+msgstr "Loading..."
+
+msgid "Log out"
+msgstr "Log out"
+
+msgid "Logged-out successfully!"
+msgstr "Logged-out successfully!"
+
+msgid "Login"
+msgstr "Login"
+
+msgid "Lowercase letter required"
+msgstr "Lowercase letter required"
+
+msgid "Make"
+msgstr "Make"
+
+msgid "Manage your upcoming and past journeys"
+msgstr "Manage your upcoming and past journeys"
+
+msgid "Max 500 characters"
+msgstr "Max 500 characters"
+
+msgid "Max length 20 characters"
+msgstr "Max length 20 characters"
+
+msgid "Maximum 500 characters"
+msgstr "Maximum 500 characters"
+
+msgid "Maximum 8 seats allowed"
+msgstr "Maximum 8 seats allowed"
+
+msgid "Min length 8 characters"
+msgstr "Min length 8 characters"
+
+msgid "Minimum: {bookedSeats} (already booked)"
+msgstr "Minimum: {bookedSeats} (already booked)"
+
+msgid "Model"
+msgstr "Model"
+
+msgid "Must be between 1 and 8"
+msgstr "Must be between 1 and 8"
+
+msgid "My Booking"
+msgstr "My Booking"
+
+msgid "My Profile"
+msgstr "My Profile"
+
+msgid "My rides"
+msgstr "My rides"
+
+msgid "My Rides"
+msgstr "My Rides"
+
+msgid "New"
+msgstr "New"
+
+msgid "No bio provided."
+msgstr "No bio provided."
+
+msgid "No cities found"
+msgstr "No cities found"
+
+msgid "No pets"
+msgstr "No pets"
+
+msgid "No smoking"
+msgstr "No smoking"
+
+msgid "Number required"
+msgstr "Number required"
+
+msgid "Offer a ride"
+msgstr "Offer a ride"
+
+msgid "Offer a Ride"
+msgstr "Offer a Ride"
+
+msgid "Passenger"
+msgstr "Passenger"
+
+msgid "Password"
+msgstr "Password"
+
+msgid "Password is required"
+msgstr "Password is required"
+
+msgid "Passwords do not match"
+msgstr "Passwords do not match"
+
+msgid "per seat"
+msgstr "per seat"
+
+msgid "Personal Information"
+msgstr "Personal Information"
+
+msgid "Pets allowed"
+msgstr "Pets allowed"
+
+msgid "Phone"
+msgstr "Phone"
+
+msgid "Phone number"
+msgstr "Phone number"
+
+msgid "Please check the form for errors"
+msgstr "Please check the form for errors"
+
+msgid "Please complete your profile (Name, Bio, Email, Phone, Social Media) to publish a ride."
+msgstr "Please complete your profile (Name, Bio, Email, Phone, Social Media) to publish a ride."
+
+msgid "Please try again later."
+msgstr "Please try again later."
+
+msgid "Preferences"
+msgstr "Preferences"
+
+msgid "Price can have at most 2 decimal digits"
+msgstr "Price can have at most 2 decimal digits"
+
+msgid "Price cannot be negative"
+msgstr "Price cannot be negative"
+
+msgid "Price must be between 0 and 1000"
+msgstr "Price must be between 0 and 1000"
+
+msgid "Price per seat"
+msgstr "Price per seat"
+
+msgid "Price per seat is required"
+msgstr "Price per seat is required"
+
+msgid "Price seems too high"
+msgstr "Price seems too high"
+
+msgid "Privacy"
+msgstr "Privacy"
+
+msgid "Privacy Policy"
+msgstr "Privacy Policy"
+
+msgid "Profile"
+msgstr "Profile"
+
+msgid "Profile Unavailable"
+msgstr "Profile Unavailable"
+
+msgid "Profile updated successfully"
+msgstr "Profile updated successfully"
+
+msgid "Publish Ride"
+msgstr "Publish Ride"
+
+msgid "Quick Links"
+msgstr "Quick Links"
+
+msgid "Register"
+msgstr "Register"
+
+msgid "Registered successfully"
+msgstr "Registered successfully"
+
+msgid "required"
+msgstr "the field is required"
+
+msgid "Required"
+msgstr "Required"
+
+msgid "review"
+msgstr "review"
+
+msgid "reviews"
+msgstr "reviews"
+
+msgid "Ride created successfully!"
+msgstr "Ride created successfully!"
+
+msgid "Ride Details"
+msgstr "Ride Details"
+
+msgid "Ride not found"
+msgstr "Ride not found"
+
+msgid "Ride Status"
+msgstr "Ride Status"
+
+msgid "Ride updated successfully"
+msgstr "Ride updated successfully"
+
+msgid "rides"
+msgstr "rides"
+
+msgid "Rides you're offering"
+msgstr "Rides you're offering"
+
+msgid "Rides you've booked"
+msgstr "Rides you've booked"
+
+msgid "Route"
+msgstr "Route"
+
+msgid "Safety"
+msgstr "Safety"
+
+msgid "Save Changes"
+msgstr "Save Changes"
+
+msgid "Saving..."
+msgstr "Saving..."
+
+msgid "Search failed"
+msgstr "Search failed"
+
+msgid "Search Rides"
+msgstr "Search Rides"
+
+msgid "Select a date"
+msgstr "Select a date"
+
+msgid "Select date"
+msgstr "Select date"
+
+msgid "Select number of seats"
+msgstr "Select number of seats"
+
+msgid "Share your journey and split the costs. Fill in the details below to post your ride."
+msgstr "Share your journey and split the costs. Fill in the details below to post your ride."
+
+msgid "Showing {limit} ride(s) • Page {page} of {totalPages}"
+msgstr "Showing {limit} ride(s) • Page {page} of {totalPages}"
+
+msgid "Shut up and take my money"
+msgstr "Shut up and take my money"
+
+msgid "Shut up and take my money!"
+msgstr "Shut up and take my money!"
+
+msgid "Sign in"
+msgstr "Sign in"
+
+msgid "Smoking allowed"
+msgstr "Smoking allowed"
+
+msgid "Social Media"
+msgstr "Social Media"
+
+msgid "Special character required"
+msgstr "Special character required"
+
+msgid "Status"
+msgstr "Status"
+
+msgid "Submit"
+msgstr "Submit"
+
+msgid "Support"
+msgstr "Support"
+
+msgid "Tell us about yourself..."
+msgstr "Tell us about yourself..."
+
+msgid "Terms"
+msgstr "Terms"
+
+msgid "Terms of Service"
+msgstr "Terms of Service"
+
+msgid "The ride you are looking for does not exist or has been removed."
+msgstr "The ride you are looking for does not exist or has been removed."
+
+msgid "Time (24-hour format)"
+msgstr "Time (24-hour format)"
+
+msgid "To"
+msgstr "To"
+
+msgid "Total for all seats"
+msgstr "Total for all seats"
+
+msgid "Turn your empty seats into extra income while helping others travel affordably and sustainably."
+msgstr "Turn your empty seats into extra income while helping others travel affordably and sustainably."
+
+msgid "Twitter"
+msgstr "Twitter"
+
+msgid "Type at least 3 characters to search"
+msgstr "Type at least 3 characters to search"
+
+msgid "Update the details of your ride. Note that you cannot change the origin and destination."
+msgstr "Update the details of your ride. Note that you cannot change the origin and destination."
+
+msgid "Update your personal details and bio"
+msgstr "Update your personal details and bio"
+
+msgid "Update your social media accounts"
+msgstr "Update your social media accounts"
+
+msgid "Uppercase letter required"
+msgstr "Uppercase letter required"
+
+msgid "User"
+msgstr "User"
+
+msgid "Vehicle"
+msgstr "Vehicle"
+
+msgid "Vehicle Information"
+msgstr "Vehicle Information"
+
+msgid "Verify password"
+msgstr "Verify password"
+
+msgid "View details"
+msgstr "View details"
+
+msgid "We couldn't find this profile. It may not exist, or you might not have permission to view it. Profiles are only visible between users with confirmed rides."
+msgstr "We couldn't find this profile. It may not exist, or you might not have permission to view it. Profiles are only visible between users with confirmed rides."
+
+msgid "Welcome back!"
+msgstr "Welcome back!"
+
+msgid "When"
+msgstr "When"
+
+msgid "When?"
+msgstr "When?"
+
+msgid "Your changes have been saved."
+msgstr "Your changes have been saved."
+
+msgid "Your personal details and bio"
+msgstr "Your personal details and bio"
+
+msgid "Your profile information is private and will only be shared with riders you connect with."
+msgstr "Your profile information is private and will only be shared with riders you connect with."
+
+msgid "Your Request"
+msgstr "Your Request"
+
+msgid "Your ride is now available for passengers to book."
+msgstr "Your ride is now available for passengers to book."
+
+msgid "Your social media accounts"
+msgstr "Your social media accounts"

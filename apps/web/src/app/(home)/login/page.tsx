@@ -1,5 +1,8 @@
 "use client";
 
+import { t } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
+
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -36,7 +39,7 @@ export default function LoginPage() {
     },
     onSuccess: () => {
       router.refresh();
-      toast.success("Welcome back!");
+      toast.success(t`Welcome back!`);
     },
     onError: (err: Error) => {
       toast.error(err.message);
@@ -49,8 +52,8 @@ export default function LoginPage() {
 
   const handleOnError = (errors: FieldErrors) => {
     const fieldLabels: Record<string, string> = {
-      email: "Email",
-      password: "Password",
+      email: t`Email`,
+      password: t`Password`,
     };
 
     onError(fieldLabels, errors);
@@ -60,8 +63,12 @@ export default function LoginPage() {
     <div className="h-full w-full flex-1 flex justify-center items-center">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>Shut up and take my money!</CardDescription>
+          <CardTitle className="text-2xl">
+            <Trans>Login</Trans>
+          </CardTitle>
+          <CardDescription>
+            <Trans>Shut up and take my money!</Trans>
+          </CardDescription>
         </CardHeader>
         <CardFooter>
           <form
@@ -73,7 +80,7 @@ export default function LoginPage() {
             <CustomInput
               id="email"
               name="email"
-              label="Email"
+              label={<Trans>Email</Trans>}
               type="email"
               register={register}
               autoComplete="username"
@@ -81,7 +88,7 @@ export default function LoginPage() {
             <CustomInput
               id="password"
               name="password"
-              label="Password"
+              label={<Trans>Password</Trans>}
               type="password"
               register={register}
               autoComplete="current-password"
@@ -91,7 +98,7 @@ export default function LoginPage() {
               type="submit"
               loading={mutation.isPending}
             >
-              Submit
+              <Trans>Submit</Trans>
             </Button>
           </form>
         </CardFooter>

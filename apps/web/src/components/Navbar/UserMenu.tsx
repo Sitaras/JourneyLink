@@ -2,6 +2,8 @@
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import { LogOut, User } from "lucide-react";
+import { t } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -31,7 +33,7 @@ export default function UserMenu() {
 
   const onLogoutFinally = () => {
     router.refresh();
-    toast.success("Logged-out successfully!");
+    toast.success(t`Logged-out successfully!`);
     queryClient.clear();
   };
 
@@ -58,7 +60,7 @@ export default function UserMenu() {
         <Link href={routes.profile}>
           <DropdownMenuItem>
             <User className="mr-2 h-4 w-4" />
-            Profile
+            <Trans>Profile</Trans>
           </DropdownMenuItem>
         </Link>
         <DropdownMenuSeparator />
@@ -67,7 +69,7 @@ export default function UserMenu() {
           onClick={() => logoutAction.mutate()}
         >
           <LogOut className="mr-2 h-4 w-4" />
-          Log out
+          <Trans>Log out</Trans>
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

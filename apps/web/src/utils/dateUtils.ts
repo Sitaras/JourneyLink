@@ -26,7 +26,7 @@ import {
   differenceInHours,
   differenceInMilliseconds,
 } from "date-fns";
-import { el } from "date-fns/locale/el";
+
 import { DateFormats } from "./dateFormats";
 
 export const isValidDate = (date: unknown) => {
@@ -55,15 +55,12 @@ export const parseDate = (
 
 export const formatDate = (
   date: string | Date,
-  format = DateFormats.DATE_TIME_SLASH_FORMAT,
-  language?: string
+  format = DateFormats.DATE_TIME_SLASH_FORMAT
 ) => {
   const parsedDate = parseDate(date);
 
   if (!parsedDate) return "";
-  const dateString = formatDateFns(parsedDate, format, {
-    locale: language === "el" ? el : undefined,
-  });
+  const dateString = formatDateFns(parsedDate, format);
   return dateString;
 };
 
@@ -75,8 +72,8 @@ export const formatToUTC = (date: string | Date) => {
   return dateString;
 };
 
-export const getDayName = (date: string | Date, { language = "en" } = {}) => {
-  return formatDate(date, DateFormats.DAY_NAME, language);
+export const getDayName = (date: string | Date) => {
+  return formatDate(date, DateFormats.DAY_NAME);
 };
 
 export const addDays = (date: string | Date, days: number) => {

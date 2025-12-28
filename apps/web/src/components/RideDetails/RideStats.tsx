@@ -1,6 +1,8 @@
 import Typography from "@/components/ui/typography";
 import { Ride } from "@journey-link/shared";
-import { Euro, User } from "lucide-react";
+import { User } from "lucide-react";
+import { i18n } from "@lingui/core";
+import { Trans } from "@lingui/react/macro";
 
 interface RideStatsProps {
   ride: Ride;
@@ -11,18 +13,22 @@ export const RideStats = ({ ride }: RideStatsProps) => {
     <>
       <div className="grid grid-cols-2 gap-6">
         <div className="bg-muted/30 p-4 rounded-lg">
-          <div className="flex items-center gap-2 text-muted-foreground mb-1">
-            <Euro className="w-4 h-4" />
-            <span className="text-sm font-medium">Price per seat</span>
-          </div>
+          <Typography className="text-sm font-medium text-muted-foreground mb-1">
+            <Trans>Price per seat</Trans>
+          </Typography>
           <Typography className="text-2xl font-bold text-primary">
-            €{ride.pricePerSeat}
+            {i18n.number(ride.pricePerSeat, {
+              style: "currency",
+              currency: "EUR",
+            })}
           </Typography>
         </div>
         <div className="bg-muted/30 p-4 rounded-lg">
           <div className="flex items-center gap-2 text-muted-foreground mb-1">
             <User className="w-4 h-4" />
-            <span className="text-sm font-medium">Available Seats</span>
+            <Typography className="text-sm font-medium">
+              <Trans>Available Seats</Trans>
+            </Typography>
           </div>
           <Typography className="text-2xl font-bold text-primary">
             {ride.availableSeats}
@@ -33,7 +39,7 @@ export const RideStats = ({ ride }: RideStatsProps) => {
       {ride.additionalInfo && (
         <div className="bg-muted/30 p-4 rounded-lg">
           <Typography className="font-semibold mb-2">
-            Additional Information
+            <Trans>Additional Information</Trans>
           </Typography>
           <Typography className="text-muted-foreground">
             {ride.additionalInfo}

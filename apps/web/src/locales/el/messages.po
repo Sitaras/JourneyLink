@@ -1,0 +1,600 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2025-12-17 10:28+0200\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: el\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#. placeholder {0}: rideData.driverProfile.rating.count + "rides"
+msgid "{0} )"
+msgstr "{0} )"
+
+#. placeholder {0}: rideData.remainingSeats
+#. placeholder {1}: rideData.availableSeats
+msgid "{0} of {1} left"
+msgstr "{0} από {1} απομένουν"
+
+#. placeholder {0}: ride.driverProfile.rating.count
+msgid "{0} reviews"
+msgstr "{0} κριτικές"
+
+msgid "{bioCharCount}/{MAX_BIO_LENGTH} characters"
+msgstr "{bioCharCount}/{MAX_BIO_LENGTH} χαρακτήρες"
+
+msgid "About"
+msgstr "Σχετικά"
+
+msgid "Additional Information"
+msgstr "Πρόσθετες Πληροφορίες"
+
+msgid "All rights reserved."
+msgstr "Όλα τα δικαιώματα διατηρούνται."
+
+msgid "Any additional details passengers should know..."
+msgstr "Τυχόν πρόσθετες λεπτομέρειες που πρέπει να γνωρίζουν οι επιβάτες..."
+
+msgid "Any extra details?"
+msgstr "Τυχόν πρόσθετες λεπτομέρειες;"
+
+msgid "Are you sure you want to cancel your booking?"
+msgstr "Είστε σίγουροι ότι θέλετε να ακυρώσετε την κράτησή σας;"
+
+msgid "Arrival city"
+msgstr "Πόλη άφιξης"
+
+msgid "Arrival location"
+msgstr "Τοποθεσία άφιξης"
+
+msgid "As Driver"
+msgstr "Ως Οδηγός"
+
+msgid "As Passenger"
+msgstr "Ως Επιβάτης"
+
+msgid "At least 1 seat is required"
+msgstr "Απαιτείται τουλάχιστον 1 θέση"
+
+msgid "Available Rides"
+msgstr "Διαθέσιμες Διαδρομές"
+
+msgid "Available Seats"
+msgstr "Διαθέσιμες Θέσεις"
+
+msgid "Bio"
+msgstr "Βιογραφικό"
+
+msgid "Booked"
+msgstr "Κρατημένο"
+
+msgid "Booked on"
+msgstr "Κράτηση στις"
+
+msgid "Born"
+msgstr "Γεννήθηκε"
+
+msgid "By publishing this ride, you agree to our terms of service and community guidelines."
+msgstr "Δημοσιεύοντας αυτή τη διαδρομή, συμφωνείτε με τους όρους χρήσης και τις οδηγίες της κοινότητας."
+
+msgid "Cancel"
+msgstr "Ακύρωση"
+
+msgid "Cancel booking"
+msgstr "Ακύρωση κράτησης"
+
+msgid "Capacity & Pricing"
+msgstr "Χωρητικότητα & Τιμολόγηση"
+
+msgid "Color"
+msgstr "Χρώμα"
+
+msgid "Connect with drivers heading your way. Share the journey, split the costs, and travel sustainably."
+msgstr "Συνδεθείτε με οδηγούς που πηγαίνουν προς την κατεύθυνσή σας. Μοιραστείτε τη διαδρομή, μοιραστείτε τα έξοδα και ταξιδέψτε οικολογικά."
+
+msgid "Connecting travelers and reducing carbon footprints, one ride at a time."
+msgstr "Συνδέοντας ταξιδιώτες και μειώνοντας το αποτύπωμα άνθρακα, μία διαδρομή τη φορά."
+
+msgid "Contact details and social links are only visible because you have a confirmed ride with this user."
+msgstr "Τα στοιχεία επικοινωνίας και τα social media είναι ορατά μόνο επειδή έχετε μια επιβεβαιωμένη διαδρομή με αυτόν τον χρήστη."
+
+msgid "Contact Information"
+msgstr "Πληροφορίες Επικοινωνίας"
+
+msgid "Contact Us"
+msgstr "Επικοινωνήστε μαζί μας"
+
+msgid "Cookie Policy"
+msgstr "Πολιτική Cookies"
+
+msgid "Cookies"
+msgstr "Cookies"
+
+msgid "Create Ride"
+msgstr "Δημιουργία Διαδρομής"
+
+msgid "Creating ride..."
+msgstr "Δημιουργία διαδρομής..."
+
+msgid "Date"
+msgstr "Ημερομηνία"
+
+msgid "Date is required"
+msgstr "Η ημερομηνία είναι υποχρεωτική"
+
+msgid "Date is too far in the future"
+msgstr "Η ημερομηνία είναι πολύ μακριά στο μέλλον"
+
+msgid "Date must be in the future"
+msgstr "Η ημερομηνία πρέπει να είναι στο μέλλον"
+
+msgid "Date of birth"
+msgstr "Ημερομηνία γέννησης"
+
+msgid "Date of birth is required"
+msgstr "Η ημερομηνία γέννησης είναι υποχρεωτική"
+
+msgid "Departure and arrival locations must be different"
+msgstr "Οι τοποθεσίες αναχώρησης και άφιξης πρέπει να είναι διαφορετικές"
+
+msgid "Departure city"
+msgstr "Πόλη αναχώρησης"
+
+msgid "Departure location"
+msgstr "Τοποθεσία αναχώρησης"
+
+msgid "Departure time is required"
+msgstr "Η ώρα αναχώρησης είναι υποχρεωτική"
+
+msgid "Driver"
+msgstr "Οδηγός"
+
+msgid "e.g. Athens"
+msgstr "π.χ. Αθήνα"
+
+msgid "e.g. Planning a coffee stop, flexible departure time, luggage space available..."
+msgstr "π.χ. Στάση για καφέ, ευέλικτη ώρα αναχώρησης, διαθέσιμος χώρος αποσκευών..."
+
+msgid "e.g. Thessaloniki"
+msgstr "π.χ. Θεσσαλονίκη"
+
+msgid "e.g., ABC-1234"
+msgstr "π.χ., ABC-1234"
+
+msgid "e.g., Camry"
+msgstr "π.χ., Camry"
+
+msgid "e.g., Silver"
+msgstr "π.χ., Ασημί"
+
+msgid "e.g., Toyota"
+msgstr "π.χ., Toyota"
+
+msgid "Edit"
+msgstr "Επεξεργασία"
+
+msgid "Edit Ride"
+msgstr "Επεξεργασία Διαδρομής"
+
+msgid "Email"
+msgstr "Email"
+
+msgid "Email is required"
+msgstr "Το Email είναι υποχρεωτικό"
+
+msgid "Facebook"
+msgstr "Facebook"
+
+msgid "Failed to create ride"
+msgstr "Αποτυχία δημιουργίας διαδρομής"
+
+msgid "Failed to update profile"
+msgstr "Αποτυχία ενημέρωσης προφίλ"
+
+msgid "Failed to update ride"
+msgstr "Αποτυχία ενημέρωσης διαδρομής"
+
+msgid "Find a Ride"
+msgstr "Βρες Διαδρομή"
+
+msgid "Find Your Perfect Ride"
+msgstr "Βρες την Ιδανική σου Διαδρομή"
+
+msgid "First name"
+msgstr "Όνομα"
+
+msgid "From"
+msgstr "Από"
+
+msgid "Get Started"
+msgstr "Ξεκινήστε"
+
+msgid "Go back"
+msgstr "Επιστροφή"
+
+msgid "Go to Profile"
+msgstr "Μετάβαση στο Προφίλ"
+
+msgid "Have a car? Offer a ride!"
+msgstr "Έχεις αυτοκίνητο; Πρόσφερε μια διαδρομή!"
+
+msgid "Help Center"
+msgstr "Κέντρο Βοήθειας"
+
+msgid "Home"
+msgstr "Αρχική"
+
+msgid "How it Works"
+msgstr "Πώς λειτουργεί"
+
+msgid "Invalid email address"
+msgstr "Μη έγκυρη διεύθυνση"
+
+msgid "Invalid format"
+msgstr "Μη έγκυρη μορφή"
+
+msgid "Last name"
+msgstr "Επώνυμο"
+
+msgid "Legal"
+msgstr "Νομικά"
+
+msgid "License Plate"
+msgstr "Αριθμός Κυκλοφορίας"
+
+msgid "LinkedIn"
+msgstr "LinkedIn"
+
+msgid "Loading..."
+msgstr "Φόρτωση..."
+
+msgid "Log out"
+msgstr "Αποσύνδεση"
+
+msgid "Logged-out successfully!"
+msgstr "Αποσυνδεθήκατε επιτυχώς!"
+
+msgid "Login"
+msgstr "Σύνδεση"
+
+msgid "Lowercase letter required"
+msgstr "Απαιτείται πεζό γράμμα"
+
+msgid "Make"
+msgstr "Μάρκα"
+
+msgid "Manage your upcoming and past journeys"
+msgstr "Διαχειριστείτε τις επερχόμενες και παρελθοντικές σας διαδρομές"
+
+msgid "Max 500 characters"
+msgstr "Μέγιστο 500 χαρακτήρες"
+
+msgid "Max length 20 characters"
+msgstr "Μέγιστο μήκος 20 χαρακτήρες"
+
+msgid "Maximum 500 characters"
+msgstr "Μέγιστο 500 χαρακτήρες"
+
+msgid "Maximum 8 seats allowed"
+msgstr "Επιτρέπονται το πολύ 8 θέσεις"
+
+msgid "Min length 8 characters"
+msgstr "Ελάχιστο μήκος 8 χαρακτήρες"
+
+msgid "Minimum: {bookedSeats} (already booked)"
+msgstr "Ελάχιστο: {bookedSeats} (ήδη κρατημένα)"
+
+msgid "Model"
+msgstr "Μοντέλο"
+
+msgid "Must be between 1 and 8"
+msgstr "Πρέπει να είναι μεταξύ 1 και 8"
+
+msgid "My Booking"
+msgstr "Η Κράτησή μου"
+
+msgid "My Profile"
+msgstr "Το Προφίλ μου"
+
+msgid "My rides"
+msgstr "Οι διαδρομές μου"
+
+msgid "My Rides"
+msgstr "Οι Διαδρομές μου"
+
+msgid "New"
+msgstr "Νέο"
+
+msgid "No bio provided."
+msgstr "Δεν δόθηκε βιογραφικό."
+
+msgid "No cities found"
+msgstr "Δεν βρέθηκαν πόλεις"
+
+msgid "No pets"
+msgstr "Όχι κατοικίδια"
+
+msgid "No smoking"
+msgstr "Απαγορεύεται το κάπνισμα"
+
+msgid "Number required"
+msgstr "Απαιτείται αριθμός"
+
+msgid "Offer a ride"
+msgstr "Πρόσφερε διαδρομή"
+
+msgid "Offer a Ride"
+msgstr "Πρόσφερε Διαδρομή"
+
+msgid "Passenger"
+msgstr "Επιβάτης"
+
+msgid "Password"
+msgstr "Κωδικός"
+
+msgid "Password is required"
+msgstr "Ο κωδικός είναι υποχρεωτικός"
+
+msgid "Passwords do not match"
+msgstr "Οι κωδικοί δεν ταιριάζουν"
+
+msgid "per seat"
+msgstr "ανά θέση"
+
+msgid "Personal Information"
+msgstr "Προσωπικές Πληροφορίες"
+
+msgid "Pets allowed"
+msgstr "Επιτρέπονται κατοικίδια"
+
+msgid "Phone"
+msgstr "Τηλέφωνο"
+
+msgid "Phone number"
+msgstr "Αριθμός τηλεφώνου"
+
+msgid "Please check the form for errors"
+msgstr "Παρακαλώ ελέγξτε τη φόρμα για σφάλματα"
+
+msgid "Please complete your profile (Name, Bio, Email, Phone, Social Media) to publish a ride."
+msgstr "Παρακαλώ ολοκληρώστε το προφίλ σας (Όνομα, Βιογραφικό, Email, Τηλέφωνο, Social Media) για να δημοσιεύσετε μια διαδρομή."
+
+msgid "Please try again later."
+msgstr "Παρακαλώ δοκιμάστε ξανά αργότερα."
+
+msgid "Preferences"
+msgstr "Προτιμήσεις"
+
+msgid "Price can have at most 2 decimal digits"
+msgstr "Η τιμή μπορεί να έχει το πολύ 2 δεκαδικά ψηφία"
+
+msgid "Price cannot be negative"
+msgstr "Η τιμή δεν μπορεί να είναι αρνητική"
+
+msgid "Price must be between 0 and 1000"
+msgstr "Η τιμή πρέπει να είναι μεταξύ 0 και 1000"
+
+msgid "Price per seat"
+msgstr "Τιμή ανά θέση"
+
+msgid "Price per seat is required"
+msgstr "Η τιμή ανά θέση είναι υποχρεωτική"
+
+msgid "Price seems too high"
+msgstr "Η τιμή φαίνεται πολύ υψηλή"
+
+msgid "Privacy"
+msgstr "Απόρρητο"
+
+msgid "Privacy Policy"
+msgstr "Πολιτική Απορρήτου"
+
+msgid "Profile"
+msgstr "Προφίλ"
+
+msgid "Profile Unavailable"
+msgstr "Προφίλ Μη Διαθέσιμο"
+
+msgid "Profile updated successfully"
+msgstr "Το προφίλ ενημερώθηκε επιτυχώς"
+
+msgid "Publish Ride"
+msgstr "Δημοσίευση Διαδρομής"
+
+msgid "Quick Links"
+msgstr "Γρήγοροι Σύνδεσμοι"
+
+msgid "Register"
+msgstr "Εγγραφή"
+
+msgid "Registered successfully"
+msgstr "Η εγγραφή ήταν επιτυχής"
+
+msgid "required"
+msgstr "το πεδίο είναι υποχρεωτικό"
+
+msgid "Required"
+msgstr "Υποχρεωτικό"
+
+msgid "review"
+msgstr "κριτική"
+
+msgid "reviews"
+msgstr "κριτικές"
+
+msgid "Ride created successfully!"
+msgstr "Η διαδρομή δημιουργήθηκε επιτυχώς!"
+
+msgid "Ride Details"
+msgstr "Λεπτομέρειες Διαδρομής"
+
+msgid "Ride not found"
+msgstr "Η διαδρομή δεν βρέθηκε"
+
+msgid "Ride Status"
+msgstr "Κατάσταση Διαδρομής"
+
+msgid "Ride updated successfully"
+msgstr "Η διαδρομή ενημερώθηκε επιτυχώς"
+
+msgid "rides"
+msgstr "διαδρομές"
+
+msgid "Rides you're offering"
+msgstr "Διαδρομές που προσφέρετε"
+
+msgid "Rides you've booked"
+msgstr "Διαδρομές που έχετε κλείσει"
+
+msgid "Route"
+msgstr "Διαδρομή"
+
+msgid "Safety"
+msgstr "Ασφάλεια"
+
+msgid "Save Changes"
+msgstr "Αποθήκευση Αλλαγών"
+
+msgid "Saving..."
+msgstr "Αποθήκευση..."
+
+msgid "Search failed"
+msgstr "Η αναζήτηση απέτυχε"
+
+msgid "Search Rides"
+msgstr "Αναζήτηση Διαδρομών"
+
+msgid "Select a date"
+msgstr "Επιλέξτε μια ημερομηνία"
+
+msgid "Select date"
+msgstr "Επιλέξτε ημερομηνία"
+
+msgid "Select number of seats"
+msgstr "Επιλέξτε αριθμό θέσεων"
+
+msgid "Share your journey and split the costs. Fill in the details below to post your ride."
+msgstr "Μοιραστείτε τη διαδρομή σας και μοιραστείτε τα έξοδα. Συμπληρώστε τις λεπτομέρειες παρακάτω για να δημοσιεύσετε τη διαδρομή σας."
+
+msgid "Showing {limit} ride(s) • Page {page} of {totalPages}"
+msgstr "Εμφάνιση {limit} διαδρομής(ών) • Σελίδα {page} από {totalPages}"
+
+msgid "Shut up and take my money"
+msgstr "Σκάσε και πάρε τα λεφτά μου"
+
+msgid "Shut up and take my money!"
+msgstr "Σκάσε και πάρε τα λεφτά μου!"
+
+msgid "Sign in"
+msgstr "Σύνδεση"
+
+msgid "Smoking allowed"
+msgstr "Επιτρέπεται το κάπνισμα"
+
+msgid "Social Media"
+msgstr "Social Media"
+
+msgid "Special character required"
+msgstr "Απαιτείται ειδικός χαρακτήρας"
+
+msgid "Status"
+msgstr "Κατάσταση"
+
+msgid "Submit"
+msgstr "Υποβολή"
+
+msgid "Support"
+msgstr "Υποστήριξη"
+
+msgid "Tell us about yourself..."
+msgstr "Πείτε μας για εσάς..."
+
+msgid "Terms"
+msgstr "Όροι"
+
+msgid "Terms of Service"
+msgstr "Όροι Χρήσης"
+
+msgid "The ride you are looking for does not exist or has been removed."
+msgstr "Η διαδρομή που αναζητάτε δεν υπάρχει ή έχει αφαιρεθεί."
+
+msgid "Time (24-hour format)"
+msgstr "Ώρα (24ωρη μορφή)"
+
+msgid "To"
+msgstr "Προς"
+
+msgid "Total for all seats"
+msgstr "Σύνολο για όλες τις θέσεις"
+
+msgid "Turn your empty seats into extra income while helping others travel affordably and sustainably."
+msgstr "Μετατρέψτε τις κενές θέσεις σας σε επιπλέον εισόδημα βοηθώντας παράλληλα άλλους να ταξιδέψουν οικονομικά και οικολογικά."
+
+msgid "Twitter"
+msgstr "Twitter"
+
+msgid "Type at least 3 characters to search"
+msgstr "Πληκτρολογήστε τουλάχιστον 3 χαρακτήρες για αναζήτηση"
+
+msgid "Update the details of your ride. Note that you cannot change the origin and destination."
+msgstr "Ενημερώστε τις λεπτομέρειες της διαδρομής σας. Σημειώστε ότι δεν μπορείτε να αλλάξετε την προέλευση και τον προορισμό."
+
+msgid "Update your personal details and bio"
+msgstr "Ενημερώστε τα προσωπικά σας στοιχεία και το βιογραφικό σας"
+
+msgid "Update your social media accounts"
+msgstr "Ενημερώστε τους λογαριασμούς κοινωνικών δικτύων σας"
+
+msgid "Uppercase letter required"
+msgstr "Απαιτείται κεφαλαίο γράμμα"
+
+msgid "User"
+msgstr "Χρήστης"
+
+msgid "Vehicle"
+msgstr "Όχημα"
+
+msgid "Vehicle Information"
+msgstr "Πληροφορίες Οχήματος"
+
+msgid "Verify password"
+msgstr "Επιβεβαίωση κωδικού"
+
+msgid "View details"
+msgstr "Προβολή λεπτομερειών"
+
+msgid "We couldn't find this profile. It may not exist, or you might not have permission to view it. Profiles are only visible between users with confirmed rides."
+msgstr "Δεν μπορέσαμε να βρούμε αυτό το προφίλ. Μπορεί να μην υπάρχει ή μπορεί να μην έχετε άδεια να το δείτε. Τα προφίλ είναι ορατά μόνο μεταξύ χρηστών με επιβεβαιωμένες διαδρομές."
+
+msgid "Welcome back!"
+msgstr "Καλώς ήρθατε πίσω!"
+
+msgid "When"
+msgstr "Πότε"
+
+msgid "When?"
+msgstr "Πότε;"
+
+msgid "Your changes have been saved."
+msgstr "Οι αλλαγές σας αποθηκεύτηκαν."
+
+msgid "Your personal details and bio"
+msgstr "Τα προσωπικά σας στοιχεία και βιογραφικό"
+
+msgid "Your profile information is private and will only be shared with riders you connect with."
+msgstr "Οι πληροφορίες του προφίλ σας είναι ιδιωτικές και θα κοινοποιηθούν μόνο στους επιβάτες με τους οποίους συνδέεστε."
+
+msgid "Your Request"
+msgstr "Το Αίτημά σας"
+
+msgid "Your ride is now available for passengers to book."
+msgstr "Η διαδρομή σας είναι πλέον διαθέσιμη για κράτηση από επιβάτες."
+
+msgid "Your social media accounts"
+msgstr "Οι λογαριασμοί κοινωνικών δικτύων σας"

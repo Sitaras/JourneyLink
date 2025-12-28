@@ -13,7 +13,7 @@ import {
   useMarkAllNotificationsAsRead,
 } from "@/hooks/useNotification";
 import { INotification } from "@journey-link/shared";
-import { formatDistanceToNow } from "date-fns";
+import { i18n } from "@lingui/core";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -84,8 +84,9 @@ export const Notifications = () => {
                       {notification.title}
                     </p>
                     <span className="text-[10px] text-muted-foreground whitespace-nowrap">
-                      {formatDistanceToNow(new Date(notification.createdAt), {
-                        addSuffix: true,
+                      {i18n.date(notification.createdAt, {
+                        dateStyle: "short",
+                        timeStyle: "short",
                       })}
                     </span>
                   </div>

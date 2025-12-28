@@ -17,7 +17,9 @@ import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
 import Typography from "@/components/ui/typography";
 import LoadingState from "../LoadingState/LoadingState";
-import { dateTimeFormatter, shortDateFormatter } from "@/utils/formatters";
+import { i18n } from "@lingui/core";
+import { formatDate } from "@/utils/dateUtils";
+import { DateFormats } from "@/utils/dateFormats";
 
 interface RidesListProps {
   rides?: Ride[];
@@ -93,7 +95,10 @@ export default function RidesList({
                 <div className="flex items-center gap-2 text-sm">
                   <Calendar className="w-4 h-4 text-primary flex-shrink-0" />
                   <Typography className="font-medium">
-                    {dateTimeFormatter.format(departureDate)}
+                    {i18n.date(departureDate, {
+                      dateStyle: "medium",
+                      timeStyle: "short",
+                    })}
                   </Typography>
                 </div>
                 <Badge className="px-3 py-1">
@@ -107,7 +112,10 @@ export default function RidesList({
             <CardFooter className="flex justify-between items-center pt-4">
               <div className="flex flex-col gap-1">
                 <Typography className="text-2xl font-bold">
-                  €{ride.pricePerSeat.toFixed(2)}
+                  {i18n.number(ride.pricePerSeat, {
+                    style: "currency",
+                    currency: "EUR",
+                  })}
                 </Typography>
                 <Typography className="text-xs text-muted-foreground">
                   per seat
@@ -121,7 +129,7 @@ export default function RidesList({
                   )}/${encodeURIComponent(
                     ride.destination.city
                   )}/${encodeURIComponent(
-                    shortDateFormatter.format(departureDate)
+                    formatDate(departureDate, DateFormats.DATE_SLASH_FORMAT)
                   )}/${encodeURIComponent(ride._id)}`}
                 >
                   <Button size="default" className="font-semibold">

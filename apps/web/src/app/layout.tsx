@@ -6,8 +6,8 @@ import { authStorage } from "@/lib/authStorage";
 import { Toaster } from "@/components/ui/sonner";
 import Navbar from "@/components/Navbar/navbar";
 import Footer from "@/components/Footer/Footer";
-
 import styles from "./layout.module.css";
+import { initLingui, allMessages } from "@/lib/appRouterI18n";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -41,13 +41,20 @@ export default async function RootLayout({
   const token = await authStorage.getAccessToken();
   const refreshToken = await authStorage.getRefreshToken();
 
+  const i18n = await initLingui();
+  const locale = i18n.locale;
+
   return (
-    <html lang="en">
+    <html lang={locale}>
       <body
         className={`flex min-h-screen w-full flex-col ${geistSans.variable} ${geistMono.variable}`}
       >
         <Toaster richColors />
-        <Providers initialHasToken={Boolean(token) || Boolean(refreshToken)}>
+        <Providers
+          initialHasToken={Boolean(token) || Boolean(refreshToken)}
+          initialMessages={allMessages[locale]}
+          initialLocale={locale}
+        >
           <main className={styles.page}>
             <div className={styles.container}>
               <Navbar />

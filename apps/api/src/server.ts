@@ -1,4 +1,5 @@
 import express, { urlencoded, json } from "express";
+
 import cors from "cors";
 import { connectDB } from "./db/connectDB";
 import { config } from "./config/config";

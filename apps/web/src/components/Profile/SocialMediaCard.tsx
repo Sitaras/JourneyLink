@@ -14,6 +14,7 @@ import { Pencil } from "lucide-react";
 import { CustomInput } from "../ui/Inputs/CustomInput";
 import EditFormActions from "./EditFormActions";
 import InfoField from "./InfoField";
+import { Trans } from "@lingui/react/macro";
 
 interface SocialMediaCardProps {
   isEditing: boolean;
@@ -43,11 +44,15 @@ const SocialMediaCard: React.FC<SocialMediaCardProps> = ({
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-xl">Social Media</CardTitle>
+            <CardTitle className="text-xl">
+              <Trans>Social Media</Trans>
+            </CardTitle>
             <CardDescription>
-              {isEditing
-                ? "Update your social media accounts"
-                : "Your social media accounts"}
+              {isEditing ? (
+                <Trans>Update your social media accounts</Trans>
+              ) : (
+                <Trans>Your social media accounts</Trans>
+              )}
             </CardDescription>
           </div>
           {!isEditing && (
@@ -70,21 +75,21 @@ const SocialMediaCard: React.FC<SocialMediaCardProps> = ({
             <div className="grid grid-cols-1 gap-4">
               <CustomInput
                 name="socials.facebook"
-                label="Facebook"
+                label={<Trans>Facebook</Trans>}
                 type="text"
                 placeholder="facebook.com/username"
                 register={register}
               />
               <CustomInput
                 name="socials.twitter"
-                label="Twitter"
+                label={<Trans>Twitter</Trans>}
                 type="text"
                 placeholder="twitter.com/username"
                 register={register}
               />
               <CustomInput
                 name="socials.linkedIn"
-                label="LinkedIn"
+                label={<Trans>LinkedIn</Trans>}
                 type="text"
                 placeholder="linkedin.com/in/username"
                 register={register}
@@ -99,9 +104,18 @@ const SocialMediaCard: React.FC<SocialMediaCardProps> = ({
           </>
         ) : (
           <div className="grid grid-cols-1 gap-4">
-            <InfoField label="Facebook" value={socials?.facebook} />
-            <InfoField label="Twitter" value={socials?.twitter} />
-            <InfoField label="LinkedIn" value={socials?.linkedIn} />
+            <InfoField
+              label={<Trans>Facebook</Trans>}
+              value={socials?.facebook}
+            />
+            <InfoField
+              label={<Trans>Twitter</Trans>}
+              value={socials?.twitter}
+            />
+            <InfoField
+              label={<Trans>LinkedIn</Trans>}
+              value={socials?.linkedIn}
+            />
           </div>
         )}
       </CardContent>

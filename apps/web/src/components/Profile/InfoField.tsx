@@ -3,7 +3,7 @@
 import Typography from "../ui/typography";
 
 interface InfoFieldProps {
-  label: string;
+  label: React.ReactNode;
   value?: string;
 }
 

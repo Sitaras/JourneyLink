@@ -1,4 +1,5 @@
 import Typography from "@/components/ui/typography";
+import { Trans } from "@lingui/react/macro";
 import { Card, CardContent } from "@/components/ui/card";
 
 interface LayoutProps {
@@ -28,11 +29,13 @@ export default async function Layout({
       {isInitialLoad && (
         <div className="w-full max-w-4xl text-center space-y-4 mb-4">
           <Typography variant="h1" className="text-4xl md:text-5xl font-bold">
-            Find Your Perfect Ride
+            <Trans>Find Your Perfect Ride</Trans>
           </Typography>
           <Typography className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Connect with drivers heading your way. Share the journey, split the
-            costs, and travel sustainably.
+            <Trans>
+              Connect with drivers heading your way. Share the journey, split
+              the costs, and travel sustainably.
+            </Trans>
           </Typography>
         </div>
       )}
@@ -46,11 +49,13 @@ export default async function Layout({
           <div className="flex items-center justify-between flex-wrap gap-3">
             <div>
               <Typography variant="h2" className="text-2xl font-bold">
-                Available Rides
+                <Trans>Available Rides</Trans>
               </Typography>
               {hasResults && (
                 <Typography className="text-sm text-muted-foreground mt-1">
-                  Showing {limit} ride(s) • Page {page} of {totalPages}
+                  <Trans>
+                    Showing {limit} ride(s) • Page {page} of {totalPages}
+                  </Trans>
                 </Typography>
               )}
             </div>
@@ -70,11 +75,13 @@ export default async function Layout({
           <Card className="bg-gradient-to-br from-primary/5 to-transparent border-primary/20">
             <CardContent className="p-8 text-center space-y-4">
               <Typography variant="h3" className="text-2xl font-bold">
-                Have a car? Offer a ride!
+                <Trans>Have a car? Offer a ride!</Trans>
               </Typography>
               <Typography className="text-muted-foreground max-w-xl mx-auto">
-                Turn your empty seats into extra income while helping others
-                travel affordably and sustainably.
+                <Trans>
+                  Turn your empty seats into extra income while helping others
+                  travel affordably and sustainably.
+                </Trans>
               </Typography>
             </CardContent>
           </Card>

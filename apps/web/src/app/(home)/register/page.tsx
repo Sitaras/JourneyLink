@@ -1,5 +1,8 @@
 "use client";
 
+import { t } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
+
 import {
   Card,
   CardDescription,
@@ -23,12 +26,12 @@ import BirthdayInput from "@/components/ui/Inputs/BirthdayInput";
 const registerFormSchema = registerSchemaBase
   .extend({
     dateOfBirth: z.string().min(1, {
-      error: "Date of birth is required",
+      message: "REQUIRED",
     }),
   })
   .refine((data) => data.password === data.verifyPassword, {
     path: ["verifyPassword"],
-    error: "Passwords do not match",
+    message: "PASSWORDS_DO_NOT_MATCH",
   });
 
 type RegisterFormValues = z.infer<typeof registerFormSchema>;
@@ -43,7 +46,7 @@ export default function RegisterPage() {
       return register(data);
     },
     onSuccess: () => {
-      toast.success("Registered successfully");
+      toast.success(t`Registered successfully`);
     },
     onError: (err: Error) => {
       toast.error(err.message);
@@ -56,13 +59,13 @@ export default function RegisterPage() {
 
   const handleOnError = (errors: FieldErrors) => {
     const fieldLabels: Record<string, string> = {
-      email: "Email",
-      firstName: "First name",
-      lastName: "Last name",
-      phoneNumber: "Phone number",
-      dateOfBirth: "Date of birth",
-      password: "Password",
-      verifyPassword: "Verify password",
+      email: t`Email`,
+      firstName: t`First name`,
+      lastName: t`Last name`,
+      phoneNumber: t`Phone number`,
+      dateOfBirth: t`Date of birth`,
+      password: t`Password`,
+      verifyPassword: t`Verify password`,
     };
 
     onError(fieldLabels, errors);
@@ -72,8 +75,12 @@ export default function RegisterPage() {
     <div className="h-full w-full flex-1 flex justify-center items-center">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle className="text-2xl">Register</CardTitle>
-          <CardDescription>Shut up and take my money</CardDescription>
+          <CardTitle className="text-2xl">
+            <Trans>Register</Trans>
+          </CardTitle>
+          <CardDescription>
+            <Trans>Shut up and take my money</Trans>
+          </CardDescription>
         </CardHeader>
         <CardFooter>
           <form
@@ -85,35 +92,35 @@ export default function RegisterPage() {
             <CustomInput
               id="email"
               name="email"
-              label="Email"
+              label={<Trans>Email</Trans>}
               type="email"
               register={_register}
               autoComplete="username"
             />
             <CustomInput
               name="firstName"
-              label="First name"
+              label={<Trans>First name</Trans>}
               register={_register}
             />
             <CustomInput
               name="lastName"
-              label="Last name"
+              label={<Trans>Last name</Trans>}
               register={_register}
             />
             <CustomInput
               name="phoneNumber"
-              label="Phone number"
+              label={<Trans>Phone number</Trans>}
               type="tel"
               register={_register}
             />
             <BirthdayInput
-              label="Date of birth"
+              label={<Trans>Date of birth</Trans>}
               name="dateOfBirth"
               register={_register}
             />
             <CustomInput
               id="new-password"
-              label="Password"
+              label={<Trans>Password</Trans>}
               name="password"
               type="password"
               register={_register}
@@ -121,7 +128,7 @@ export default function RegisterPage() {
             />
             <CustomInput
               id="verifyPassword"
-              label="Verify password"
+              label={<Trans>Verify password</Trans>}
               name="verifyPassword"
               type="password"
               register={_register}
@@ -132,7 +139,7 @@ export default function RegisterPage() {
               type="submit"
               loading={mutation.isPending}
             >
-              Submit
+              <Trans>Submit</Trans>
             </Button>
           </form>
         </CardFooter>

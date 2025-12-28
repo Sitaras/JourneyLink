@@ -1,5 +1,8 @@
 "use client";
 
+import { t } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
+
 import { useState } from "react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { getUserProfile, updateUserProfile } from "@/api-actions/user";
@@ -39,13 +42,13 @@ const Profile = () => {
     onSuccess: () => {
       refetch();
       setEditingSection(null);
-      toast.success("Profile updated successfully", {
-        description: "Your changes have been saved.",
+      toast.success(t`Profile updated successfully`, {
+        description: t`Your changes have been saved.`,
       });
     },
     onError: (err: Error) => {
-      toast.error("Failed to update profile", {
-        description: err.message || "Please try again later.",
+      toast.error(t`Failed to update profile`, {
+        description: err.message || t`Please try again later.`,
       });
     },
   });
@@ -88,15 +91,15 @@ const Profile = () => {
 
   const handleOnError = (errors: FieldErrors) => {
     const FIELD_LABELS: Record<string, string> = {
-      firstName: "First name",
-      lastName: "Last name",
-      email: "Email",
-      dateOfBirth: "Date of birth",
-      bio: "Bio",
-      phoneNumber: "Phone number",
-      "socials.facebook": "Facebook",
-      "socials.twitter": "Twitter",
-      "socials.linkedIn": "LinkedIn",
+      firstName: t`First name`,
+      lastName: t`Last name`,
+      email: t`Email`,
+      dateOfBirth: t`Date of birth`,
+      bio: t`Bio`,
+      phoneNumber: t`Phone number`,
+      "socials.facebook": t`Facebook`,
+      "socials.twitter": t`Twitter`,
+      "socials.linkedIn": t`LinkedIn`,
     };
 
     onError(FIELD_LABELS, errors);
@@ -121,7 +124,9 @@ const Profile = () => {
     <section className="flex justify-center w-full py-8 px-4">
       <div className="flex flex-col gap-6 max-w-xl w-full">
         <div className="flex flex-col gap-2">
-          <Typography variant="h2">My Profile</Typography>
+          <Typography variant="h2">
+            <Trans>My Profile</Trans>
+          </Typography>
         </div>
 
         <ProfileHeader
@@ -169,8 +174,10 @@ const Profile = () => {
         </form>
 
         <Typography className="text-xs text-center text-muted-foreground">
-          Your profile information is private and will only be shared with
-          riders you connect with.
+          <Trans>
+            Your profile information is private and will only be shared with
+            riders you connect with.
+          </Trans>
         </Typography>
       </div>
     </section>

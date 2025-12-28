@@ -1,5 +1,7 @@
 "use client";
 
+import { Trans } from "@lingui/react/macro";
+
 import { useQuery } from "@tanstack/react-query";
 import { getUserProfileById } from "@/api-actions/user";
 import { formatDate } from "@/utils/dateUtils";
@@ -42,18 +44,22 @@ const UserProfile = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[50vh] gap-4">
         <User className="w-16 h-16 text-muted-foreground/50" />
-        <Typography variant="h3">Profile Unavailable</Typography>
+        <Typography variant="h3">
+          <Trans>Profile Unavailable</Trans>
+        </Typography>
         <Typography className="text-muted-foreground text-center max-w-md">
-          We couldn&apos;t find this profile. It may not exist, or you might not
-          have permission to view it. Profiles are only visible between users
-          with confirmed rides.
+          <Trans>
+            We couldn&apos;t find this profile. It may not exist, or you might
+            not have permission to view it. Profiles are only visible between
+            users with confirmed rides.
+          </Trans>
         </Typography>
         <Button
           onClick={() => router.back()}
           variant="outline"
           className="mt-2"
         >
-          Go back
+          <Trans>Go back</Trans>
         </Button>
       </div>
     );
@@ -99,7 +105,13 @@ const UserProfile = () => {
                   {averageRating.toFixed(1)}
                 </span>
                 <span className="text-muted-foreground text-sm">
-                  ({ratingCount} {ratingCount === 1 ? "review" : "reviews"})
+                  ({ratingCount}{" "}
+                  {ratingCount === 1 ? (
+                    <Trans>review</Trans>
+                  ) : (
+                    <Trans>reviews</Trans>
+                  )}
+                  )
                 </span>
               </div>
             </div>
@@ -111,7 +123,7 @@ const UserProfile = () => {
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-lg">
                 <User className="w-5 h-5 text-primary" />
-                About
+                <Trans>About</Trans>
               </CardTitle>
             </CardHeader>
             <CardContent>
@@ -121,7 +133,7 @@ const UserProfile = () => {
                 </Typography>
               ) : (
                 <Typography className="text-muted-foreground italic">
-                  No bio provided.
+                  <Trans>No bio provided.</Trans>
                 </Typography>
               )}
             </CardContent>
@@ -130,7 +142,9 @@ const UserProfile = () => {
           {(email || phoneNumber || dateOfBirth) && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Contact Information</CardTitle>
+                <CardTitle className="text-lg">
+                  <Trans>Contact Information</Trans>
+                </CardTitle>
               </CardHeader>
               <CardContent className="grid gap-4 sm:grid-cols-2">
                 {email && (
@@ -140,7 +154,7 @@ const UserProfile = () => {
                     </div>
                     <div className="flex flex-col overflow-hidden">
                       <span className="text-xs text-muted-foreground font-medium">
-                        Email
+                        <Trans>Email</Trans>
                       </span>
                       <span className="font-medium truncate" title={email}>
                         {email}
@@ -155,7 +169,7 @@ const UserProfile = () => {
                     </div>
                     <div className="flex flex-col">
                       <span className="text-xs text-muted-foreground font-medium">
-                        Phone
+                        <Trans>Phone</Trans>
                       </span>
                       <span className="font-medium">{phoneNumber}</span>
                     </div>
@@ -168,7 +182,7 @@ const UserProfile = () => {
                     </div>
                     <div className="flex flex-col">
                       <span className="text-xs text-muted-foreground font-medium">
-                        Born
+                        <Trans>Born</Trans>
                       </span>
                       <span className="font-medium">
                         {formatDate(dateOfBirth, DateFormats.DATE_SLASH_FORMAT)}
@@ -183,7 +197,9 @@ const UserProfile = () => {
           {socials && Object.values(socials).some((s) => s) && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Social Media</CardTitle>
+                <CardTitle className="text-lg">
+                  <Trans>Social Media</Trans>
+                </CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="flex flex-wrap gap-4">
@@ -196,7 +212,7 @@ const UserProfile = () => {
                         className="gap-2"
                       >
                         <Facebook className="w-4 h-4 text-[#1877F2]" />
-                        Facebook
+                        <Trans>Facebook</Trans>
                       </Link>
                     </Button>
                   )}
@@ -209,7 +225,7 @@ const UserProfile = () => {
                         className="gap-2"
                       >
                         <Linkedin className="w-4 h-4 text-[#0A66C2]" />
-                        LinkedIn
+                        <Trans>LinkedIn</Trans>
                       </Link>
                     </Button>
                   )}
@@ -222,7 +238,7 @@ const UserProfile = () => {
                         className="gap-2"
                       >
                         <Twitter className="w-4 h-4 text-[#1DA1F2]" />
-                        Twitter
+                        <Trans>Twitter</Trans>
                       </Link>
                     </Button>
                   )}
@@ -232,8 +248,10 @@ const UserProfile = () => {
           )}
 
           <Typography className="text-xs text-center text-muted-foreground mt-4">
-            Contact details and social links are only visible because you have a
-            confirmed ride with this user.
+            <Trans>
+              Contact details and social links are only visible because you have
+              a confirmed ride with this user.
+            </Trans>
           </Typography>
         </div>
       </div>

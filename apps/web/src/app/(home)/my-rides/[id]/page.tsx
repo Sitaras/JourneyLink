@@ -186,7 +186,6 @@ const RideManagementPage = () => {
             onSuccess={() => {
               setIsEditOpen(false);
               refetchRide();
-              toast.success("Ride updated successfully");
             }}
           />
         )}

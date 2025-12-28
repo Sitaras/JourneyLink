@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 export interface CustomTextareaProps extends React.ComponentProps<"textarea"> {
   register?: UseFormRegister<any>;
   errors?: FieldErrors;
-  label?: string;
+  label?: React.ReactNode;
   name: string;
   required?: boolean;
   labelClassName?: string;

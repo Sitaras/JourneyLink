@@ -3,6 +3,7 @@ import { Star, UserRoundIcon } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import Typography from "@/components/ui/typography";
+import { Trans } from "@lingui/react/macro";
 
 interface ProfileHeaderProps {
   firstName?: string;
@@ -27,7 +28,7 @@ const ProfileHeader = ({ firstName, lastName, rating }: ProfileHeaderProps) => {
         </Avatar>
         <div className="flex flex-col gap-1">
           <Typography className="font-semibold text-lg break-words">
-            {fullName || "User"}
+            {fullName || <Trans>User</Trans>}
           </Typography>
           {hasRating && (
             <div className="flex items-center gap-2 mt-1">
@@ -41,7 +42,7 @@ const ProfileHeader = ({ firstName, lastName, rating }: ProfileHeaderProps) => {
               )}
               {!!rating.count && (
                 <Typography className="text-xs text-muted-foreground">
-                  ({rating.count} {"rides"})
+                  ({rating.count} <Trans>rides</Trans>)
                 </Typography>
               )}
             </div>

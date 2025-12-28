@@ -3,11 +3,12 @@ import { Input } from "../input";
 import { Label } from "../label";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
 import { cn } from "@/lib/utils";
+import { getValidationMessage } from "@/utils/validationMessages";
 
 export interface CustomInputProps extends React.ComponentProps<"input"> {
   register?: UseFormRegister<any>;
   errors?: FieldErrors;
-  label?: string;
+  label?: React.ReactNode;
   type?: string;
   name: string;
   required?: boolean;
@@ -37,7 +38,7 @@ const CustomInput = ({
         id={name}
         type={type}
         required={required}
-        errorMessage={errors?.[name]?.message as string}
+        errorMessage={getValidationMessage(errors?.[name]?.message as string)}
         {...register?.(name)}
         {...rest}
       />

@@ -5,12 +5,13 @@ import { StatusCodes } from "http-status-codes";
 type ValidationTarget = "body" | "query" | "params";
 
 export const validateData = (
-  schema: ZodSchema<any>,
+  schema: ZodSchema<any> | (() => ZodSchema<any>),
   target: ValidationTarget = "body"
 ) => {
   return (req: Request, res: Response, next: NextFunction) => {
     try {
-      const validated = schema.parse(req[target]);
+      const zodSchema = typeof schema === "function" ? schema() : schema;
+      const validated = zodSchema.parse(req[target]);
       req[target] = validated;
       next();
     } catch (error) {

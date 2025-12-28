@@ -3,6 +3,8 @@
 import { Button } from "../ui/button";
 import { X, Check } from "lucide-react";
 
+import { Trans } from "@lingui/react/macro";
+
 interface EditFormActionsProps {
   onCancel: () => void;
   isSubmitting: boolean;
@@ -24,7 +26,7 @@ const EditFormActions = ({
         disabled={isSubmitting}
       >
         <X className="h-4 w-4 mr-1" />
-        Cancel
+        <Trans>Cancel</Trans>
       </Button>
       <Button
         type="submit"
@@ -33,7 +35,7 @@ const EditFormActions = ({
         loading={isSubmitting}
       >
         <Check className="h-4 w-4 mr-1" />
-        Save Changes
+        <Trans>Save Changes</Trans>
       </Button>
     </div>
   );

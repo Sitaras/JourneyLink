@@ -20,6 +20,8 @@ import { UseFormRegister } from "react-hook-form";
 import { UpdateProfilePayload } from "@journey-link/shared";
 import EditFormActions from "./EditFormActions";
 import InfoField from "./InfoField";
+import { t } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
 
 const MAX_BIO_LENGTH = 500;
 
@@ -61,11 +63,15 @@ const PersonalInfoCard = ({
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <div>
-            <CardTitle className="text-xl">Personal Information</CardTitle>
+            <CardTitle className="text-xl">
+              <Trans>Personal Information</Trans>
+            </CardTitle>
             <CardDescription>
-              {isEditing
-                ? "Update your personal details and bio"
-                : "Your personal details and bio"}
+              {isEditing ? (
+                <Trans>Update your personal details and bio</Trans>
+              ) : (
+                <Trans>Your personal details and bio</Trans>
+              )}
             </CardDescription>
           </div>
           {!isEditing && (
@@ -88,13 +94,13 @@ const PersonalInfoCard = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <CustomInput
                 name="firstName"
-                label="First name"
+                label={<Trans>First name</Trans>}
                 register={register}
                 required
               />
               <CustomInput
                 name="lastName"
-                label="Last name"
+                label={<Trans>Last name</Trans>}
                 register={register}
                 required
               />
@@ -103,7 +109,7 @@ const PersonalInfoCard = ({
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <CustomInput
                 name="email"
-                label="Email"
+                label={<Trans>Email</Trans>}
                 type="email"
                 register={register}
                 autoComplete="username"
@@ -111,7 +117,7 @@ const PersonalInfoCard = ({
               />
               <CustomInput
                 name="phoneNumber"
-                label="Phone"
+                label={<Trans>Phone</Trans>}
                 type="tel-national"
                 register={register}
                 required
@@ -119,7 +125,7 @@ const PersonalInfoCard = ({
             </div>
 
             <BirthdayInput
-              label="Date of birth"
+              label={<Trans>Date of birth</Trans>}
               name="dateOfBirth"
               register={register}
             />
@@ -127,8 +133,8 @@ const PersonalInfoCard = ({
             <div className="space-y-2">
               <CustomTextarea
                 name="bio"
-                label="Bio"
-                placeholder="Tell us about yourself..."
+                label={<Trans>Bio</Trans>}
+                placeholder={t`Tell us about yourself...`}
                 register={register}
                 rows={4}
                 maxLength={MAX_BIO_LENGTH}
@@ -140,7 +146,9 @@ const PersonalInfoCard = ({
                     : "text-muted-foreground"
                 }`}
               >
-                {bioCharCount}/{MAX_BIO_LENGTH} characters
+                <Trans>
+                  {bioCharCount}/{MAX_BIO_LENGTH} characters
+                </Trans>
               </Typography>
             </div>
 
@@ -153,17 +161,17 @@ const PersonalInfoCard = ({
         ) : (
           <>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <InfoField label="First name" value={firstName} />
-              <InfoField label="Last name" value={lastName} />
+              <InfoField label={<Trans>First name</Trans>} value={firstName} />
+              <InfoField label={<Trans>Last name</Trans>} value={lastName} />
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <InfoField label="Email" value={email} />
-              <InfoField label="Phone" value={phoneNumber} />
+              <InfoField label={<Trans>Email</Trans>} value={email} />
+              <InfoField label={<Trans>Phone</Trans>} value={phoneNumber} />
             </div>
 
             <InfoField
-              label="Date of birth"
+              label={<Trans>Date of birth</Trans>}
               value={
                 dateOfBirth
                   ? formatDate(dateOfBirth, DateFormats.DATE_FULL_MONTH_FORMAT)
@@ -171,7 +179,7 @@ const PersonalInfoCard = ({
               }
             />
 
-            <InfoField label="Bio" value={bio} />
+            <InfoField label={<Trans>Bio</Trans>} value={bio} />
           </>
         )}
       </CardContent>

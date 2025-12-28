@@ -3,6 +3,7 @@ import { CustomAutocomplete } from "./CustomAutocomplete";
 import { useDebounce } from "@/hooks/useDebounce";
 import { CustomAutocompleteProps } from "./CustomAutocomplete";
 import useCityAutocomplete from "@/hooks/useCityAutocomplete";
+import { t } from "@lingui/core/macro";
 
 const CityAutoComplete = ({
   defaultSearchInput,
@@ -36,10 +37,10 @@ const CityAutoComplete = ({
       onSearchChange={setSearchInput}
       emptyMessage={
         isLoading
-          ? "Loading..."
+          ? t`Loading...`
           : searchInput.length <= 2
-            ? "Type at least 3 characters to search"
-            : "No cities found"
+            ? t`Type at least 3 characters to search`
+            : t`No cities found`
       }
       optionsKeyName="coordinates"
       {...rest}

@@ -1,4 +1,5 @@
 import { getRideById } from "@/lib/rideApi";
+import { initLingui } from "@/lib/appRouterI18n";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import {
   MapPin,
@@ -17,12 +18,14 @@ import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { BookingDisclaimer } from "@/components/BookingDisclaimer/BookingDisclaimer";
 import BookingButton from "@/components/BookingButton/BookingButton";
 import { dateFormatter, timeFormatter } from "@/utils/formatters";
+import { Trans } from "@lingui/react/macro";
 
 export default async function Ride({
   params,
 }: {
   params: Promise<{ slug: string[] }>;
 }) {
+  await initLingui();
   const { slug } = await params;
   const [, , , rideId] = slug;
 
@@ -34,10 +37,12 @@ export default async function Ride({
         <Card className="max-w-md">
           <CardContent className="p-6 text-center">
             <Typography className="text-lg font-semibold mb-2">
-              Ride not found
+              <Trans>Ride not found</Trans>
             </Typography>
             <Typography className="text-sm text-muted-foreground">
-              The ride you are looking for does not exist or has been removed.
+              <Trans>
+                The ride you are looking for does not exist or has been removed.
+              </Trans>
             </Typography>
           </CardContent>
         </Card>
@@ -75,7 +80,7 @@ export default async function Ride({
                 {rideData.driverProfile.firstName}
               </Typography>
               <Typography className="text-xs text-muted-foreground uppercase tracking-wide">
-                Driver
+                <Trans>Driver</Trans>
               </Typography>
               {hasRating && (
                 <div className="flex items-center gap-2 mt-1">
@@ -89,7 +94,10 @@ export default async function Ride({
                   )}
                   {!!rideData.driverProfile.rating.count && (
                     <Typography className="text-xs text-muted-foreground">
-                      ({rideData.driverProfile.rating.count + "rides"} )
+                      (
+                      <Trans>
+                        {rideData.driverProfile.rating.count + "rides"} )
+                      </Trans>
                     </Typography>
                   )}
                 </div>
@@ -127,7 +135,9 @@ export default async function Ride({
                 </div>
               </div>
               <Badge className="text-sm px-3 py-1">
-                {rideData.remainingSeats} of {rideData.availableSeats} left
+                <Trans>
+                  {rideData.remainingSeats} of {rideData.availableSeats} left
+                </Trans>
               </Badge>
             </div>
 
@@ -136,7 +146,7 @@ export default async function Ride({
             {/* Preferences */}
             <div>
               <Typography className="text-xs text-muted-foreground uppercase tracking-wide mb-3">
-                Preferences
+                <Trans>Preferences</Trans>
               </Typography>
               <div className="flex flex-wrap gap-2">
                 <Badge
@@ -148,9 +158,11 @@ export default async function Ride({
                   className="flex items-center gap-1.5 px-3 py-1"
                 >
                   <Cigarette className="w-3.5 h-3.5" />
-                  {rideData.preferences.smokingAllowed
-                    ? "Smoking allowed"
-                    : "No smoking"}
+                  {rideData.preferences.smokingAllowed ? (
+                    <Trans>Smoking allowed</Trans>
+                  ) : (
+                    <Trans>No smoking</Trans>
+                  )}
                 </Badge>
                 <Badge
                   variant={
@@ -159,9 +171,11 @@ export default async function Ride({
                   className="flex items-center gap-1.5 px-3 py-1"
                 >
                   <PawPrint className="w-3.5 h-3.5" />
-                  {rideData.preferences.petsAllowed
-                    ? "Pets allowed"
-                    : "No pets"}
+                  {rideData.preferences.petsAllowed ? (
+                    <Trans>Pets allowed</Trans>
+                  ) : (
+                    <Trans>No pets</Trans>
+                  )}
                 </Badge>
               </div>
             </div>
@@ -172,7 +186,7 @@ export default async function Ride({
                 <Separator />
                 <div>
                   <Typography className="text-xs text-muted-foreground uppercase tracking-wide mb-2">
-                    Vehicle
+                    <Trans>Vehicle</Trans>
                   </Typography>
                   <div className="flex items-center gap-2">
                     <Car className="w-4 h-4 text-primary flex-shrink-0" />
@@ -195,7 +209,7 @@ export default async function Ride({
                 <Separator />
                 <div>
                   <Typography className="text-xs text-muted-foreground uppercase tracking-wide mb-2">
-                    Additional Information
+                    <Trans>Additional Information</Trans>
                   </Typography>
                   <Typography className="text-sm leading-relaxed">
                     {rideData.additionalInfo}
@@ -214,11 +228,11 @@ export default async function Ride({
                 €{rideData.pricePerSeat}
               </Typography>
               <Typography className="text-sm text-muted-foreground mt-1">
-                per seat
+                <Trans>per seat</Trans>
               </Typography>
             </div>
             <Typography className="text-sm text-muted-foreground">
-              Total for all seats
+              <Trans>Total for all seats</Trans>
             </Typography>
           </CardContent>
         </Card>

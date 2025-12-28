@@ -1,16 +1,22 @@
 "use client";
-import { useState } from "react";
+import { useState, ReactNode } from "react";
 
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/context/AuthContext";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { LinguiClientProvider } from "@/components/LinguiProvider";
+import { Messages } from "@lingui/core";
 
 export default function Providers({
-  initialHasToken,
   children,
+  initialHasToken,
+  initialLocale,
+  initialMessages,
 }: {
+  children: ReactNode;
   initialHasToken: boolean;
-  children: React.ReactNode;
+  initialLocale: string;
+  initialMessages: Messages;
 }) {
   const [queryClient] = useState(
     () =>
@@ -37,9 +43,14 @@ export default function Providers({
 
   return (
     <QueryClientProvider client={queryClient}>
-      <AuthProvider initialHasToken={initialHasToken}>
-        <TooltipProvider>{children}</TooltipProvider>
-      </AuthProvider>
+      <LinguiClientProvider
+        initialLocale={initialLocale}
+        initialMessages={initialMessages}
+      >
+        <AuthProvider initialHasToken={initialHasToken}>
+          <TooltipProvider>{children}</TooltipProvider>
+        </AuthProvider>
+      </LinguiClientProvider>
     </QueryClientProvider>
   );
 }

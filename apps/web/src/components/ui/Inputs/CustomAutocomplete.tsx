@@ -36,7 +36,7 @@ export interface CustomAutocompleteProps<
   control: Control<any>;
   name: TName;
   options: readonly AutocompleteOption[];
-  label?: string;
+  label?: React.ReactNode;
   description?: string;
   placeholder?: string;
   searchPlaceholder?: string;

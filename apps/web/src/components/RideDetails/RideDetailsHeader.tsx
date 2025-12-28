@@ -1,4 +1,5 @@
 import { Badge } from "@/components/ui/badge";
+import { Trans } from "@lingui/react/macro";
 import { CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Tooltip,
@@ -34,7 +35,9 @@ export const RideDetailsHeader = ({
     <CardHeader>
       <div className="flex justify-between items-start">
         <div className="space-y-1">
-          <CardTitle className="text-2xl">Ride Details</CardTitle>
+          <CardTitle className="text-2xl">
+            <Trans>Ride Details</Trans>
+          </CardTitle>
           <div className="flex items-center gap-2 text-muted-foreground">
             <Calendar className="w-4 h-4" />
             <span>
@@ -58,7 +61,9 @@ export const RideDetailsHeader = ({
                 </div>
               </TooltipTrigger>
               <TooltipContent>
-                <p>Ride Status: {statusLabel}</p>
+                <p>
+                  <Trans>Ride Status</Trans>: {statusLabel}
+                </p>
               </TooltipContent>
             </Tooltip>
 
@@ -76,7 +81,10 @@ export const RideDetailsHeader = ({
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Your Request: {getBookingStatusLabel(myBooking.status)}</p>
+                  <p>
+                    <Trans>Your Request</Trans>:{" "}
+                    {getBookingStatusLabel(myBooking.status)}
+                  </p>
                 </TooltipContent>
               </Tooltip>
             )}

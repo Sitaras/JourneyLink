@@ -2,6 +2,9 @@
 
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
+import { t } from "@lingui/core/macro";
+import { Trans } from "@lingui/react/macro";
+import { useMemo } from "react";
 
 import { createRide } from "@/api-actions/ride";
 import { Button } from "@/components/ui/button";
@@ -10,7 +13,7 @@ import { DatePicker } from "@/components/ui/datepicker";
 import CityAutoComplete from "@/components/ui/Inputs/CityAutoComplete";
 import { CustomInput } from "@/components/ui/Inputs/CustomInput";
 import {
-  createRideSchema,
+  createCreateRideSchema,
   CreateRideFormValues,
 } from "@/schemas/home/createRideSchema";
 import { ICreateRidePayload } from "@journey-link/shared";
@@ -57,7 +60,9 @@ export default function CreateRide() {
     hasSocials;
 
   const { register, control, handleSubmit } = useForm<CreateRideFormValues>({
-    resolver: zodResolver(createRideSchema) as Resolver<CreateRideFormValues>,
+    resolver: zodResolver(
+      useMemo(() => createCreateRideSchema(), [])
+    ) as Resolver<CreateRideFormValues>,
     defaultValues: {
       smoking: false,
       petsAllowed: false,
@@ -70,12 +75,12 @@ export default function CreateRide() {
       return createRide(data);
     },
     onSuccess: () => {
-      toast.success("Ride created successfully!", {
-        description: "Your ride is now available for passengers to book.",
+      toast.success(t`Ride created successfully!`, {
+        description: t`Your ride is now available for passengers to book.`,
       });
     },
     onError: () => {
-      toast.error("Failed to create ride");
+      toast.error(t`Failed to create ride`);
     },
   });
 
@@ -128,10 +133,14 @@ export default function CreateRide() {
       <div className="flex flex-col gap-8 max-w-xl w-full">
         {/* Header */}
         <div className="flex flex-col gap-2">
-          <Typography variant="h2">Offer a ride</Typography>
+          <Typography variant="h2">
+            <Trans>Offer a ride</Trans>
+          </Typography>
           <Typography className="text-muted-foreground text-lg">
-            Share your journey and split the costs. Fill in the details below to
-            post your ride.
+            <Trans>
+              Share your journey and split the costs. Fill in the details below
+              to post your ride.
+            </Trans>
           </Typography>
         </div>
 
@@ -143,13 +152,15 @@ export default function CreateRide() {
         >
           {!isProfileComplete && !isLoading && (
             <div className="bg-destructive/10 border border-destructive/20 text-destructive p-3 rounded-md text-sm text-center">
-              Please complete your profile (Name, Bio, Email, Phone, Social
-              Media) to publish a ride.
+              <Trans>
+                Please complete your profile (Name, Bio, Email, Phone, Social
+                Media) to publish a ride.
+              </Trans>
               <span
                 onClick={() => router.push("/profile")}
                 className="underline cursor-pointer font-medium"
               >
-                Go to Profile
+                <Trans>Go to Profile</Trans>
               </span>
             </div>
           )}
@@ -158,23 +169,23 @@ export default function CreateRide() {
               <div className="flex items-center gap-2 mb-2">
                 <MapPin className="w-5 h-5 text-primary" />
                 <Typography className="font-semibold text-lg">
-                  Ride Details
+                  <Trans>Ride Details</Trans>
                 </Typography>
               </div>
 
               <CityAutoComplete
                 control={control}
                 name="departureLocation"
-                label="Departure location"
-                placeholder="e.g. Athens"
+                label={<Trans>Departure location</Trans>}
+                placeholder={t`e.g. Athens`}
                 buttonClassName="w-full"
               />
 
               <CityAutoComplete
                 control={control}
                 name="arrivalLocation"
-                label="Arrival location"
-                placeholder="e.g. Thessaloniki"
+                label={<Trans>Arrival location</Trans>}
+                placeholder={t`e.g. Thessaloniki`}
                 buttonClassName="w-full"
               />
             </CardContent>
@@ -185,15 +196,17 @@ export default function CreateRide() {
             <CardContent className="p-6 space-y-5">
               <div className="flex items-center gap-2 mb-2">
                 <Calendar className="w-5 h-5 text-primary" />
-                <Typography className="font-semibold text-lg">When?</Typography>
+                <Typography className="font-semibold text-lg">
+                  <Trans>When?</Trans>
+                </Typography>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <DatePicker
                   register={register}
                   name="dateTrip"
-                  label="Date"
-                  placeholder="Select a date"
+                  label={<Trans>Date</Trans>}
+                  placeholder={t`Select a date`}
                   buttonClassName="w-full"
                 />
 
@@ -203,7 +216,7 @@ export default function CreateRide() {
                     name="time"
                     id="time-picker"
                     register={register}
-                    label="Time (24-hour format)"
+                    label={<Trans>Time (24-hour format)</Trans>}
                     className="peer bg-background appearance-none pr-9 [&::-webkit-calendar-picker-indicator]:hidden [&::-webkit-calendar-picker-indicator]:appearance-none"
                   />
                   <div className="text-muted-foreground pointer-events-none absolute inset-y-10 right-0 flex items-center justify-center pr-4 peer-disabled:opacity-50">
@@ -220,7 +233,7 @@ export default function CreateRide() {
               <div className="flex items-center gap-2 mb-2">
                 <Users className="w-5 h-5 text-primary" />
                 <Typography className="font-semibold text-lg">
-                  Capacity & Pricing
+                  <Trans>Capacity & Pricing</Trans>
                 </Typography>
               </div>
 
@@ -228,7 +241,7 @@ export default function CreateRide() {
                 <SeatsSelect
                   control={control}
                   name="availableSeats"
-                  label="Available Seats"
+                  label={<Trans>Available Seats</Trans>}
                   maxSeats={4}
                   required
                 />
@@ -236,7 +249,7 @@ export default function CreateRide() {
                 <div className="relative">
                   <CustomInput
                     name="pricePerSeat"
-                    label="Price per seat"
+                    label={<Trans>Price per seat</Trans>}
                     register={register}
                     required
                     placeholder="0.00"
@@ -255,7 +268,7 @@ export default function CreateRide() {
               <div className="flex items-center gap-2 mb-2">
                 <Settings className="w-5 h-5 text-primary" />
                 <Typography className="font-semibold text-lg">
-                  Preferences
+                  <Trans>Preferences</Trans>
                 </Typography>
               </div>
 
@@ -263,12 +276,12 @@ export default function CreateRide() {
                 <Switch
                   control={control}
                   name="smoking"
-                  label="Smoking allowed"
+                  label={<Trans>Smoking allowed</Trans>}
                 />
                 <Switch
                   control={control}
                   name="petsAllowed"
-                  label="Pets allowed"
+                  label={<Trans>Pets allowed</Trans>}
                 />
               </div>
             </CardContent>
@@ -280,14 +293,14 @@ export default function CreateRide() {
               <div className="flex items-center gap-2 mb-2">
                 <Info className="w-5 h-5 text-primary" />
                 <Typography className="font-semibold text-lg">
-                  Additional Information
+                  <Trans>Additional Information</Trans>
                 </Typography>
               </div>
 
               <CustomTextarea
                 name="additionalInfo"
-                label="Any extra details?"
-                placeholder="e.g. Planning a coffee stop, flexible departure time, luggage space available..."
+                label={<Trans>Any extra details?</Trans>}
+                placeholder={t`e.g. Planning a coffee stop, flexible departure time, luggage space available...`}
                 register={register}
                 rows={4}
               />
@@ -302,12 +315,14 @@ export default function CreateRide() {
             className="w-full text-base font-semibold"
             disabled={mutation.isPending || !isProfileComplete}
           >
-            {mutation.isPending ? "Creating ride..." : "Publish Ride"}
+            {mutation.isPending ? t`Creating ride...` : t`Publish Ride`}
           </Button>
 
           <Typography className="text-xs text-center text-muted-foreground">
-            By publishing this ride, you agree to our terms of service and
-            community guidelines.
+            <Trans>
+              By publishing this ride, you agree to our terms of service and
+              community guidelines.
+            </Trans>
           </Typography>
         </form>
       </div>

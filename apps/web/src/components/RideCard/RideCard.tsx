@@ -1,3 +1,4 @@
+import { Trans } from "@lingui/react/macro";
 import {
   Card,
   CardContent,
@@ -35,14 +36,14 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { isPast } from "@/utils/dateUtils";
+import { i18n } from "@lingui/core";
 import { UserRideRole } from "@/types/user.types";
 import { RideStatus, UserRide } from "@journey-link/shared";
-import { dateTimeFormatter } from "@/utils/formatters";
 
 interface RideCardProps {
   ride: UserRide;
   viewType: UserRideRole;
-  buttonLabel?: string;
+  buttonLabel?: React.ReactNode;
   className?: string;
   onEdit?: (ride: UserRide) => void;
 }
@@ -50,7 +51,7 @@ interface RideCardProps {
 const RideCard = ({
   ride,
   viewType,
-  buttonLabel = "View details",
+  buttonLabel = <Trans>View details</Trans>,
   className,
   onEdit,
 }: RideCardProps) => {
@@ -108,7 +109,9 @@ const RideCard = ({
                   </div>
                 </TooltipTrigger>
                 <TooltipContent>
-                  <p>Ride Status: {statusLabel}</p>
+                  <p>
+                    <Trans>Ride Status</Trans>: {statusLabel}
+                  </p>
                 </TooltipContent>
               </Tooltip>
 
@@ -127,7 +130,8 @@ const RideCard = ({
                   </TooltipTrigger>
                   <TooltipContent>
                     <p>
-                      Your Request: {getBookingStatusLabel(ride.bookingStatus)}
+                      <Trans>Your Request</Trans>:{" "}
+                      {getBookingStatusLabel(ride.bookingStatus)}
                     </p>
                   </TooltipContent>
                 </Tooltip>
@@ -142,7 +146,10 @@ const RideCard = ({
           <div className="flex items-center gap-2 text-sm">
             <Calendar className="w-4 h-4 text-primary flex-shrink-0" />
             <Typography className="font-medium">
-              {dateTimeFormatter.format(departureDate)}
+              {i18n.date(departureDate, {
+                dateStyle: "medium",
+                timeStyle: "short",
+              })}
             </Typography>
           </div>
           {viewType === UserRideRole.AS_PASSENGER && ride.driver && (
@@ -168,7 +175,7 @@ const RideCard = ({
             <div className="flex items-center gap-2 pt-2">
               <Users className="w-4 h-4 text-primary flex-shrink-0" />
               <Typography className="text-sm text-muted-foreground">
-                Booked: {ride.totalPassengersBooked}
+                <Trans>Booked</Trans>: {ride.totalPassengersBooked}
               </Typography>
             </div>
           )}
@@ -180,10 +187,13 @@ const RideCard = ({
       <CardFooter className="flex justify-between items-center gap-4 pt-4 flex-wrap">
         <div className="flex flex-col gap-1">
           <Typography className="text-2xl font-bold text-primary">
-            €{ride.pricePerSeat?.toFixed(2)}
+            {i18n.number(ride.pricePerSeat, {
+              style: "currency",
+              currency: "EUR",
+            })}
           </Typography>
           <Typography className="text-xs text-muted-foreground">
-            per seat
+            <Trans>per seat</Trans>
           </Typography>
         </div>
         <div className="flex gap-2">
@@ -195,7 +205,7 @@ const RideCard = ({
               onClick={() => onEdit(ride)}
             >
               <Pencil className="w-4 h-4 mr-2" />
-              Edit
+              <Trans>Edit</Trans>
             </Button>
           )}
           <Link href={`/my-rides/${ride._id}`}>

@@ -3,7 +3,7 @@ import { z } from "zod";
 export const isoDateSchema = z
   .string()
   .min(1, {
-    error: "required",
+    error: "REQUIRED",
   })
   .refine(
     (value) => {

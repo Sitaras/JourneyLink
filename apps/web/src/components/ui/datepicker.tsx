@@ -8,12 +8,12 @@ interface DatePickerProps<
   TFieldValues extends FieldValues = FieldValues,
   TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
 > extends Omit<
-    React.ComponentProps<"input">,
-    "name" | "type" | "className" | "min" | "max"
-  > {
+  React.ComponentProps<"input">,
+  "name" | "type" | "className" | "min" | "max"
+> {
   register: UseFormRegister<TFieldValues>;
   name: TName;
-  label?: string;
+  label?: React.ReactNode;
   className?: string;
   buttonClassName?: string;
   labelClassName?: string;
