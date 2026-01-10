@@ -7,6 +7,7 @@ import {
   ICreateRidePayload,
   IGetRideQueryPayload,
   IDeleteRidePayload,
+  ErrorCodes,
 } from "@journey-link/shared";
 import mongoose from "mongoose";
 import { StatusCodes } from "http-status-codes";
@@ -323,7 +324,10 @@ export class RideService {
     const user = await User.findById(userId).populate("profile");
 
     if (!user) {
-      throw { statusCode: StatusCodes.NOT_FOUND, message: "User not found" };
+      throw {
+        statusCode: StatusCodes.NOT_FOUND,
+        message: ErrorCodes.USER_NOT_FOUND,
+      };
     }
 
     const profile = user.profile as any;
@@ -344,8 +348,7 @@ export class RideService {
     ) {
       throw {
         statusCode: StatusCodes.FORBIDDEN,
-        message:
-          "To create a ride, your profile must include: First Name, Last Name, Email, Phone, Bio, and at least one Social Media link.",
+        message: ErrorCodes.INCOMPLETE_PROFILE,
       };
     }
 
@@ -397,7 +400,10 @@ export class RideService {
     const ride = Ride.hydrate(rideAgg);
 
     if (!ride) {
-      throw { statusCode: StatusCodes.NOT_FOUND, message: "Ride not Found!" };
+      throw {
+        statusCode: StatusCodes.NOT_FOUND,
+        message: ErrorCodes.RIDE_NOT_FOUND,
+      };
     }
 
     const { canBook, reason: cannotBookReason } = ride.getBookingStatus(userId);
@@ -457,27 +463,30 @@ export class RideService {
     const ride = await Ride.findById(rideId);
 
     if (!ride) {
-      throw { statusCode: StatusCodes.NOT_FOUND, message: "Ride not found" };
+      throw {
+        statusCode: StatusCodes.NOT_FOUND,
+        message: ErrorCodes.RIDE_NOT_FOUND,
+      };
     }
 
     if (ride.status === "cancelled") {
       throw {
         statusCode: StatusCodes.BAD_REQUEST,
-        message: "Ride is already cancelled",
+        message: ErrorCodes.RIDE_ALREADY_CANCELLED,
       };
     }
 
     if (ride.status === "completed") {
       throw {
         statusCode: StatusCodes.BAD_REQUEST,
-        message: "Cannot cancel a completed ride",
+        message: ErrorCodes.CANNOT_CANCEL_COMPLETED_RIDE,
       };
     }
 
     if (ride.driver.toString() !== userId) {
       throw {
         statusCode: StatusCodes.FORBIDDEN,
-        message: "Not authorized to delete this ride",
+        message: ErrorCodes.UNAUTHORIZED_DELETE_RIDE,
       };
     }
 
@@ -510,27 +519,30 @@ export class RideService {
     const ride = await Ride.findById(rideId);
 
     if (!ride) {
-      throw { statusCode: StatusCodes.NOT_FOUND, message: "Ride not found" };
+      throw {
+        statusCode: StatusCodes.NOT_FOUND,
+        message: ErrorCodes.RIDE_NOT_FOUND,
+      };
     }
 
     if (ride.driver.toString() !== userId) {
       throw {
         statusCode: StatusCodes.FORBIDDEN,
-        message: "Not authorized to update this ride",
+        message: ErrorCodes.UNAUTHORIZED_UPDATE_RIDE,
       };
     }
 
     if (ride.status === RideStatus.COMPLETED) {
       throw {
         statusCode: StatusCodes.BAD_REQUEST,
-        message: "Cannot edit a completed ride",
+        message: ErrorCodes.CANNOT_EDIT_COMPLETED_RIDE,
       };
     }
 
     if (ride.status === RideStatus.CANCELLED) {
       throw {
         statusCode: StatusCodes.BAD_REQUEST,
-        message: "Cannot edit a cancelled ride",
+        message: ErrorCodes.CANNOT_EDIT_CANCELLED_RIDE,
       };
     }
 
@@ -542,7 +554,7 @@ export class RideService {
       if (data.availableSeats < bookedSeats) {
         throw {
           statusCode: StatusCodes.BAD_REQUEST,
-          message: `Cannot reduce seats below ${bookedSeats} (already booked)`,
+          message: ErrorCodes.CANNOT_REDUCE_SEATS,
         };
       }
     }
@@ -560,7 +572,7 @@ export class RideService {
       if (new Date(departureTime) <= new Date()) {
         throw {
           statusCode: StatusCodes.BAD_REQUEST,
-          message: "Departure time must be in the future",
+          message: ErrorCodes.DEPARTURE_TIME_MUST_BE_FUTURE,
         };
       }
       ride.departureTime = new Date(departureTime);

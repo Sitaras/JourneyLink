@@ -11,16 +11,14 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import { register } from "@/api-actions/auth";
 import { FieldErrors, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
 import { registerSchemaBase } from "@journey-link/shared";
 import { CustomInput } from "@/components/ui/Inputs/CustomInput";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { onError } from "@/utils/formUtils";
+import { useRegisterMutation } from "@/hooks/mutations/useAuthMutations";
 import BirthdayInput from "@/components/ui/Inputs/BirthdayInput";
 
 const registerFormSchema = registerSchemaBase
@@ -41,20 +39,10 @@ export default function RegisterPage() {
     resolver: zodResolver(registerFormSchema),
   });
 
-  const mutation = useMutation({
-    mutationFn: async (data: RegisterFormValues) => {
-      return register(data);
-    },
-    onSuccess: () => {
-      toast.success(t`Registered successfully`);
-    },
-    onError: (err: Error) => {
-      toast.error(err.message);
-    },
-  });
+  const { mutate, isPending } = useRegisterMutation();
 
   const onSubmit = (data: RegisterFormValues) => {
-    mutation.mutate(data);
+    mutate(data);
   };
 
   const handleOnError = (errors: FieldErrors) => {
@@ -134,11 +122,7 @@ export default function RegisterPage() {
               register={_register}
               autoComplete="new-password"
             />
-            <Button
-              className="w-full"
-              type="submit"
-              loading={mutation.isPending}
-            >
+            <Button className="w-full" type="submit" loading={isPending}>
               <Trans>Submit</Trans>
             </Button>
           </form>

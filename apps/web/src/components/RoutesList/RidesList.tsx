@@ -14,7 +14,7 @@ import { MapPin, Calendar, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Ride } from "@journey-link/shared";
 import Link from "next/link";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/AuthClient";
 import Typography from "@/components/ui/typography";
 import LoadingState from "../LoadingState/LoadingState";
 import { i18n } from "@lingui/core";

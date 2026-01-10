@@ -1,14 +1,19 @@
 import { getQueryClient } from "@/lib/queryClient";
 import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
-import ProfileClient from "./ProfileClient";
+import EditRideClient from "./EditRideClient";
 
-const Profile = async () => {
+interface PageProps {
+  params: Promise<{ id: string }>;
+}
+
+const EditRidePage = async ({}: PageProps) => {
   const queryClient = getQueryClient();
+
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <ProfileClient />
+      <EditRideClient />
     </HydrationBoundary>
   );
 };
 
-export default Profile;
+export default EditRidePage;

@@ -11,3 +11,4 @@ export * from "./types/response.types";
 export * from "./types/notification.types";
 export * from "./types/error.types";
 export * from "./types/profile.types";
+export * from "./constants/errorCodes";

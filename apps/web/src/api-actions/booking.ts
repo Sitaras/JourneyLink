@@ -6,6 +6,7 @@ import {
   IBooking,
 } from "@journey-link/shared";
 import { postFetcher, fetcher } from "./api";
+import { extractErrorMessage } from "@/utils/errorUtils";
 
 export const bookSeat = async (body: ICreateBookingPayload) => {
   try {
@@ -16,17 +17,13 @@ export const bookSeat = async (body: ICreateBookingPayload) => {
 
     return response;
   } catch (error: any) {
-    throw error?.message;
+    throw extractErrorMessage(error);
   }
 };
 
 export const getRideBookings = async (rideId: string) => {
-  try {
-    const response = await fetcher<IBooking[]>(`booking/ride/${rideId}`);
-    return response;
-  } catch (error: any) {
-    throw error?.message;
-  }
+  const response = await fetcher<IBooking[]>(`booking/ride/${rideId}`);
+  return response;
 };
 
 export const acceptBooking = async (bookingId: string) => {
@@ -37,7 +34,7 @@ export const acceptBooking = async (bookingId: string) => {
     );
     return response;
   } catch (error: any) {
-    throw error?.message;
+    throw extractErrorMessage(error);
   }
 };
 
@@ -49,18 +46,14 @@ export const declineBooking = async (bookingId: string) => {
     );
     return response;
   } catch (error: any) {
-    throw error?.message;
+    throw extractErrorMessage(error);
   }
 };
 
 export const cancelBooking = async (bookingId: string) => {
-  try {
-    const response = await postFetcher<
-      Record<string, never>,
-      { status: string }
-    >(`booking/${bookingId}/cancel`, {});
-    return response;
-  } catch (error: any) {
-    throw error?.message || "Failed to cancel booking";
-  }
+  const response = await postFetcher<Record<string, never>, { status: string }>(
+    `booking/${bookingId}/cancel`,
+    {}
+  );
+  return response;
 };

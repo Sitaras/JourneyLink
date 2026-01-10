@@ -1,10 +1,7 @@
 "use client";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { useBookSeatMutation } from "@/hooks/mutations/useBookingMutations";
 import { Button } from "../ui/button";
-import { bookSeat } from "@/api-actions/booking";
-import { useRouter } from "next/navigation";
 import { LucideIcon, RotateCcw } from "lucide-react";
 import { cn } from "@/lib/utils";
 import {
@@ -13,7 +10,6 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { useState } from "react";
 
 interface BookingButtonProps {
   rideId: string;
@@ -30,36 +26,11 @@ const BookingButton = ({
   className,
   Icon = RotateCcw,
 }: BookingButtonProps) => {
-  const router = useRouter();
-  const queryClient = useQueryClient();
-  const [isInvalidating, setIsInvalidating] = useState(false);
-
-  const mutation = useMutation({
-    mutationFn: async (rideId: string) => {
-      return bookSeat({ rideId });
-    },
-    onSuccess: async () => {
-      setIsInvalidating(true);
-      toast.success(
-        "Booking request sent! The driver will contact you shortly."
-      );
-
-      await Promise.all([
-        queryClient.invalidateQueries({ queryKey: ["ride-bookings", rideId] }),
-        queryClient.invalidateQueries({ queryKey: ["api/ride", rideId] }),
-        queryClient.invalidateQueries({ queryKey: ["me/user-rides"] }),
-      ]);
-
-      router.refresh();
-      setIsInvalidating(false);
-    },
-    onError: (err: Error) => {
-      toast.error(err.message || "Failed to book seat. Please try again.");
-    },
-  });
+  const { isPending, mutate } = useBookSeatMutation(rideId);
 
   const isIcon = variant === "icon";
-  const isLoading = mutation.isPending || isInvalidating;
+
+  const isLoading = isPending;
 
   const button = (
     <Button
@@ -69,7 +40,7 @@ const BookingButton = ({
       disabled={isLoading || !canBook}
       loading={isLoading}
       onClick={() => {
-        mutation.mutate(rideId);
+        mutate({ rideId });
       }}
     >
       {isIcon ? (

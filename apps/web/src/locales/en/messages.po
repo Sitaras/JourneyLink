@@ -68,6 +68,9 @@ msgstr "Available Rides"
 msgid "Available Seats"
 msgstr "Available Seats"
 
+msgid "Bad request"
+msgstr "Bad request"
+
 msgid "Bio"
 msgstr "Bio"
 
@@ -76,6 +79,15 @@ msgstr "Booked"
 
 msgid "Booked on"
 msgstr "Booked on"
+
+msgid "Booking cannot be cancelled in its current status"
+msgstr "Booking cannot be cancelled in its current status"
+
+msgid "Booking is not pending"
+msgstr "Booking is not pending"
+
+msgid "Booking not found"
+msgstr "Booking not found"
 
 msgid "Born"
 msgstr "Born"
@@ -86,8 +98,20 @@ msgstr "By publishing this ride, you agree to our terms of service and community
 msgid "Cancel"
 msgstr "Cancel"
 
-msgid "Cancel booking"
-msgstr "Cancel booking"
+msgid "Cancel request"
+msgstr "Cancel request"
+
+msgid "Cannot cancel a completed ride"
+msgstr "Cannot cancel a completed ride"
+
+msgid "Cannot edit a cancelled ride"
+msgstr "Cannot edit a cancelled ride"
+
+msgid "Cannot edit a completed ride"
+msgstr "Cannot edit a completed ride"
+
+msgid "Cannot reduce seats below confirmed bookings"
+msgstr "Cannot reduce seats below confirmed bookings"
 
 msgid "Capacity & Pricing"
 msgstr "Capacity & Pricing"
@@ -137,8 +161,8 @@ msgstr "Date must be in the future"
 msgid "Date of birth"
 msgstr "Date of birth"
 
-msgid "Date of birth is required"
-msgstr "Date of birth is required"
+#~ msgid "Date of birth is required"
+#~ msgstr "Date of birth is required"
 
 msgid "Departure and arrival locations must be different"
 msgstr "Departure and arrival locations must be different"
@@ -151,6 +175,9 @@ msgstr "Departure location"
 
 msgid "Departure time is required"
 msgstr "Departure time is required"
+
+msgid "Departure time must be in the future"
+msgstr "Departure time must be in the future"
 
 msgid "Driver"
 msgstr "Driver"
@@ -185,6 +212,9 @@ msgstr "Edit Ride"
 msgid "Email"
 msgstr "Email"
 
+msgid "Email already in use"
+msgstr "Email already in use"
+
 msgid "Email is required"
 msgstr "Email is required"
 
@@ -208,6 +238,9 @@ msgstr "Find Your Perfect Ride"
 
 msgid "First name"
 msgstr "First name"
+
+msgid "Forbidden"
+msgstr "Forbidden"
 
 msgid "From"
 msgstr "From"
@@ -236,8 +269,14 @@ msgstr "How it Works"
 msgid "Invalid email address"
 msgstr "Invalid email address"
 
+msgid "Invalid email or password"
+msgstr "Invalid email or password"
+
 msgid "Invalid format"
 msgstr "Invalid format"
+
+msgid "Invalid Ride ID"
+msgstr "Invalid Ride ID"
 
 msgid "Last name"
 msgstr "Last name"
@@ -323,6 +362,18 @@ msgstr "No pets"
 msgid "No smoking"
 msgstr "No smoking"
 
+msgid "Not authorized to delete this ride"
+msgstr "Not authorized to delete this ride"
+
+msgid "Not authorized to update this ride"
+msgstr "Not authorized to update this ride"
+
+msgid "Not authorized to view bookings"
+msgstr "Not authorized to view bookings"
+
+msgid "Not found"
+msgstr "Not found"
+
 msgid "Number required"
 msgstr "Number required"
 
@@ -359,11 +410,17 @@ msgstr "Phone"
 msgid "Phone number"
 msgstr "Phone number"
 
+msgid "Phone number already in use"
+msgstr "Phone number already in use"
+
 msgid "Please check the form for errors"
 msgstr "Please check the form for errors"
 
 msgid "Please complete your profile (Name, Bio, Email, Phone, Social Media) to publish a ride."
 msgstr "Please complete your profile (Name, Bio, Email, Phone, Social Media) to publish a ride."
+
+msgid "Please complete your profile first (Name, Email, Phone, Bio, Socials)"
+msgstr "Please complete your profile first (Name, Email, Phone, Bio, Socials)"
 
 msgid "Please try again later."
 msgstr "Please try again later."
@@ -398,6 +455,9 @@ msgstr "Privacy Policy"
 msgid "Profile"
 msgstr "Profile"
 
+msgid "Profile not found"
+msgstr "Profile not found"
+
 msgid "Profile Unavailable"
 msgstr "Profile Unavailable"
 
@@ -419,8 +479,8 @@ msgstr "Registered successfully"
 msgid "required"
 msgstr "the field is required"
 
-msgid "Required"
-msgstr "Required"
+#~ msgid "Required"
+#~ msgstr "Required"
 
 msgid "review"
 msgstr "review"
@@ -433,6 +493,18 @@ msgstr "Ride created successfully!"
 
 msgid "Ride Details"
 msgstr "Ride Details"
+
+msgid "Ride for this booking not found"
+msgstr "Ride for this booking not found"
+
+msgid "Ride is already cancelled"
+msgstr "Ride is already cancelled"
+
+msgid "Ride is not available for booking"
+msgstr "Ride is not available for booking"
+
+msgid "Ride is not bookable"
+msgstr "Ride is not bookable"
 
 msgid "Ride not found"
 msgstr "Ride not found"
@@ -500,6 +572,9 @@ msgstr "Smoking allowed"
 msgid "Social Media"
 msgstr "Social Media"
 
+msgid "Something went wrong"
+msgstr "Something went wrong"
+
 msgid "Special character required"
 msgstr "Special character required"
 
@@ -542,6 +617,18 @@ msgstr "Twitter"
 msgid "Type at least 3 characters to search"
 msgstr "Type at least 3 characters to search"
 
+msgid "Unauthorized"
+msgstr "Unauthorized"
+
+msgid "Unauthorized to accept this booking"
+msgstr "Unauthorized to accept this booking"
+
+msgid "Unauthorized to cancel this booking"
+msgstr "Unauthorized to cancel this booking"
+
+msgid "Unauthorized to decline this booking"
+msgstr "Unauthorized to decline this booking"
+
 msgid "Update the details of your ride. Note that you cannot change the origin and destination."
 msgstr "Update the details of your ride. Note that you cannot change the origin and destination."
 
@@ -556,6 +643,12 @@ msgstr "Uppercase letter required"
 
 msgid "User"
 msgstr "User"
+
+msgid "User already exists"
+msgstr "User already exists"
+
+msgid "User not found"
+msgstr "User not found"
 
 msgid "Vehicle"
 msgstr "Vehicle"
@@ -580,6 +673,15 @@ msgstr "When"
 
 msgid "When?"
 msgstr "When?"
+
+msgid "You already have a booking for this ride"
+msgstr "You already have a booking for this ride"
+
+msgid "You can only view profiles of users you have a confirmed ride with"
+msgstr "You can only view profiles of users you have a confirmed ride with"
+
+msgid "You cannot book your own ride"
+msgstr "You cannot book your own ride"
 
 msgid "Your changes have been saved."
 msgstr "Your changes have been saved."

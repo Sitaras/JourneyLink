@@ -1,8 +1,5 @@
 "use client";
-
-import React from "react";
-import { useQuery } from "@tanstack/react-query";
-import { getRideBookings } from "@/api-actions/booking";
+import { useRideRequests } from "@/hooks/queries/useRideQuery";
 import LoadingState from "@/components/LoadingState/LoadingState";
 import Typography from "@/components/ui/typography";
 import BookingRequestCard from "./BookingRequestCard";
@@ -15,11 +12,7 @@ interface BookingRequestsListProps {
 }
 
 const BookingRequestsList = ({ rideId }: BookingRequestsListProps) => {
-  const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ["ride-bookings", rideId],
-    queryFn: () => getRideBookings(rideId),
-  });
-
+  const { data, isLoading, error, refetch } = useRideRequests(rideId);
   if (isLoading) {
     return <LoadingState />;
   }

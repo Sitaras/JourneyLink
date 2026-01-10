@@ -2,8 +2,12 @@ import { Booking } from "../models/booking.model";
 import { Ride } from "../models/ride.model";
 import { Types } from "mongoose";
 import { isUserInRide } from "../utils/rideUtils";
-import { ICreateBookingPayload } from "@journey-link/shared";
-import { BookingStatus, NotificationType } from "@journey-link/shared";
+import {
+  ICreateBookingPayload,
+  BookingStatus,
+  NotificationType,
+  ErrorCodes,
+} from "@journey-link/shared";
 import { StatusCodes } from "http-status-codes";
 import { notificationService } from "./notification.service";
 
@@ -12,32 +16,38 @@ export class BookingService {
     const { rideId } = data;
 
     if (!Types.ObjectId.isValid(rideId)) {
-      throw { statusCode: StatusCodes.BAD_REQUEST, message: "Invalid Ride ID" };
+      throw {
+        statusCode: StatusCodes.BAD_REQUEST,
+        message: ErrorCodes.INVALID_RIDE_ID,
+      };
     }
 
     const rideDoc = await Ride.findById(rideId);
     if (!rideDoc) {
-      throw { statusCode: StatusCodes.NOT_FOUND, message: "Ride not found" };
+      throw {
+        statusCode: StatusCodes.NOT_FOUND,
+        message: ErrorCodes.RIDE_NOT_FOUND,
+      };
     }
 
     if (!rideDoc.isBookable()) {
       throw {
         statusCode: StatusCodes.BAD_REQUEST,
-        message: "Ride is not available for booking.",
+        message: ErrorCodes.RIDE_NOT_AVAILABLE,
       };
     }
 
     if (rideDoc.driver.toString() === userId) {
       throw {
         statusCode: StatusCodes.BAD_REQUEST,
-        message: "Driver cannot book their own ride.",
+        message: ErrorCodes.DRIVER_CANNOT_BOOK_OWN_RIDE,
       };
     }
 
     if (await isUserInRide(userId, rideId)) {
       throw {
         statusCode: StatusCodes.BAD_REQUEST,
-        message: "User already in ride or has pending booking.",
+        message: ErrorCodes.USER_ALREADY_IN_RIDE,
       };
     }
 
@@ -94,20 +104,23 @@ export class BookingService {
     const booking = await Booking.findById(bookingId);
 
     if (!booking) {
-      throw { statusCode: StatusCodes.NOT_FOUND, message: "Booking not found" };
+      throw {
+        statusCode: StatusCodes.NOT_FOUND,
+        message: ErrorCodes.BOOKING_NOT_FOUND,
+      };
     }
 
     if (booking.driver.toString() !== userId) {
       throw {
         statusCode: StatusCodes.UNAUTHORIZED,
-        message: "Unauthorized to accept this booking",
+        message: ErrorCodes.UNAUTHORIZED_ACCEPT_BOOKING,
       };
     }
 
     if (booking.status !== BookingStatus.PENDING) {
       throw {
         statusCode: StatusCodes.BAD_REQUEST,
-        message: "Booking cannot be accepted not in Pending Status",
+        message: ErrorCodes.BOOKING_NOT_PENDING_ACCEPT,
       };
     }
 
@@ -115,14 +128,14 @@ export class BookingService {
     if (!rideDoc) {
       throw {
         statusCode: StatusCodes.NOT_FOUND,
-        message: "Ride for this booking not found",
+        message: ErrorCodes.RIDE_FOR_BOOKING_NOT_FOUND,
       };
     }
 
     if (!rideDoc.isBookable()) {
       throw {
         statusCode: StatusCodes.BAD_REQUEST,
-        message: "Ride is not Bookable.",
+        message: ErrorCodes.RIDE_NOT_BOOKABLE,
       };
     }
 
@@ -153,20 +166,23 @@ export class BookingService {
     const booking = await Booking.findById(bookingId);
 
     if (!booking) {
-      throw { statusCode: StatusCodes.NOT_FOUND, message: "Booking not found" };
+      throw {
+        statusCode: StatusCodes.NOT_FOUND,
+        message: ErrorCodes.BOOKING_NOT_FOUND,
+      };
     }
 
     if (booking.driver.toString() !== userId) {
       throw {
         statusCode: StatusCodes.UNAUTHORIZED,
-        message: "Unauthorized to decline this booking",
+        message: ErrorCodes.UNAUTHORIZED_DECLINE_BOOKING,
       };
     }
 
     if (booking.status !== BookingStatus.PENDING) {
       throw {
         statusCode: StatusCodes.BAD_REQUEST,
-        message: "Booking cannot be declined, not in Pending Status",
+        message: ErrorCodes.BOOKING_NOT_PENDING_DECLINE,
       };
     }
 
@@ -174,14 +190,14 @@ export class BookingService {
     if (!rideDoc) {
       throw {
         statusCode: StatusCodes.NOT_FOUND,
-        message: "Ride for this booking not found",
+        message: ErrorCodes.RIDE_FOR_BOOKING_NOT_FOUND,
       };
     }
 
     if (!rideDoc.isBookable()) {
       throw {
         statusCode: StatusCodes.BAD_REQUEST,
-        message: "Ride is not Bookable.",
+        message: ErrorCodes.RIDE_NOT_BOOKABLE,
       };
     }
 
@@ -210,18 +226,24 @@ export class BookingService {
 
   async getRideBookings(rideId: string, driverId: string) {
     if (!Types.ObjectId.isValid(rideId)) {
-      throw { statusCode: StatusCodes.BAD_REQUEST, message: "Invalid Ride ID" };
+      throw {
+        statusCode: StatusCodes.BAD_REQUEST,
+        message: ErrorCodes.INVALID_RIDE_ID,
+      };
     }
 
     const rideDoc = await Ride.findById(rideId);
     if (!rideDoc) {
-      throw { statusCode: StatusCodes.NOT_FOUND, message: "Ride not found" };
+      throw {
+        statusCode: StatusCodes.NOT_FOUND,
+        message: ErrorCodes.RIDE_NOT_FOUND,
+      };
     }
 
     if (rideDoc.driver.toString() !== driverId) {
       throw {
         statusCode: StatusCodes.FORBIDDEN,
-        message: "Not authorized to view bookings for this ride",
+        message: ErrorCodes.UNAUTHORIZED_VIEW_BOOKINGS,
       };
     }
 
@@ -240,18 +262,24 @@ export class BookingService {
 
   async getPendingBookings(rideId: string, driverId: string) {
     if (!Types.ObjectId.isValid(rideId)) {
-      throw { statusCode: StatusCodes.BAD_REQUEST, message: "Invalid Ride ID" };
+      throw {
+        statusCode: StatusCodes.BAD_REQUEST,
+        message: ErrorCodes.INVALID_RIDE_ID,
+      };
     }
 
     const rideDoc = await Ride.findById(rideId);
     if (!rideDoc) {
-      throw { statusCode: StatusCodes.NOT_FOUND, message: "Ride not found" };
+      throw {
+        statusCode: StatusCodes.NOT_FOUND,
+        message: ErrorCodes.RIDE_NOT_FOUND,
+      };
     }
 
     if (rideDoc.driver.toString() !== driverId) {
       throw {
         statusCode: StatusCodes.FORBIDDEN,
-        message: "Not authorized to view bookings for this ride",
+        message: ErrorCodes.UNAUTHORIZED_VIEW_BOOKINGS,
       };
     }
 
@@ -274,7 +302,10 @@ export class BookingService {
     const booking = await Booking.findById(bookingId);
 
     if (!booking) {
-      throw { statusCode: StatusCodes.NOT_FOUND, message: "Booking not found" };
+      throw {
+        statusCode: StatusCodes.NOT_FOUND,
+        message: ErrorCodes.BOOKING_NOT_FOUND,
+      };
     }
 
     if (
@@ -283,7 +314,7 @@ export class BookingService {
     ) {
       throw {
         statusCode: StatusCodes.UNAUTHORIZED,
-        message: "Unauthorized to cancel this booking",
+        message: ErrorCodes.UNAUTHORIZED_CANCEL_BOOKING,
       };
     }
 
@@ -295,7 +326,7 @@ export class BookingService {
     ) {
       throw {
         statusCode: StatusCodes.BAD_REQUEST,
-        message: "Booking cannot be cancelled in its current status",
+        message: ErrorCodes.BOOKING_CANNOT_CANCEL,
       };
     }
 
@@ -303,7 +334,7 @@ export class BookingService {
     if (!rideDoc) {
       throw {
         statusCode: StatusCodes.NOT_FOUND,
-        message: "Ride for this booking not found",
+        message: ErrorCodes.RIDE_FOR_BOOKING_NOT_FOUND,
       };
     }
 

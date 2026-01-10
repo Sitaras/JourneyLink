@@ -45,7 +45,7 @@ export const getAuthApi = async () => {
             return Promise.reject(error);
           }
 
-          await authStorage.removeToken();
+          await authStorage.removeAccessToken();
 
           const refreshToken = await authStorage.getRefreshToken();
           if (!refreshToken) {
@@ -63,8 +63,8 @@ export const getAuthApi = async () => {
 
             if (!newRefreshToken) {
               state.isRefreshingToken = false;
-              await authStorage.clearAuthTokens();
               if (typeof window !== "undefined") {
+                await authStorage.clearAuthTokens();
                 window.location.href = "/login";
               }
               throw error.json;
@@ -107,7 +107,10 @@ export const getAuthApi = async () => {
             return response;
           } catch (error) {
             if ((error as WretchError)?.status === 401) {
-              await authStorage.clearAuthTokens();
+              if (typeof window !== "undefined") {
+                await authStorage.clearAuthTokens();
+                window.location.href = "/login";
+              }
               const errorJson = await (error as WretchError).response.json();
               throw errorJson;
             }

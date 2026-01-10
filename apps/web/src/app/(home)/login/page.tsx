@@ -11,43 +11,27 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { login } from "@/api-actions/auth";
 import { loginSchema } from "@journey-link/shared";
 import { FieldErrors, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { CustomInput } from "@/components/ui/Inputs/CustomInput";
-import { useRouter } from "next/navigation";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
 import { onError } from "@/utils/formUtils";
+import { useLoginMutation } from "@/hooks/mutations/useAuthMutations";
 
 // FYI https://dev.to/emmanuel_xs/how-to-use-react-hook-form-with-useactionstate-hook-in-nextjs15-1hja
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function LoginPage() {
-  const router = useRouter();
-
   const { register, handleSubmit } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
   });
 
-  const mutation = useMutation({
-    mutationFn: async (data: LoginFormValues) => {
-      return login(data);
-    },
-    onSuccess: () => {
-      router.refresh();
-      toast.success(t`Welcome back!`);
-    },
-    onError: (err: Error) => {
-      toast.error(err.message);
-    },
-  });
+  const { mutate, isPending } = useLoginMutation();
 
   const onSubmit = (data: LoginFormValues) => {
-    mutation.mutate(data);
+    mutate(data);
   };
 
   const handleOnError = (errors: FieldErrors) => {
@@ -93,11 +77,7 @@ export default function LoginPage() {
               register={register}
               autoComplete="current-password"
             />
-            <Button
-              className="w-full"
-              type="submit"
-              loading={mutation.isPending}
-            >
+            <Button className="w-full" type="submit" loading={isPending}>
               <Trans>Submit</Trans>
             </Button>
           </form>

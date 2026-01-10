@@ -4,6 +4,7 @@ import { formatToUTC } from "@/utils/dateUtils";
 import { authStorage } from "../lib/authStorage";
 import { LoginInput, RegisterInput } from "@journey-link/shared";
 import { revalidatePath } from "next/cache";
+import { extractErrorMessage } from "@/utils/errorUtils";
 
 type LoginFormValues = LoginInput;
 
@@ -24,16 +25,15 @@ export const login = async (body: LoginFormValues) => {
     revalidatePath("/", "layout");
     return response;
   } catch (error: any) {
-    console.log(error);
-    throw new Error(error?.message || "Login failed");
+    throw extractErrorMessage(error);
   }
 };
 
 type RegisterFormValues = RegisterInput;
 
 export const register = async (body: RegisterFormValues) => {
-  const dateOfBirthDateISOstring = formatToUTC(body.dateOfBirth);
   try {
+    const dateOfBirthDateISOstring = formatToUTC(body.dateOfBirth);
     const response = await api
       .url("auth/register")
       .post({
@@ -43,17 +43,16 @@ export const register = async (body: RegisterFormValues) => {
       .json((json) => json?.data);
     return response;
   } catch (error: any) {
-    throw new Error(error?.message || "Registration failed");
+    throw extractErrorMessage(error);
   }
 };
 
 export const logout = async () => {
   try {
     const refreshToken = await authStorage.getRefreshToken();
-
     await (await getAuthApi()).url("auth/logout").post({ refreshToken }).res();
   } catch (error: any) {
-    throw error;
+    throw extractErrorMessage(error);
   } finally {
     await authStorage.clearAuthTokens();
     revalidatePath("/", "layout");

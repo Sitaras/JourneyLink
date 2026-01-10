@@ -10,43 +10,29 @@ import {
 } from "@/schemas/user/userRideSchema";
 import { generateQueryString } from "@/utils/genericUtils";
 import { UserRidesResponse, IUser } from "@journey-link/shared";
+import { extractErrorMessage } from "@/utils/errorUtils";
 
 export const getUserInfo = async () => {
-  try {
-    const response = await fetcher<IUser>("me/user-info");
-
-    return response;
-  } catch (error: any) {
-    throw error?.message;
-  }
+  const response = await fetcher<IUser>("me/user-info");
+  return response;
 };
 
 export const getUserProfile = async () => {
-  try {
-    const response = await fetcher<ProfileResponse>("me/profile");
-
-    return response;
-  } catch (error: any) {
-    throw error?.message;
-  }
+  const response = await fetcher<ProfileResponse>("me/profile");
+  return response;
 };
 
 export const getUserProfileById = async (userId: string) => {
-  try {
-    const response = await fetcher<ProfileResponse>(`me/${userId}/profile`);
-
-    return response;
-  } catch (error: any) {
-    throw error?.message;
-  }
+  const response = await fetcher<ProfileResponse>(`me/${userId}/profile`);
+  return response;
 };
 
 export const updateUserProfile = async (body: UpdateProfilePayload) => {
-  const dateOfBirthDateISOstring = body.dateOfBirth
-    ? formatToUTC(body.dateOfBirth)
-    : undefined;
-
   try {
+    const dateOfBirthDateISOstring = body.dateOfBirth
+      ? formatToUTC(body.dateOfBirth)
+      : undefined;
+
     const response = await patchFetcher<UpdateProfilePayload, ProfileResponse>(
       "/me/profile",
       {
@@ -57,25 +43,17 @@ export const updateUserProfile = async (body: UpdateProfilePayload) => {
 
     return response;
   } catch (error: any) {
-    throw error?.message;
+    throw extractErrorMessage(error);
   }
 };
 
 export const getUserRides = async (parameters: IGetUserRidesQueryPayload) => {
   const parsedParams = getUserRidesQuerySchema.parse(parameters);
-
   const queryString = generateQueryString(parsedParams);
 
-  try {
-    const response = await fetcher<UserRidesResponse>(
-      `me/user-rides?${queryString}`
-    );
+  const response = await fetcher<UserRidesResponse>(
+    `me/user-rides?${queryString}`
+  );
 
-    // // Simulate network delay
-    // await new Promise((resolve) => setTimeout(resolve, 800));
-
-    return response;
-  } catch (error: any) {
-    throw error?.message;
-  }
+  return response;
 };

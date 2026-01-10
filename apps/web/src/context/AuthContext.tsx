@@ -1,60 +1,24 @@
-"use client";
-import { createContext, useContext, useMemo } from "react";
-import { IUser } from "@journey-link/shared";
-import { useQuery } from "@tanstack/react-query";
-import { getUserInfo } from "@/api-actions/user";
+import { ReactNode } from "react";
+import { HydrationBoundary, dehydrate } from "@tanstack/react-query";
+import { getQueryClient } from "@/lib/queryClient";
+import { authStorage } from "@/lib/authStorage";
+import { AuthProvider } from "./AuthClient";
 
-interface AuthContextType {
-  user?: IUser;
-  isLoading: boolean;
-  isAuthenticated: boolean;
-  error?: unknown;
-  refetchUser: () => void;
+interface AuthClientProps {
+  children: ReactNode;
 }
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
+async function AuthContext({ children }: AuthClientProps) {
+  const queryClient = getQueryClient();
+  const isLoggedIn =
+    !!(await authStorage.getAccessToken()) ||
+    !!(await authStorage.getRefreshToken());
 
-export const AuthProvider = ({
-  initialHasToken,
-  children,
-}: {
-  initialHasToken: boolean;
-  children: React.ReactNode;
-}) => {
-  const {
-    data: user,
-    isLoading,
-    error,
-    refetch,
-  } = useQuery<unknown, unknown, IUser>({
-    queryKey: ["api/user"],
-    queryFn: getUserInfo,
-    enabled: initialHasToken,
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
-    refetchOnMount: false,
-    refetchOnWindowFocus: false,
-    refetchOnReconnect: false,
-  });
-
-  const value = useMemo(
-    () => ({
-      user,
-      isAuthenticated: Boolean(user),
-      isLoading: initialHasToken && isLoading,
-      error,
-      refetchUser: () => refetch(),
-    }),
-    [user, initialHasToken, isLoading, error, refetch]
+  return (
+    <HydrationBoundary state={dehydrate(queryClient)}>
+      <AuthProvider initialHasToken={isLoggedIn}>{children}</AuthProvider>
+    </HydrationBoundary>
   );
+}
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
-};
-
-export const useAuth = () => {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-};
+export default AuthContext;

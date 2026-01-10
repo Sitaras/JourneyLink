@@ -2,12 +2,13 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
-import { authStorage } from "@/lib/authStorage";
 import { Toaster } from "@/components/ui/sonner";
 import Navbar from "@/components/Navbar/navbar";
 import Footer from "@/components/Footer/Footer";
 import styles from "./layout.module.css";
 import { initLingui, allMessages } from "@/lib/appRouterI18n";
+import QueryProvider from "./QueryProvider";
+import AuthContext from "@/context/AuthContext";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -38,9 +39,6 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const token = await authStorage.getAccessToken();
-  const refreshToken = await authStorage.getRefreshToken();
-
   const i18n = await initLingui();
   const locale = i18n.locale;
 
@@ -50,19 +48,22 @@ export default async function RootLayout({
         className={`flex min-h-screen w-full flex-col ${geistSans.variable} ${geistMono.variable}`}
       >
         <Toaster richColors />
-        <Providers
-          initialHasToken={Boolean(token) || Boolean(refreshToken)}
-          initialMessages={allMessages[locale]}
-          initialLocale={locale}
-        >
-          <main className={styles.page}>
-            <div className={styles.container}>
-              <Navbar />
-              <main className={styles.main}>{children}</main>
-            </div>
-          </main>
-          <Footer />
-        </Providers>
+        <QueryProvider>
+          <AuthContext>
+            <Providers
+              initialMessages={allMessages[locale]}
+              initialLocale={locale}
+            >
+              <main className={styles.page}>
+                <div className={styles.container}>
+                  <Navbar />
+                  <main className={styles.main}>{children}</main>
+                </div>
+              </main>
+              <Footer />
+            </Providers>
+          </AuthContext>
+        </QueryProvider>
       </body>
     </html>
   );

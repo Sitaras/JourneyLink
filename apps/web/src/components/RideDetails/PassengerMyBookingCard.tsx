@@ -75,7 +75,7 @@ export const PassengerMyBookingCard = ({
             disabled={isCancelling}
           >
             {isCancelling && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            <Trans>Cancel booking</Trans>
+            <Trans>Cancel request</Trans>
           </Button>
         )}
       </CardContent>

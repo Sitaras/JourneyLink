@@ -7,14 +7,10 @@ import z from "zod";
 type CityAutocompleteValues = z.infer<typeof cityAutocompleteSchema>;
 
 export const cityAutocomplete = async (body: CityAutocompleteValues) => {
-  try {
-    const response = await api
-      .url("city-autocomplete")
-      .post(body)
-      .json<CityAutocompleteResponse["results"]>((json) => json?.data?.results);
+  const response = await api
+    .url("city-autocomplete")
+    .post(body)
+    .json<CityAutocompleteResponse["results"]>((json) => json?.data?.results);
 
-    return response;
-  } catch (error: any) {
-    throw error?.message;
-  }
+  return response;
 };

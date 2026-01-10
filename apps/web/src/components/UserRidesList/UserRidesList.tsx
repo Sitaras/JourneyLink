@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useInfiniteQuery } from "@tanstack/react-query";
+import React from "react";
+
 import useIntersectionObserver from "@/hooks/useIntersectionObserver";
 import { MapPin, AlertCircle } from "lucide-react";
 import Typography from "@/components/ui/typography";
@@ -8,9 +8,10 @@ import { Card, CardContent } from "@/components/ui/card";
 import LoadingState from "@/components/LoadingState/LoadingState";
 import RideCard from "@/components/RideCard/RideCard";
 import { UserRideRole } from "@/types/user.types";
-import { getUserRides } from "@/api-actions/user";
 import { UserRide } from "@journey-link/shared";
-import EditRideDialog from "@/components/EditRideDialog/EditRideDialog";
+import { useRouter } from "next/navigation";
+import { routes } from "@/configs/routes";
+import { useUserRidesInfinite } from "@/hooks/queries/useUserQuery";
 
 type RidesListProps = {
   type: UserRideRole;
@@ -18,7 +19,7 @@ type RidesListProps = {
 };
 
 const UserRidesList = ({ type, className }: RidesListProps) => {
-  const [editingRide, setEditingRide] = useState("");
+  const router = useRouter();
 
   const {
     data,
@@ -27,15 +28,7 @@ const UserRidesList = ({ type, className }: RidesListProps) => {
     isLoading,
     isFetchingNextPage,
     error,
-    refetch,
-  } = useInfiniteQuery({
-    queryKey: ["me/user-rides", type],
-    queryFn: ({ pageParam }) => getUserRides({ type, page: pageParam }),
-    initialPageParam: 1,
-    getNextPageParam: (lastPage) => {
-      return lastPage.page < lastPage.pages ? lastPage.page + 1 : undefined;
-    },
-  });
+  } = useUserRidesInfinite(type);
 
   const ref = useIntersectionObserver(() => {
     if (hasNextPage && !isFetchingNextPage) {
@@ -44,16 +37,7 @@ const UserRidesList = ({ type, className }: RidesListProps) => {
   });
 
   const handleEdit = (ride: UserRide) => {
-    setEditingRide(ride._id);
-  };
-
-  const handleCloseEdit = () => {
-    setEditingRide("");
-  };
-
-  const handleSaveSuccess = () => {
-    refetch();
-    setEditingRide("");
+    router.push(`${routes.myRides}/${ride._id}/edit`);
   };
 
   if (isLoading) {
@@ -125,15 +109,6 @@ const UserRidesList = ({ type, className }: RidesListProps) => {
           </div>
         )}
       </section>
-
-      {editingRide && (
-        <EditRideDialog
-          rideId={editingRide}
-          open={!!editingRide}
-          onClose={handleCloseEdit}
-          onSuccess={handleSaveSuccess}
-        />
-      )}
     </>
   );
 };

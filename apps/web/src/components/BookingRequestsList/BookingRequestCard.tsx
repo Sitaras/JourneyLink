@@ -1,17 +1,16 @@
 "use client";
 
-import React from "react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
-
 import Typography from "@/components/ui/typography";
 import { Check, X, Clock, User } from "lucide-react";
 import Link from "next/link";
 import { IBooking, BookingStatus } from "@journey-link/shared";
-import { useMutation } from "@tanstack/react-query";
-import { acceptBooking, declineBooking } from "@/api-actions/booking";
-import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import {
+  useAcceptBookingMutation,
+  useDeclineBookingMutation,
+} from "@/hooks/mutations/useBookingMutations";
 
 interface BookingRequestCardProps {
   booking: IBooking;
@@ -24,29 +23,12 @@ const BookingRequestCard = ({
 }: BookingRequestCardProps) => {
   const isPending = booking.status === BookingStatus.PENDING;
 
-  const acceptMutation = useMutation({
-    mutationFn: () => acceptBooking(booking._id),
-    onSuccess: () => {
-      toast.success("Booking accepted");
-      onStatusChange();
-    },
-    onError: (error: any) => {
-      toast.error(error.message || "Failed to accept booking");
-    },
-  });
+  const { mutate: acceptBooking, isPending: isAccepting } =
+    useAcceptBookingMutation(onStatusChange);
+  const { mutate: declineBooking, isPending: isDeclining } =
+    useDeclineBookingMutation(onStatusChange);
 
-  const declineMutation = useMutation({
-    mutationFn: () => declineBooking(booking._id),
-    onSuccess: () => {
-      toast.success("Booking declined");
-      onStatusChange();
-    },
-    onError: (error: any) => {
-      toast.error(error.message || "Failed to decline booking");
-    },
-  });
-
-  const isLoading = acceptMutation.isPending || declineMutation.isPending;
+  const isLoading = isAccepting || isDeclining;
 
   return (
     <div className="bg-card rounded-lg border p-4 shadow-sm transition-all hover:shadow-md">
@@ -81,7 +63,7 @@ const BookingRequestCard = ({
                 variant="outline"
                 size="sm"
                 className="flex-1 sm:flex-none h-8 text-xs border-destructive/20 text-destructive hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30"
-                onClick={() => declineMutation.mutate()}
+                onClick={() => declineBooking(booking._id)}
                 disabled={isLoading}
               >
                 <X className="w-3 h-3 mr-1.5" />
@@ -90,7 +72,7 @@ const BookingRequestCard = ({
               <Button
                 size="sm"
                 className="flex-1 sm:flex-none h-8 text-xs bg-primary hover:bg-primary/90"
-                onClick={() => acceptMutation.mutate()}
+                onClick={() => acceptBooking(booking._id)}
                 disabled={isLoading}
               >
                 <Check className="w-3 h-3 mr-1.5" />

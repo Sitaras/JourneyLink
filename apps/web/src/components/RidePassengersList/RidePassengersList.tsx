@@ -3,14 +3,12 @@
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Typography from "@/components/ui/typography";
-import { IBooking, UserRideRole } from "@journey-link/shared";
+import { IBooking } from "@journey-link/shared";
 import { User, MessageCircle } from "lucide-react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { cancelBooking } from "@/api-actions/booking";
-import { toast } from "sonner";
+import { useCancelBookingMutation } from "@/hooks/mutations/useBookingMutations";
 import { Loader2, XCircle } from "lucide-react";
 import {
   Tooltip,
@@ -25,22 +23,7 @@ interface RidePassengersListProps {
 }
 
 const RidePassengersList = ({ bookings, rideId }: RidePassengersListProps) => {
-  const queryClient = useQueryClient();
-
-  const { isPending, mutate: handleCancel } = useMutation({
-    mutationFn: (bookingId: string) => cancelBooking(bookingId),
-    onSuccess: () => {
-      toast.success("Booking cancelled successfully");
-      queryClient.invalidateQueries({ queryKey: ["ride-bookings", rideId] });
-      queryClient.invalidateQueries({ queryKey: ["api/ride", rideId] });
-      queryClient.invalidateQueries({
-        queryKey: ["me/user-rides", UserRideRole.AS_DRIVER],
-      });
-    },
-    onError: (error: any) => {
-      toast.error(error.toString());
-    },
-  });
+  const { isPending, mutate: handleCancel } = useCancelBookingMutation(rideId);
 
   if (!bookings || bookings.length === 0) {
     return (

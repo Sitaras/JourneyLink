@@ -5,7 +5,12 @@ import { Booking } from "../models/booking.model";
 import { Ride } from "../models/ride.model";
 import { Types } from "mongoose";
 import { IGetUserRidesQueryPayload } from "../schemas/user/userRideSchema";
-import { RideStatus, BookingStatus, UserRideRole } from "@journey-link/shared";
+import {
+  RideStatus,
+  BookingStatus,
+  UserRideRole,
+  ErrorCodes,
+} from "@journey-link/shared";
 import { StatusCodes } from "http-status-codes";
 
 export class UserService {
@@ -18,7 +23,10 @@ export class UserService {
       });
 
     if (!user) {
-      throw { statusCode: StatusCodes.NOT_FOUND, message: "Not found" };
+      throw {
+        statusCode: StatusCodes.NOT_FOUND,
+        message: ErrorCodes.NOT_FOUND,
+      };
     }
 
     return user;
@@ -28,7 +36,10 @@ export class UserService {
     const profile = await Profile.findOne({ user: userId });
 
     if (!profile) {
-      throw { statusCode: StatusCodes.NOT_FOUND, message: "Profile not found" };
+      throw {
+        statusCode: StatusCodes.NOT_FOUND,
+        message: ErrorCodes.PROFILE_NOT_FOUND,
+      };
     }
 
     return profile;
@@ -43,14 +54,16 @@ export class UserService {
     if (!canView) {
       throw {
         statusCode: StatusCodes.FORBIDDEN,
-        message:
-          "You can only view profiles of users you have a confirmed ride with.",
+        message: ErrorCodes.UNAUTHORIZED_VIEW_PROFILE,
       };
     }
 
     const profile = await Profile.findOne({ user: targetUserId });
     if (!profile) {
-      throw { statusCode: StatusCodes.NOT_FOUND, message: "Profile not found" };
+      throw {
+        statusCode: StatusCodes.NOT_FOUND,
+        message: ErrorCodes.PROFILE_NOT_FOUND,
+      };
     }
 
     return profile;
@@ -90,11 +103,11 @@ export class UserService {
       });
 
       if (existingUser) {
-        let message = "User already exists";
+        let message = ErrorCodes.USER_ALREADY_EXISTS;
         if (existingUser.email === userUpdates.email) {
-          message = "Email already in use";
+          message = ErrorCodes.EMAIL_ALREADY_IN_USE;
         } else if (existingUser.phoneNumber === userUpdates.phoneNumber) {
-          message = "Phone number already in use";
+          message = ErrorCodes.PHONE_NUMBER_ALREADY_IN_USE;
         }
 
         throw {
@@ -113,7 +126,10 @@ export class UserService {
     );
 
     if (!profile) {
-      throw { statusCode: StatusCodes.NOT_FOUND, message: "Profile not found" };
+      throw {
+        statusCode: StatusCodes.NOT_FOUND,
+        message: ErrorCodes.PROFILE_NOT_FOUND,
+      };
     }
 
     return profile;

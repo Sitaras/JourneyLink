@@ -1,12 +1,11 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/AuthClient";
 import { t } from "@lingui/core/macro";
 import { Trans } from "@lingui/react/macro";
 import { useMemo } from "react";
 
-import { createRide } from "@/api-actions/ride";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { DatePicker } from "@/components/ui/datepicker";
@@ -18,9 +17,8 @@ import {
 } from "@/schemas/home/createRideSchema";
 import { ICreateRidePayload } from "@journey-link/shared";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation } from "@tanstack/react-query";
+import { useCreateRideMutation } from "@/hooks/mutations/useRideMutations";
 import { FieldErrors, useForm, Resolver } from "react-hook-form";
-import { toast } from "sonner";
 import { Switch } from "@/components/ui/switch";
 
 import { combineDateAndTime } from "@/utils/dateUtils";
@@ -43,6 +41,7 @@ export default function CreateRide() {
   const router = useRouter();
   const { user, isLoading } = useAuth();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const profile = user?.profile as any;
   const hasSocials =
     profile?.socials &&
@@ -70,19 +69,7 @@ export default function CreateRide() {
     shouldFocusError: false,
   });
 
-  const mutation = useMutation({
-    mutationFn: async (data: ICreateRidePayload) => {
-      return createRide(data);
-    },
-    onSuccess: () => {
-      toast.success(t`Ride created successfully!`, {
-        description: t`Your ride is now available for passengers to book.`,
-      });
-    },
-    onError: () => {
-      toast.error(t`Failed to create ride`);
-    },
-  });
+  const { mutate, isPending } = useCreateRideMutation();
 
   const onSubmit = (data: CreateRideFormValues) => {
     const departureTime = combineDateAndTime(
@@ -109,7 +96,7 @@ export default function CreateRide() {
       additionalInfo: data.additionalInfo,
     };
 
-    mutation.mutate(body);
+    mutate(body);
   };
 
   const handleOnError = (errors: FieldErrors) => {
@@ -310,12 +297,12 @@ export default function CreateRide() {
           {/* Submit Button */}
           <Button
             type="submit"
-            loading={mutation.isPending}
+            loading={isPending}
             size="lg"
             className="w-full text-base font-semibold"
-            disabled={mutation.isPending || !isProfileComplete}
+            disabled={isPending || !isProfileComplete}
           >
-            {mutation.isPending ? t`Creating ride...` : t`Publish Ride`}
+            {isPending ? t`Creating ride...` : t`Publish Ride`}
           </Button>
 
           <Typography className="text-xs text-center text-muted-foreground">

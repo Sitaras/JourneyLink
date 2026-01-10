@@ -1497,7 +1497,6 @@ __metadata:
     "@lingui/format-po": "npm:^5.7.0"
     "@lingui/macro": "npm:^5.7.0"
     "@lingui/react": "npm:^5.7.0"
-    "@lingui/swc-plugin": "npm:^5.9.0"
     "@radix-ui/react-avatar": "npm:^1.1.10"
     "@radix-ui/react-dialog": "npm:^1.1.15"
     "@radix-ui/react-dropdown-menu": "npm:^2.1.4"
@@ -1511,6 +1510,7 @@ __metadata:
     "@radix-ui/react-tabs": "npm:^1.1.13"
     "@radix-ui/react-tooltip": "npm:^1.1.6"
     "@tanstack/react-query": "npm:5.90.12"
+    "@tanstack/react-query-devtools": "npm:^5.91.2"
     "@types/js-cookie": "npm:^3.0.6"
     "@types/node": "npm:^20"
     "@types/react": "npm:^19"
@@ -1747,20 +1747,6 @@ __metadata:
     babel-plugin-macros:
       optional: true
   checksum: 10c0/6339e51fa63a15eda821753352dbd54c02c96df4ba325f85626f95aeb9159f73d014fda5dacc97ebf83f97b48af19e8c60f1580ec033d9346aca9d06659f05ff
-  languageName: node
-  linkType: hard
-
-"@lingui/swc-plugin@npm:^5.9.0":
-  version: 5.9.0
-  resolution: "@lingui/swc-plugin@npm:5.9.0"
-  peerDependencies:
-    "@lingui/core": 5
-  peerDependenciesMeta:
-    "@swc/core":
-      optional: true
-    next:
-      optional: true
-  checksum: 10c0/9453cf1fe72843bb2847fbca06811cc78fa728919dfc141489a5b3a9b264db2d4ccb2f5569e8a7915ea5cd201f4f06d1684ec0af66a0769f9e61cf95350102e8
   languageName: node
   linkType: hard
 
@@ -3307,6 +3293,25 @@ __metadata:
   version: 5.90.12
   resolution: "@tanstack/query-core@npm:5.90.12"
   checksum: 10c0/60d5dd23d7801118d6ef84a3d76e798aaf6eb851ee5227629a1dc798fa01ac9560580553413208fcc8a003fb12a89e83d6dd1f38ebc3bd9b6e8838cfaaa45fef
+  languageName: node
+  linkType: hard
+
+"@tanstack/query-devtools@npm:5.92.0":
+  version: 5.92.0
+  resolution: "@tanstack/query-devtools@npm:5.92.0"
+  checksum: 10c0/3e41da3c47881b6190d954b60cc0f93f11251ff3066b68b7312eee5696ff114ce078309ed7ec80cd85a5b7a56ed0360fb2048d204ec459ab05f4a3c11268f6ce
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query-devtools@npm:^5.91.2":
+  version: 5.91.2
+  resolution: "@tanstack/react-query-devtools@npm:5.91.2"
+  dependencies:
+    "@tanstack/query-devtools": "npm:5.92.0"
+  peerDependencies:
+    "@tanstack/react-query": ^5.90.14
+    react: ^18 || ^19
+  checksum: 10c0/afb267583d5df1311cf184095f97211df8d769be22cf5966d9ba0defbe341cdd728d035213df7b377483f8721f86dbaff9fab809c97b587c7d97620953e40d68
   languageName: node
   linkType: hard
 

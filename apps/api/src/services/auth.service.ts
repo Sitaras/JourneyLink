@@ -1,7 +1,11 @@
 import { User } from "../models/user.model";
 import { Profile } from "../models/profile.model";
 import * as tokenUtils from "../utils/token.utils";
-import { IUserRegistration, IUserLogin } from "@journey-link/shared";
+import {
+  IUserRegistration,
+  IUserLogin,
+  ErrorCodes,
+} from "@journey-link/shared";
 import { verifyRefreshToken } from "../utils/token.utils";
 import { Types } from "mongoose";
 import { IRefreshTokenPayload } from "../schemas/auth/refreshTokenSchema";
@@ -22,7 +26,7 @@ export class AuthService {
     if (password !== verifyPassword) {
       throw {
         statusCode: StatusCodes.BAD_REQUEST,
-        message: "Passwords do not match",
+        message: ErrorCodes.PASSWORDS_DO_NOT_MATCH,
       };
     }
 
@@ -31,11 +35,11 @@ export class AuthService {
     });
 
     if (existingUser) {
-      let message = "User already exists";
+      let message: string = ErrorCodes.USER_ALREADY_EXISTS;
       if (existingUser.email === email) {
-        message = "Email already in use";
+        message = ErrorCodes.EMAIL_ALREADY_IN_USE;
       } else if (existingUser.phoneNumber === phoneNumber) {
-        message = "Phone number already in use";
+        message = ErrorCodes.PHONE_NUMBER_ALREADY_IN_USE;
       }
 
       throw {
@@ -73,7 +77,7 @@ export class AuthService {
     if (!user) {
       throw {
         statusCode: StatusCodes.BAD_REQUEST,
-        message: "INVALID_CREDENTIALS",
+        message: ErrorCodes.INVALID_CREDENTIALS,
       };
     }
 
@@ -82,7 +86,7 @@ export class AuthService {
     if (!isValidPassword) {
       throw {
         statusCode: StatusCodes.BAD_REQUEST,
-        message: "INVALID_CREDENTIALS",
+        message: ErrorCodes.INVALID_CREDENTIALS,
       };
     }
 
@@ -113,7 +117,10 @@ export class AuthService {
     });
 
     if (!user) {
-      throw { statusCode: StatusCodes.UNAUTHORIZED, message: "Unauthorized" };
+      throw {
+        statusCode: StatusCodes.UNAUTHORIZED,
+        message: ErrorCodes.UNAUTHORIZED,
+      };
     }
 
     try {
@@ -123,7 +130,10 @@ export class AuthService {
         typeof decoded === "string" ||
         user._id.toString() !== decoded.userId
       ) {
-        throw { statusCode: StatusCodes.UNAUTHORIZED, message: "Unauthorized" };
+        throw {
+          statusCode: StatusCodes.UNAUTHORIZED,
+          message: ErrorCodes.UNAUTHORIZED,
+        };
       }
 
       user.refreshTokens = user.refreshTokens.filter((token) => {
@@ -154,7 +164,10 @@ export class AuthService {
         refreshToken: newRefreshToken,
       };
     } catch (error) {
-      throw { statusCode: StatusCodes.UNAUTHORIZED, message: "Unauthorized" };
+      throw {
+        statusCode: StatusCodes.UNAUTHORIZED,
+        message: ErrorCodes.UNAUTHORIZED,
+      };
     }
   }
 
@@ -166,7 +179,10 @@ export class AuthService {
     });
 
     if (!user) {
-      throw { statusCode: StatusCodes.UNAUTHORIZED, message: "Unauthorized" };
+      throw {
+        statusCode: StatusCodes.UNAUTHORIZED,
+        message: ErrorCodes.UNAUTHORIZED,
+      };
     }
 
     user.refreshTokens = user.refreshTokens.filter(
@@ -179,7 +195,10 @@ export class AuthService {
     const user = await User.findById(userId);
 
     if (!user) {
-      throw { statusCode: StatusCodes.UNAUTHORIZED, message: "Unauthorized" };
+      throw {
+        statusCode: StatusCodes.UNAUTHORIZED,
+        message: ErrorCodes.UNAUTHORIZED,
+      };
     }
 
     user.refreshTokens = [];

@@ -1,8 +1,10 @@
 "use client";
 import Link from "next/link";
-import { useAuth } from "@/context/AuthContext";
+import { useAuth } from "@/context/AuthClient";
 import { LogOut, User } from "lucide-react";
-import { t } from "@lingui/core/macro";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { routes } from "@/configs/routes";
 import { Trans } from "@lingui/react/macro";
 import {
   DropdownMenu,
@@ -12,36 +14,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuLabel,
 } from "@/components/ui/dropdown-menu";
-import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { routes } from "@/configs/routes";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { logout } from "@/api-actions/auth"; // Import the server action
-import { useRouter } from "next/navigation";
-import { useQueryClient } from "@tanstack/react-query";
+import { useLogoutMutation } from "@/hooks/mutations/useAuthMutations";
 
 export default function UserMenu() {
   const { user } = useAuth();
-  const router = useRouter();
-
-  const queryClient = useQueryClient();
 
   const initials = `${user?.profile?.firstName?.[0] ?? ""}${
     user?.profile?.lastName?.[0] ?? ""
   }`.toUpperCase();
 
-  const onLogoutFinally = () => {
-    router.refresh();
-    toast.success(t`Logged-out successfully!`);
-    queryClient.clear();
-  };
-
-  const logoutAction = useMutation({
-    mutationFn: logout,
-    onSuccess: onLogoutFinally,
-    onError: onLogoutFinally,
-  });
+  const logoutAction = useLogoutMutation();
 
   return (
     <DropdownMenu>
