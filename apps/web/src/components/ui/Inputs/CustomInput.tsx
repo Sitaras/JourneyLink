@@ -3,7 +3,7 @@ import { Input } from "../input";
 import { Label } from "../label";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
 import { cn } from "@/lib/utils";
-import { getValidationMessage } from "@/utils/validationMessages";
+import { getValidationMessage } from "@/utils/errorMappings";
 
 export interface CustomInputProps extends React.ComponentProps<"input"> {
   register?: UseFormRegister<any>;

@@ -21,7 +21,7 @@ import { useCreateRideMutation } from "@/hooks/mutations/useRideMutations";
 import { FieldErrors, useForm, Resolver } from "react-hook-form";
 import { Switch } from "@/components/ui/switch";
 
-import { combineDateAndTime } from "@/utils/dateUtils";
+import { combineDateAndTime } from "@journey-link/shared";
 import { parsePrice } from "@/utils/moneysUtils";
 import Typography from "@/components/ui/typography";
 import {
@@ -32,6 +32,7 @@ import {
   Euro,
   Settings,
   Info,
+  Car,
 } from "lucide-react";
 import { SeatsSelect } from "@/components/ui/Inputs/SeatSelect";
 import { CustomTextarea } from "@/components/ui/Inputs/CustomTextarea";
@@ -93,6 +94,12 @@ export default function CreateRide() {
         smokingAllowed: data.smoking,
         petsAllowed: data.petsAllowed,
       },
+      vehicleInfo: {
+        make: data.vehicleMake,
+        model: data.vehicleModel,
+        color: data.vehicleColor,
+        licensePlate: data.vehiclePlate,
+      },
       additionalInfo: data.additionalInfo,
     };
 
@@ -110,6 +117,10 @@ export default function CreateRide() {
       smoking: "Smoking",
       petsAllowed: "Pets allowed",
       additionalInfo: "Additional info",
+      vehicleMake: "Vehicle make",
+      vehicleModel: "Vehicle model",
+      vehicleColor: "Vehicle color",
+      vehiclePlate: "Vehicle license plate",
     };
 
     onError(FIELD_LABELS, errors);
@@ -245,6 +256,52 @@ export default function CreateRide() {
                     <Euro className="size-4 z-10 opacity-50" />
                   </div>
                 </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Vehicle Info Section */}
+          <Card className="shadow-sm">
+            <CardContent className="p-6 space-y-5">
+              <div className="flex items-center gap-2 mb-2">
+                <Car className="w-5 h-5 text-primary" />
+                <Typography className="font-semibold text-lg">
+                  <Trans>Vehicle Details</Trans>
+                </Typography>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <CustomInput
+                  name="vehicleMake"
+                  label={<Trans>Make</Trans>}
+                  placeholder={t`e.g. Toyota`}
+                  register={register}
+                  required
+                />
+                <CustomInput
+                  name="vehicleModel"
+                  label={<Trans>Model</Trans>}
+                  placeholder={t`e.g. Yaris`}
+                  register={register}
+                  required
+                />
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <CustomInput
+                  name="vehicleColor"
+                  label={<Trans>Color</Trans>}
+                  placeholder={t`e.g. Silver`}
+                  register={register}
+                  required
+                />
+                <CustomInput
+                  name="vehiclePlate"
+                  label={<Trans>License Plate</Trans>}
+                  placeholder={t`e.g. ABC-1234`}
+                  register={register}
+                  required
+                />
               </div>
             </CardContent>
           </Card>

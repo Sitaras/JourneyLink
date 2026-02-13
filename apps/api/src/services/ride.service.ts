@@ -14,6 +14,8 @@ import { StatusCodes } from "http-status-codes";
 import { agenda, JobTypes } from "../config/agenda";
 import { notificationService } from "./notification.service";
 import { NotificationType } from "@journey-link/shared";
+import { rideRepository } from "../repositories/ride.repository";
+import { logger } from "../utils/logger";
 
 export class RideService {
   async checkAndCompleteRides(rideId?: string) {
@@ -47,7 +49,7 @@ export class RideService {
         }
       }
     } catch (error) {
-      console.error("RideService: Error updating ride statuses", error);
+      logger.error({ err: error }, "RideService: Error updating ride statuses");
     }
   }
 
@@ -69,255 +71,15 @@ export class RideService {
         }
       );
     } catch (error) {
-      console.error(`RideService: Error completing ride ${rideId}`, error);
+      logger.error(
+        { err: error },
+        `RideService: Error completing ride ${rideId}`
+      );
     }
-  }
-
-  private addSeatCalculationStages(pipeline: any[]): void {
-    pipeline.push(
-      {
-        $addFields: {
-          bookedSeats: {
-            $sum: {
-              $map: {
-                input: {
-                  $filter: {
-                    input: "$passengers",
-                    as: "p",
-                    cond: { $eq: ["$$p.status", BookingStatus.CONFIRMED] },
-                  },
-                },
-                as: "cp",
-                in: "$$cp.seatsBooked",
-              },
-            },
-          },
-        },
-      },
-      {
-        $addFields: {
-          remainingSeats: { $subtract: ["$availableSeats", "$bookedSeats"] },
-        },
-      }
-    );
-  }
-
-  private addDriverInfo(pipeline: any[]): void {
-    pipeline.push(
-      {
-        $lookup: {
-          from: "users",
-          localField: "driver",
-          foreignField: "_id",
-          as: "user",
-        },
-      },
-      {
-        $unwind: { path: "$user", preserveNullAndEmptyArrays: true },
-      },
-      {
-        $lookup: {
-          from: "profiles",
-          localField: "user.profile",
-          foreignField: "_id",
-          as: "driverProfile",
-        },
-      },
-      {
-        $unwind: { path: "$driverProfile", preserveNullAndEmptyArrays: true },
-      },
-      {
-        $addFields: {
-          driverProfile: {
-            $cond: {
-              if: { $ne: ["$driverProfile", null] },
-              then: {
-                _id: "$driverProfile._id",
-                firstName: "$driverProfile.firstName",
-                lastName: "$driverProfile.lastName",
-                email: "$driverProfile.email",
-                phone: "$driverProfile.phone",
-                avatar: "$driverProfile.avatar",
-                rating: "$driverProfile.rating",
-              },
-              else: null,
-            },
-          },
-        },
-      },
-      {
-        $project: {
-          user: 0, // Remove the temporary user object
-        },
-      }
-    );
-  }
-
-  private buildMatchStage(query: IGetRideQueryPayload) {
-    const { departureDate, maxPrice, smokingAllowed, petsAllowed } = query;
-
-    const matchStage: any = {
-      status: "active",
-      departureTime: { $gte: new Date() },
-    };
-
-    if (departureDate) {
-      const date = new Date(departureDate);
-      const nextDay = new Date(date);
-      nextDay.setDate(nextDay.getDate() + 1);
-      matchStage.departureTime = { $gte: date, $lt: nextDay };
-    }
-
-    if (maxPrice) {
-      matchStage.pricePerSeat = { $lte: parseFloat(maxPrice as any) };
-    }
-
-    if (smokingAllowed !== undefined) {
-      matchStage["preferences.smokingAllowed"] = smokingAllowed;
-    }
-
-    if (petsAllowed !== undefined) {
-      matchStage["preferences.petsAllowed"] = petsAllowed;
-    }
-
-    return matchStage;
-  }
-
-  private buildSortStage(
-    sortBy: string,
-    sortOrder: string,
-    hasGeoQuery: boolean
-  ): any {
-    const sortStage: any = {};
-
-    switch (sortBy) {
-      case "price":
-        sortStage.pricePerSeat = sortOrder === "asc" ? 1 : -1;
-        break;
-      case "distance":
-        if (hasGeoQuery) {
-          sortStage.originDistance = sortOrder === "asc" ? 1 : -1;
-        } else {
-          sortStage.departureTime = sortOrder === "asc" ? 1 : -1;
-        }
-        break;
-      default:
-        sortStage.departureTime = sortOrder === "asc" ? 1 : -1;
-    }
-
-    return sortStage;
   }
 
   async getRides(query: IGetRideQueryPayload) {
-    const {
-      originLat,
-      originLng,
-      originRadius = 50,
-      destinationLat,
-      destinationLng,
-      destinationRadius = 50,
-      minSeats,
-      page = 1,
-      limit = 10,
-      sortBy = "departureTime",
-      sortOrder = "asc",
-    } = query;
-
-    const pipeline: any[] = [];
-    const matchStage = this.buildMatchStage(query);
-
-    // Geo-spatial query
-    pipeline.push({
-      $geoNear: {
-        near: {
-          type: "Point",
-          coordinates: [
-            parseFloat(originLng as any),
-            parseFloat(originLat as any),
-          ],
-        },
-        distanceField: "originDistance",
-        maxDistance: (originRadius as number) * 1000,
-        spherical: true,
-        key: "origin.coordinates",
-        query: matchStage,
-      },
-    });
-
-    pipeline.push({
-      $match: {
-        "destination.coordinates": {
-          $geoWithin: {
-            $centerSphere: [
-              [
-                parseFloat(destinationLng as any),
-                parseFloat(destinationLat as any),
-              ],
-              (destinationRadius as number) / 6378.1,
-            ],
-          },
-        },
-      },
-    });
-
-    this.addSeatCalculationStages(pipeline);
-
-    if (minSeats) {
-      pipeline.push({
-        $match: { remainingSeats: { $gte: parseInt(minSeats as any) } },
-      });
-    }
-
-    this.addDriverInfo(pipeline);
-
-    pipeline.push({
-      $project: {
-        _id: 1,
-        origin: 1,
-        destination: 1,
-        departureTime: 1,
-        availableSeats: 1,
-        remainingSeats: 1,
-        pricePerSeat: 1,
-        preferences: 1,
-        originDistance: 1,
-        driverProfile: {
-          avatar: 1,
-          rating: 1,
-        },
-        createdAt: 1,
-      },
-    });
-
-    const sortStage = this.buildSortStage(
-      sortBy as string,
-      sortOrder as string,
-      true
-    );
-    pipeline.push({ $sort: sortStage });
-
-    // Pagination
-    const skip = (page - 1) * limit;
-    pipeline.push({ $skip: skip }, { $limit: limit });
-
-    const rides = await Ride.aggregate(pipeline);
-
-    // Count total
-    const countPipeline = pipeline.filter(
-      (stage) =>
-        !("$skip" in stage) && !("$limit" in stage) && !("$sort" in stage)
-    );
-    countPipeline.push({ $count: "total" });
-    const countResult = await Ride.aggregate(countPipeline);
-    const total = countResult.length > 0 ? countResult[0].total : 0;
-
-    return {
-      count: rides.length,
-      total,
-      page,
-      pages: Math.ceil(total / limit),
-      data: rides,
-    };
+    return await rideRepository.findRides(query);
   }
 
   async createRide(userId: string, data: ICreateRidePayload) {
@@ -380,7 +142,10 @@ export class RideService {
         rideId: ride._id.toString(),
       });
     } catch (error) {
-      console.error("RideService: Failed to schedule completion job", error);
+      logger.error(
+        { err: error },
+        "RideService: Failed to schedule completion job"
+      );
     }
 
     return await Ride.findById(ride._id).populate("driver", "name email phone");
@@ -393,8 +158,8 @@ export class RideService {
       { $match: { _id: new mongoose.Types.ObjectId(id) } },
     ];
 
-    this.addSeatCalculationStages(pipeline);
-    this.addDriverInfo(pipeline);
+    rideRepository.addSeatCalculationStages(pipeline);
+    rideRepository.addDriverInfo(pipeline);
 
     const [rideAgg] = await Ride.aggregate(pipeline);
     const ride = Ride.hydrate(rideAgg);
@@ -509,7 +274,10 @@ export class RideService {
         "data.rideId": rideId.toString(),
       });
     } catch (error) {
-      console.error("RideService: Failed to cancel completion job", error);
+      logger.error(
+        { err: error },
+        "RideService: Failed to cancel completion job"
+      );
     }
 
     return ride;
@@ -644,8 +412,8 @@ export class RideService {
     const pipeline: any[] = [
       { $match: { _id: new mongoose.Types.ObjectId(rideId) } },
     ];
-    this.addSeatCalculationStages(pipeline);
-    this.addDriverInfo(pipeline);
+    rideRepository.addSeatCalculationStages(pipeline);
+    rideRepository.addDriverInfo(pipeline);
 
     const [updatedRide] = await Ride.aggregate(pipeline);
 
@@ -659,14 +427,56 @@ export class RideService {
           rideId: rideId.toString(),
         });
       } catch (error) {
-        console.error(
-          "RideService: Failed to reschedule completion job",
-          error
+        logger.error(
+          { err: error },
+          "RideService: Failed to reschedule completion job"
         );
       }
     }
 
     return updatedRide;
+  }
+  async getPopularTrips(limit: number = 3) {
+    const pipeline: any[] = [
+      {
+        $match: {
+          status: RideStatus.ACTIVE,
+          departureTime: { $gt: new Date() },
+        },
+      },
+      {
+        $group: {
+          _id: {
+            origin: "$origin.city",
+            destination: "$destination.city",
+          },
+          count: { $sum: 1 },
+          minPrice: { $min: "$pricePerSeat" },
+          originDetails: { $first: "$origin" },
+          destinationDetails: { $first: "$destination" },
+        },
+      },
+      {
+        $sort: { count: -1 },
+      },
+      {
+        $limit: limit,
+      },
+      {
+        $project: {
+          _id: 0,
+          origin: "$_id.origin",
+          destination: "$_id.destination",
+          originCoordinates: "$originDetails.coordinates",
+          destinationCoordinates: "$destinationDetails.coordinates",
+          count: 1,
+          minPrice: 1,
+        },
+      },
+    ];
+
+    const results = await Ride.aggregate(pipeline);
+    return results;
   }
 }
 

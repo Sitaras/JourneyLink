@@ -38,9 +38,9 @@ export default function PaginationBar({
     if (page < 1 || page > totalPages) return;
 
     const params = new URLSearchParams({
-      from: from,
-      to: to,
-      departureDate: departureDate,
+      from,
+      to,
+      departureDate,
       page: page.toString(),
     });
 

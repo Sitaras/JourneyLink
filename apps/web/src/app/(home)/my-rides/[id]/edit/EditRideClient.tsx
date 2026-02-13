@@ -18,8 +18,8 @@ import {
   Info,
   Car,
 } from "lucide-react";
-import { formatDate } from "@/utils/dateUtils";
-import { DateFormats } from "@/utils/dateFormats";
+import { formatDate } from "@journey-link/shared";
+import { DateFormats } from "@journey-link/shared";
 import { SeatsSelect } from "@/components/ui/Inputs/SeatSelect";
 import { CustomTextarea } from "@/components/ui/Inputs/CustomTextarea";
 import { Card, CardContent } from "@/components/ui/card";

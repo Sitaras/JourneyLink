@@ -55,6 +55,16 @@ export const createCreateRideSchema = () =>
       smoking: z.boolean(),
       petsAllowed: z.boolean(),
       additionalInfo: z.string().optional(),
+      vehicleMake: z.string().min(1, { message: t`Vehicle make is required` }),
+      vehicleModel: z
+        .string()
+        .min(1, { message: t`Vehicle model is required` }),
+      vehicleColor: z
+        .string()
+        .min(1, { message: t`Vehicle color is required` }),
+      vehiclePlate: z
+        .string()
+        .min(1, { message: t`License plate is required` }),
     })
     .refine(
       (data) => {

@@ -48,4 +48,22 @@ export const getErrorMapping = (): Record<string, string> => ({
   // User
   [ErrorCodes.PROFILE_NOT_FOUND]: t`Profile not found`,
   [ErrorCodes.UNAUTHORIZED_VIEW_PROFILE]: t`You can only view profiles of users you have a confirmed ride with`,
+  // Validation
+  [ErrorCodes.INVALID_EMAIL_ADDRESS]: t`Invalid email address`,
+  [ErrorCodes.EMAIL_REQUIRED]: t`Email is required`,
+  [ErrorCodes.PASSWORD_REQUIRED]: t`Password is required`,
+  [ErrorCodes.REQUIRED]: t`required`,
+  [ErrorCodes.PASSWORD_MIN_LENGTH]: t`Min length 8 characters`,
+  [ErrorCodes.PASSWORD_MAX_LENGTH]: t`Max length 20 characters`,
+  [ErrorCodes.PASSWORD_UPPERCASE_REQUIRED]: t`Uppercase letter required`,
+  [ErrorCodes.PASSWORD_LOWERCASE_REQUIRED]: t`Lowercase letter required`,
+  [ErrorCodes.PASSWORD_NUMBER_REQUIRED]: t`Number required`,
+  [ErrorCodes.PASSWORD_SPECIAL_CHAR_REQUIRED]: t`Special character required`,
+  [ErrorCodes.OLD_PASSWORD_REQUIRED]: t`Old password is required`,
+  [ErrorCodes.INVALID_PHONE_FORMAT]: t`Invalid format`,
 });
+
+export const getValidationMessage = (key: string): string => {
+  const mapping = getErrorMapping();
+  return mapping[key] || key;
+};

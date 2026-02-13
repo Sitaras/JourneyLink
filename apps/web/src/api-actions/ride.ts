@@ -24,6 +24,23 @@ export const getRides = async (parameters: IGetRideQueryInput) => {
   return response;
 };
 
+export type PopularTrip = {
+  origin: string;
+  destination: string;
+  count: number;
+  minPrice: number;
+  originCoordinates: [number, number];
+  destinationCoordinates: [number, number];
+};
+
+export const getPopularTrips = async (limit: number = 3) => {
+  const response = await api
+    .url(`ride/popular?limit=${limit}`)
+    .get()
+    .json<PopularTrip[]>((json) => json?.data);
+  return response;
+};
+
 export const createRide = async (body: ICreateRidePayload) => {
   const response = await postFetcher<ICreateRidePayload, RideCreationResponse>(
     "ride",

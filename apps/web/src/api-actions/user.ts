@@ -3,7 +3,7 @@
 import { ProfileResponse } from "@journey-link/shared";
 import { fetcher, patchFetcher } from "./api";
 import { UpdateProfilePayload } from "@journey-link/shared";
-import { formatToUTC } from "@/utils/dateUtils";
+import { formatToUTC } from "@journey-link/shared";
 import {
   getUserRidesQuerySchema,
   IGetUserRidesQueryPayload,

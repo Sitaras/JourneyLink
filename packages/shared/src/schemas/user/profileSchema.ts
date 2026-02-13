@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { ErrorCodes } from "../../constants/errorCodes";
 
 const greekPhoneNumber = new RegExp(/^(?:[0-9]{10})$/);
 
@@ -7,7 +8,7 @@ const urlRegex =
 
 const flexibleUrlSchema = z
   .string()
-  .regex(urlRegex, "Invalid URL format")
+  .regex(urlRegex, ErrorCodes.INVALID_PHONE_FORMAT)
   .or(z.literal(""));
 
 export const updateProfileSchema = z.object({
@@ -15,35 +16,35 @@ export const updateProfileSchema = z.object({
     .string()
     .trim()
     .min(1, {
-      error: "required",
+      message: ErrorCodes.REQUIRED,
     })
     .optional(),
   lastName: z
     .string()
     .trim()
     .min(1, {
-      error: "required",
+      message: ErrorCodes.REQUIRED,
     })
     .optional(),
   dateOfBirth: z
     .string()
     .min(1, {
-      error: "required",
+      message: ErrorCodes.REQUIRED,
     })
     .optional(),
   email: z
     .email({
-      error: "emailError",
+      message: ErrorCodes.INVALID_EMAIL_ADDRESS,
     })
     .trim()
     .optional(),
   phoneNumber: z
     .string()
     .min(1, {
-      error: "required",
+      message: ErrorCodes.REQUIRED,
     })
     .regex(greekPhoneNumber, {
-      error: "Invalid format",
+      message: ErrorCodes.INVALID_PHONE_FORMAT,
     })
     .optional(),
   bio: z.string().trim().max(500, "Maximum 500 characters").optional(),

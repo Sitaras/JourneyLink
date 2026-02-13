@@ -6,6 +6,7 @@ import {
   updateRideSchema,
   getRideQuerySchema,
   deleteRideSchema,
+  popularRidesSchema,
 } from "@journey-link/shared";
 import { authenticateToken } from "../middleware/auth.middleware";
 import { mongoIdSchema } from "../schemas/idSchema";
@@ -18,18 +19,24 @@ router.get(
   rideController.getRides as unknown as RequestHandler
 );
 
+router.get(
+  "/popular",
+  validateData(popularRidesSchema, "query"),
+  rideController.getPopularTrips
+);
+
 router.post(
   "/",
   authenticateToken,
   validateData(createRideSchema),
-  rideController.createRide as unknown as RequestHandler
+  rideController.createRide
 );
 
 router.get(
   "/:id",
   authenticateToken,
   validateData(mongoIdSchema, "params"),
-  rideController.getRideById as unknown as RequestHandler
+  rideController.getRideById
 );
 
 router.delete(
@@ -37,7 +44,7 @@ router.delete(
   authenticateToken,
   validateData(mongoIdSchema, "params"),
   validateData(deleteRideSchema),
-  rideController.deleteRide as unknown as RequestHandler
+  rideController.deleteRide
 );
 
 router.put(
@@ -45,7 +52,7 @@ router.put(
   authenticateToken,
   validateData(mongoIdSchema, "params"),
   validateData(updateRideSchema),
-  rideController.updateRide as unknown as RequestHandler
+  rideController.updateRide
 );
 
 export default router;

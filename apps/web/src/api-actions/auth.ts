@@ -1,9 +1,8 @@
 "use server";
 import { api, refreshTokenService, getAuthApi } from "./api";
-import { formatToUTC } from "@/utils/dateUtils";
+import { formatToUTC } from "@journey-link/shared";
 import { authStorage } from "../lib/authStorage";
 import { LoginInput, RegisterInput } from "@journey-link/shared";
-import { revalidatePath } from "next/cache";
 import { extractErrorMessage } from "@/utils/errorUtils";
 
 type LoginFormValues = LoginInput;
@@ -22,7 +21,6 @@ export const login = async (body: LoginFormValues) => {
       refreshToken: response?.tokens?.refreshToken,
     });
 
-    revalidatePath("/", "layout");
     return response;
   } catch (error: any) {
     throw extractErrorMessage(error);
@@ -55,7 +53,6 @@ export const logout = async () => {
     throw extractErrorMessage(error);
   } finally {
     await authStorage.clearAuthTokens();
-    revalidatePath("/", "layout");
   }
 };
 

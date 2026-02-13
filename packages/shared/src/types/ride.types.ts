@@ -6,6 +6,17 @@ export enum RideStatus {
   CANCELLED = "cancelled",
 }
 
+export enum RideSortBy {
+  DEPARTURE_TIME = "departureTime",
+  PRICE = "price",
+  DISTANCE = "distance",
+}
+
+export enum SortOrder {
+  ASC = "asc",
+  DESC = "desc",
+}
+
 export type Coordinates = [number, number]; // [longitude, latitude]
 
 export type Location = {

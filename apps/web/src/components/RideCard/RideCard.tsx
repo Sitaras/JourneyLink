@@ -35,7 +35,7 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { isPast } from "@/utils/dateUtils";
+import { isPast } from "@journey-link/shared";
 import { i18n } from "@lingui/core";
 import { UserRideRole } from "@/types/user.types";
 import { RideStatus, UserRide } from "@journey-link/shared";
@@ -71,20 +71,20 @@ const RideCard = ({
   return (
     <Card
       className={cn(
-        "shadow-sm hover:shadow-lg transition-all duration-300 border-l-4",
+        "shadow-sm hover:shadow-lg hover:border-border/80 transition-all duration-300 border-l-4",
         isCompleted
-          ? "border-l-green-500/50 hover:border-l-green-500"
+          ? "border-l-success/50 hover:border-l-success"
           : isCancelled
-            ? "border-l-red-500/50 hover:border-l-red-500"
-            : "border-l-primary/20 hover:border-l-primary",
+            ? "border-l-destructive/50 hover:border-l-destructive"
+            : "border-l-primary/40 hover:border-l-primary",
         className
       )}
     >
       <CardHeader className="pb-6">
         <div className="flex items-start justify-between gap-3 flex-wrap">
           <CardTitle className="flex items-center gap-3 text-xl">
-            <div className="p-2 bg-primary/10 rounded-full">
-              <MapPin className="w-4 h-4 text-primary" />
+            <div className="p-2.5 bg-primary/5 rounded-full ring-1 ring-primary/10">
+              <MapPin className="w-5 h-5 text-primary" />
             </div>
             <span className="flex items-center gap-2 flex-wrap">
               <Typography className="font-bold">{ride.origin.city}</Typography>

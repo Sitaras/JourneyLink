@@ -45,3 +45,7 @@ Thumbs.db
 .turbo
 
 tsconfig.tsbuildinfo
+
+# AI Agents
+.agent/
+.agents/

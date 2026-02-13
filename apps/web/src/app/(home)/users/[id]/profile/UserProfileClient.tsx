@@ -3,8 +3,8 @@
 import { Trans } from "@lingui/react/macro";
 import { useUserProfile } from "@/hooks/queries/useUserQuery";
 
-import { formatDate } from "@/utils/dateUtils";
-import { DateFormats } from "@/utils/dateFormats";
+import { formatDate } from "@journey-link/shared";
+import { DateFormats } from "@journey-link/shared";
 import Typography from "@/components/ui/typography";
 import PageLoader from "@/components/PageLoader/PageLoader";
 import { Calendar, Mail, Phone, Star, User } from "lucide-react";

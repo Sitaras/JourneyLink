@@ -26,7 +26,7 @@ import {
   differenceInHours,
   differenceInMilliseconds,
 } from "date-fns";
-import { el } from "date-fns/locale/el";
+import { el } from "date-fns/locale";
 import { DateFormats } from "./dateFormats";
 
 export const isValidDate = (date: unknown) => {
@@ -36,7 +36,7 @@ export const isValidDate = (date: unknown) => {
 export const parseDate = (
   date: string | Date | number,
   format?: string,
-  returnNowIfNull = false
+  returnNowIfNull = false,
 ) => {
   if (date && typeof date === "object") return date;
   const _parsedDate =
@@ -56,7 +56,7 @@ export const parseDate = (
 export const formatDate = (
   date: string | Date,
   format = DateFormats.DATE_TIME_SLASH_FORMAT,
-  language?: string
+  language?: string,
 ) => {
   const parsedDate = parseDate(date);
 
@@ -98,7 +98,7 @@ export const getDifferenceInDays = (
   options: { includeLastDay: boolean; useStartOfDay: boolean } = {
     includeLastDay: false,
     useStartOfDay: true,
-  }
+  },
 ) => {
   const { includeLastDay = false, useStartOfDay = true } = options;
   const parsedDateFrom = parseDate(dateFrom);
@@ -109,7 +109,7 @@ export const getDifferenceInDays = (
 
   const _until = addDays(
     (useStartOfDay ? startOfDay(parsedDateUntil) : parsedDateUntil) as Date,
-    includeLastDay ? 1 : 0
+    includeLastDay ? 1 : 0,
   );
   return _until && _from ? differenceInDays(_until, _from) : 0;
 };
@@ -128,7 +128,7 @@ const precisionFunctions = {
 export const getDateDifference = (
   date: string | Date,
   dateToCompare: string | Date,
-  precision: keyof typeof precisionFunctions
+  precision: keyof typeof precisionFunctions,
 ): number | undefined => {
   if (!date || !dateToCompare) return;
 
@@ -170,7 +170,7 @@ export const startOfDay = (date: string | number | Date) => {
 export const isDateBetween = (
   date: string | number | Date,
   compareFromDate: string | number | Date,
-  compareToDate: string | number | Date
+  compareToDate: string | number | Date,
 ) => {
   const parsedDate = parseDate(date);
   const parsedFromDate = parseDate(compareFromDate);
@@ -179,16 +179,22 @@ export const isDateBetween = (
   if (!parsedDate || !parsedFromDate || !parsedToDate) return false;
 
   const _date = startOfDay(parsedDate);
+  const startFromDate = parsedFromDate ? startOfDay(parsedFromDate) : null;
+  const endToDate = parsedToDate ? endOfDay(parsedToDate) : null;
 
   return (
-    startOfDay(parsedFromDate)! <= _date! && _date! <= endOfDay(parsedToDate)!
+    startFromDate &&
+    endToDate &&
+    _date &&
+    startFromDate <= _date &&
+    _date <= endToDate
   );
 };
 
 export const isBetween = (
   date: string | number | Date,
   compareFromDate: string | number | Date,
-  compareToDate: string | number | Date
+  compareToDate: string | number | Date,
 ) => {
   const parsedDate = parseDate(date);
   const parsedFromDate = parseDate(compareFromDate);
@@ -215,7 +221,7 @@ export const isFuture = (date: string | number | Date) => {
 
 export const isAfter = (
   date: string | number | Date,
-  dateToCompare: string | number | Date
+  dateToCompare: string | number | Date,
 ) => {
   const parsedDate = parseDate(date);
   const parsedDateToCompare = parseDate(dateToCompare);
@@ -226,7 +232,7 @@ export const isAfter = (
 
 export const isBefore = (
   date: string | number | Date,
-  dateToCompare: string | number | Date
+  dateToCompare: string | number | Date,
 ) => {
   const parsedDate = parseDate(date);
   const parsedDateToCompare = parseDate(dateToCompare);
@@ -237,7 +243,7 @@ export const isBefore = (
 
 export const isEqual = (
   date: string | number | Date,
-  dateToCompare: string | number | Date
+  dateToCompare: string | number | Date,
 ) => {
   const parsedDate = parseDate(date);
   const parsedDateToCompare = parseDate(dateToCompare);
@@ -248,3 +254,46 @@ export const isEqual = (
 
 export const minDate = (datesArray: (string | number | Date)[]) =>
   min(datesArray);
+
+export const parseDateFlexible = (
+  date: string | number | Date,
+): Date | null => {
+  if (date instanceof Date && isValid(date)) return date;
+
+  if (typeof date === "number") return fromUnixTime(date);
+
+  let parsed = parseISO(date as string);
+  if (isValid(parsed)) return parsed;
+
+  const formatsToTry = [
+    "dd/MM/yyyy",
+    "MM/dd/yyyy",
+    "yyyy-MM-dd",
+    "dd-MM-yyyy",
+    "dd.MM.yyyy",
+    "yyyy/MM/dd",
+    "MMM dd, yyyy",
+    "dd MMM yyyy",
+    "MMM d yyyy",
+    "d MMM yyyy",
+    "EEE, dd MMM yyyy",
+    "EEE MMM dd yyyy",
+    "yyyyMMdd",
+  ];
+
+  for (const fmt of formatsToTry) {
+    parsed = parse(date as string, fmt, new Date());
+    if (isValid(parsed)) return parsed;
+  }
+
+  return null;
+};
+
+export function combineDateAndTime(dateTrip: Date, time: string): Date {
+  const [hours, minutes] = time.split(":").map(Number);
+
+  const combined = new Date(dateTrip);
+  combined.setHours(hours, minutes, 0, 0);
+
+  return combined;
+}

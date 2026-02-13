@@ -26,6 +26,11 @@ msgstr "{0} of {1} left"
 msgid "{0} reviews"
 msgstr "{0} reviews"
 
+#. placeholder {0}: trip.count
+#. placeholder {1}: trip.minPrice
+msgid "{0} rides available • from €{1}"
+msgstr "{0} rides available • from €{1}"
+
 msgid "{bioCharCount}/{MAX_BIO_LENGTH} characters"
 msgstr "{bioCharCount}/{MAX_BIO_LENGTH} characters"
 
@@ -35,6 +40,9 @@ msgstr "About"
 msgid "Additional Information"
 msgstr "Additional Information"
 
+msgid "Adjust search filters for rides"
+msgstr "Adjust search filters for rides"
+
 msgid "All rights reserved."
 msgstr "All rights reserved."
 
@@ -43,6 +51,9 @@ msgstr "Any additional details passengers should know..."
 
 msgid "Any extra details?"
 msgstr "Any extra details?"
+
+msgid "Any price"
+msgstr "Any price"
 
 msgid "Are you sure you want to cancel your booking?"
 msgstr "Are you sure you want to cancel your booking?"
@@ -58,6 +69,9 @@ msgstr "As Driver"
 
 msgid "As Passenger"
 msgstr "As Passenger"
+
+msgid "Ascending"
+msgstr "Ascending"
 
 msgid "At least 1 seat is required"
 msgstr "At least 1 seat is required"
@@ -94,6 +108,9 @@ msgstr "Born"
 
 msgid "By publishing this ride, you agree to our terms of service and community guidelines."
 msgstr "By publishing this ride, you agree to our terms of service and community guidelines."
+
+msgid "Can I cancel my booking?"
+msgstr "Can I cancel my booking?"
 
 msgid "Cancel"
 msgstr "Cancel"
@@ -173,14 +190,26 @@ msgstr "Departure city"
 msgid "Departure location"
 msgstr "Departure location"
 
+msgid "Departure Time"
+msgstr "Departure Time"
+
 msgid "Departure time is required"
 msgstr "Departure time is required"
 
 msgid "Departure time must be in the future"
 msgstr "Departure time must be in the future"
 
+msgid "Descending"
+msgstr "Descending"
+
+msgid "Distance"
+msgstr "Distance"
+
 msgid "Driver"
 msgstr "Driver"
+
+msgid "e.g. ABC-1234"
+msgstr "e.g. ABC-1234"
 
 msgid "e.g. Athens"
 msgstr "e.g. Athens"
@@ -188,8 +217,17 @@ msgstr "e.g. Athens"
 msgid "e.g. Planning a coffee stop, flexible departure time, luggage space available..."
 msgstr "e.g. Planning a coffee stop, flexible departure time, luggage space available..."
 
+msgid "e.g. Silver"
+msgstr "e.g. Silver"
+
 msgid "e.g. Thessaloniki"
 msgstr "e.g. Thessaloniki"
+
+msgid "e.g. Toyota"
+msgstr "e.g. Toyota"
+
+msgid "e.g. Yaris"
+msgstr "e.g. Yaris"
 
 msgid "e.g., ABC-1234"
 msgstr "e.g., ABC-1234"
@@ -230,6 +268,9 @@ msgstr "Failed to update profile"
 msgid "Failed to update ride"
 msgstr "Failed to update ride"
 
+msgid "Filters"
+msgstr "Filters"
+
 msgid "Find a Ride"
 msgstr "Find a Ride"
 
@@ -241,6 +282,9 @@ msgstr "First name"
 
 msgid "Forbidden"
 msgstr "Forbidden"
+
+msgid "Frequently Asked Questions"
+msgstr "Frequently Asked Questions"
 
 msgid "From"
 msgstr "From"
@@ -263,6 +307,12 @@ msgstr "Help Center"
 msgid "Home"
 msgstr "Home"
 
+msgid "How do I book a ride?"
+msgstr "How do I book a ride?"
+
+msgid "How do I pay for the ride?"
+msgstr "How do I pay for the ride?"
+
 msgid "How it Works"
 msgstr "How it Works"
 
@@ -278,6 +328,9 @@ msgstr "Invalid format"
 msgid "Invalid Ride ID"
 msgstr "Invalid Ride ID"
 
+msgid "Is it safe to travel with strangers?"
+msgstr "Is it safe to travel with strangers?"
+
 msgid "Last name"
 msgstr "Last name"
 
@@ -287,8 +340,14 @@ msgstr "Legal"
 msgid "License Plate"
 msgstr "License Plate"
 
+msgid "License plate is required"
+msgstr "License plate is required"
+
 msgid "LinkedIn"
 msgstr "LinkedIn"
+
+msgid "Load more"
+msgstr "Load more"
 
 msgid "Loading..."
 msgstr "Loading..."
@@ -311,11 +370,17 @@ msgstr "Make"
 msgid "Manage your upcoming and past journeys"
 msgstr "Manage your upcoming and past journeys"
 
+msgid "Mark all as read"
+msgstr "Mark all as read"
+
 msgid "Max 500 characters"
 msgstr "Max 500 characters"
 
 msgid "Max length 20 characters"
 msgstr "Max length 20 characters"
+
+msgid "Max Price"
+msgstr "Max Price"
 
 msgid "Maximum 500 characters"
 msgstr "Maximum 500 characters"
@@ -325,6 +390,9 @@ msgstr "Maximum 8 seats allowed"
 
 msgid "Min length 8 characters"
 msgstr "Min length 8 characters"
+
+msgid "Min Seats"
+msgstr "Min Seats"
 
 msgid "Minimum: {bookedSeats} (already booked)"
 msgstr "Minimum: {bookedSeats} (already booked)"
@@ -356,6 +424,9 @@ msgstr "No bio provided."
 msgid "No cities found"
 msgstr "No cities found"
 
+msgid "No notifications"
+msgstr "No notifications"
+
 msgid "No pets"
 msgstr "No pets"
 
@@ -374,6 +445,9 @@ msgstr "Not authorized to view bookings"
 msgid "Not found"
 msgstr "Not found"
 
+msgid "Notifications"
+msgstr "Notifications"
+
 msgid "Number required"
 msgstr "Number required"
 
@@ -382,6 +456,9 @@ msgstr "Offer a ride"
 
 msgid "Offer a Ride"
 msgstr "Offer a Ride"
+
+msgid "Old password is required"
+msgstr "Old password is required"
 
 msgid "Passenger"
 msgstr "Passenger"
@@ -395,6 +472,9 @@ msgstr "Password is required"
 msgid "Passwords do not match"
 msgstr "Passwords do not match"
 
+msgid "Payment is handled securely through the platform or in cash directly to the driver, depending on the ride settings. Check the ride details for specific payment information."
+msgstr "Payment is handled securely through the platform or in cash directly to the driver, depending on the ride settings. Check the ride details for specific payment information."
+
 msgid "per seat"
 msgstr "per seat"
 
@@ -403,6 +483,9 @@ msgstr "Personal Information"
 
 msgid "Pets allowed"
 msgstr "Pets allowed"
+
+msgid "Pets Allowed"
+msgstr "Pets Allowed"
 
 msgid "Phone"
 msgstr "Phone"
@@ -425,8 +508,14 @@ msgstr "Please complete your profile first (Name, Email, Phone, Bio, Socials)"
 msgid "Please try again later."
 msgstr "Please try again later."
 
+msgid "Popular Trips"
+msgstr "Popular Trips"
+
 msgid "Preferences"
 msgstr "Preferences"
+
+msgid "Price"
+msgstr "Price"
 
 msgid "Price can have at most 2 decimal digits"
 msgstr "Price can have at most 2 decimal digits"
@@ -482,6 +571,9 @@ msgstr "the field is required"
 #~ msgid "Required"
 #~ msgstr "Required"
 
+msgid "Reset Filters"
+msgstr "Reset Filters"
+
 msgid "review"
 msgstr "review"
 
@@ -530,6 +622,9 @@ msgstr "Route"
 msgid "Safety"
 msgstr "Safety"
 
+msgid "Safety is our priority. All drivers are verified, and you can read reviews from other passengers before booking. We monitor all activity to ensure a secure community."
+msgstr "Safety is our priority. All drivers are verified, and you can read reviews from other passengers before booking. We monitor all activity to ensure a secure community."
+
 msgid "Save Changes"
 msgstr "Save Changes"
 
@@ -566,14 +661,23 @@ msgstr "Shut up and take my money!"
 msgid "Sign in"
 msgstr "Sign in"
 
+msgid "Simply search for your destination, choose a ride that suits your schedule, and click \"Book\". You can contact the driver if you have specific questions before booking."
+msgstr "Simply search for your destination, choose a ride that suits your schedule, and click \"Book\". You can contact the driver if you have specific questions before booking."
+
 msgid "Smoking allowed"
 msgstr "Smoking allowed"
+
+msgid "Smoking Allowed"
+msgstr "Smoking Allowed"
 
 msgid "Social Media"
 msgstr "Social Media"
 
 msgid "Something went wrong"
 msgstr "Something went wrong"
+
+msgid "Sort By"
+msgstr "Sort By"
 
 msgid "Special character required"
 msgstr "Special character required"
@@ -653,8 +757,20 @@ msgstr "User not found"
 msgid "Vehicle"
 msgstr "Vehicle"
 
+msgid "Vehicle color is required"
+msgstr "Vehicle color is required"
+
+msgid "Vehicle Details"
+msgstr "Vehicle Details"
+
 msgid "Vehicle Information"
 msgstr "Vehicle Information"
+
+msgid "Vehicle make is required"
+msgstr "Vehicle make is required"
+
+msgid "Vehicle model is required"
+msgstr "Vehicle model is required"
 
 msgid "Verify password"
 msgstr "Verify password"
@@ -673,6 +789,9 @@ msgstr "When"
 
 msgid "When?"
 msgstr "When?"
+
+msgid "Yes, you can cancel your booking through your \"My Rides\" page. Cancellation policies may vary depending on how close to the departure time you cancel."
+msgstr "Yes, you can cancel your booking through your \"My Rides\" page. Cancellation policies may vary depending on how close to the departure time you cancel."
 
 msgid "You already have a booking for this ride"
 msgstr "You already have a booking for this ride"

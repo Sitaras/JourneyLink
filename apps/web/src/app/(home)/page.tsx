@@ -1,14 +1,5 @@
-import HomePage from "@/components/HomePage/HomePage";
+import HomePage, { type HomePageProps } from "@/components/HomePage/HomePage";
 import { initLingui } from "@/lib/appRouterI18n";
-
-interface HomePageProps {
-  searchParams: Promise<{
-    from?: string;
-    to?: string;
-    departureDate?: string;
-    page?: string;
-  }>;
-}
 
 export default async function Home({ searchParams }: HomePageProps) {
   await initLingui();

@@ -62,7 +62,9 @@ export default function SearchRidesForm({
       : "";
 
     const params = new URLSearchParams({ from, to, departureDate, page: "1" });
-    router.push(`/?${params.toString()}`);
+    router.push(
+      `/?${params.toString()}&sortBy=departureTime&sortOrder=asc&page=1`
+    );
   };
 
   const handleOnError = (errors: FieldErrors) => {

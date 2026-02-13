@@ -3,6 +3,7 @@ import express, { urlencoded, json } from "express";
 import cors from "cors";
 import { connectDB } from "./db/connectDB";
 import { config } from "./config/config";
+import { logger } from "./utils/logger";
 import { startAgenda } from "./config/agenda";
 import { successResponse } from "./middleware/successResponse.middleware";
 import { errorResponse } from "./middleware/errorResponse.middleware";
@@ -34,5 +35,5 @@ app.listen(PORT, async () => {
   if (config.env === "development") {
     await rideService.checkAndCompleteRides();
   }
-  console.log("Server is running on port: ", PORT);
+  logger.info(`Server is running on port: ${PORT}`);
 });

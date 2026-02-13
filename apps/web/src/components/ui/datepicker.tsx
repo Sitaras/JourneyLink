@@ -1,8 +1,8 @@
 import React from "react";
-import { formatDate } from "@/utils/dateUtils";
+import { formatDate } from "@journey-link/shared";
 import { CustomInput } from "./Inputs/CustomInput";
 import { UseFormRegister, FieldPath, FieldValues } from "react-hook-form";
-import { DateFormats } from "@/utils/dateFormats";
+import { DateFormats } from "@journey-link/shared";
 
 interface DatePickerProps<
   TFieldValues extends FieldValues = FieldValues,

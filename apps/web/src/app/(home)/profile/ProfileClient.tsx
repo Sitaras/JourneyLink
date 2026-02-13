@@ -9,8 +9,8 @@ import { useUpdateProfileMutation } from "@/hooks/mutations/useUserMutations";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { FieldErrors, useForm } from "react-hook-form";
 import z from "zod";
-import { formatDate } from "@/utils/dateUtils";
-import { DateFormats } from "@/utils/dateFormats";
+import { formatDate } from "@journey-link/shared";
+import { DateFormats } from "@journey-link/shared";
 import Typography from "@/components/ui/typography";
 import { onError } from "@/utils/formUtils";
 import PageLoader from "@/components/PageLoader/PageLoader";
@@ -27,7 +27,7 @@ type EditSection = "personal" | "social" | null;
 const ProfileClient = () => {
   const [editingSection, setEditingSection] = useState<EditSection>(null);
 
-  const { data, isLoading } = useUserProfile();
+  const { data, isLoading, refetch } = useUserProfile();
 
   const { mutate, isPending } = useUpdateProfileMutation();
 
@@ -67,6 +67,7 @@ const ProfileClient = () => {
     mutate(data, {
       onSuccess: () => {
         setEditingSection(null);
+        refetch();
       },
     });
   };

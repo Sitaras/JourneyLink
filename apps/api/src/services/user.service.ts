@@ -103,7 +103,7 @@ export class UserService {
       });
 
       if (existingUser) {
-        let message = ErrorCodes.USER_ALREADY_EXISTS;
+        let message: string = ErrorCodes.USER_ALREADY_EXISTS;
         if (existingUser.email === userUpdates.email) {
           message = ErrorCodes.EMAIL_ALREADY_IN_USE;
         } else if (existingUser.phoneNumber === userUpdates.phoneNumber) {

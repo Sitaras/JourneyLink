@@ -1,6 +1,10 @@
 import Typography from "@/components/ui/typography";
 import { Trans } from "@lingui/react/macro";
 import { Card, CardContent } from "@/components/ui/card";
+import { MobileFilters } from "./MobileFilters";
+import HeroSection from "./HeroSection";
+import PopularTrips from "./PopularTrips";
+import FaqSection from "./FaqSection";
 
 interface LayoutProps {
   limit?: number;
@@ -9,6 +13,7 @@ interface LayoutProps {
   hasResults?: boolean;
   isInitialLoad?: boolean;
   searchForm: React.ReactNode;
+  filters?: React.ReactNode;
   searchResults?: React.ReactNode;
   pagination?: React.ReactNode;
 }
@@ -20,52 +25,50 @@ export default async function Layout({
   hasResults,
   isInitialLoad,
   searchForm,
+  filters,
   searchResults,
   pagination,
 }: LayoutProps) {
   return (
     <section className="flex flex-col gap-8 items-center w-full max-xl:max-w-3xl max-lg:max-w-lg max-w-5xl">
-      {/* Hero Section - Only show on initial load */}
-      {isInitialLoad && (
-        <div className="w-full max-w-4xl text-center space-y-4 mb-4">
-          <Typography variant="h1" className="text-4xl md:text-5xl font-bold">
-            <Trans>Find Your Perfect Ride</Trans>
-          </Typography>
-          <Typography className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            <Trans>
-              Connect with drivers heading your way. Share the journey, split
-              the costs, and travel sustainably.
-            </Trans>
-          </Typography>
-        </div>
-      )}
+      {isInitialLoad && <HeroSection />}
 
       {searchForm}
 
-      {/* Results Section */}
+      {isInitialLoad && (
+        <div className="w-full space-y-16 mt-8">
+          <PopularTrips />
+          <FaqSection />
+        </div>
+      )}
+
       {!isInitialLoad && (
-        <div className="w-full max-w-3xl flex flex-col gap-6">
-          {/* Results Header */}
-          <div className="flex items-center justify-between flex-wrap gap-3">
-            <div>
-              <Typography variant="h2" className="text-2xl font-bold">
-                <Trans>Available Rides</Trans>
-              </Typography>
-              {hasResults && (
-                <Typography className="text-sm text-muted-foreground mt-1">
-                  <Trans>
-                    Showing {limit} ride(s) • Page {page} of {totalPages}
-                  </Trans>
+        <div className="w-full max-w-5xl grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-8">
+          <aside className="hidden lg:block">{filters}</aside>
+
+          <div className="flex flex-col gap-6">
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <div>
+                <Typography variant="h2" className="text-2xl font-bold">
+                  <Trans>Available Rides</Trans>
                 </Typography>
-              )}
+                {hasResults && (
+                  <Typography className="text-sm text-muted-foreground mt-1">
+                    <Trans>
+                      Showing {limit} ride(s) • Page {page} of {totalPages}
+                    </Trans>
+                  </Typography>
+                )}
+              </div>
+              <div className="lg:hidden">
+                <MobileFilters>{filters}</MobileFilters>
+              </div>
             </div>
+
+            {searchResults}
+
+            {pagination}
           </div>
-
-          {/* Rides List */}
-          {searchResults}
-
-          {/* Pagination */}
-          {pagination}
         </div>
       )}
 

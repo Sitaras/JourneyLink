@@ -1,6 +1,6 @@
 import { FieldErrors } from "react-hook-form";
 import { toast } from "sonner";
-import { getValidationMessage } from "@/utils/validationMessages";
+import { getValidationMessage } from "@/utils/errorMappings";
 import { t } from "@lingui/core/macro";
 
 /**

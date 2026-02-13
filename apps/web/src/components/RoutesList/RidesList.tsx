@@ -18,8 +18,8 @@ import { useAuth } from "@/context/AuthClient";
 import Typography from "@/components/ui/typography";
 import LoadingState from "../LoadingState/LoadingState";
 import { i18n } from "@lingui/core";
-import { formatDate } from "@/utils/dateUtils";
-import { DateFormats } from "@/utils/dateFormats";
+import { formatDate } from "@journey-link/shared";
+import { DateFormats } from "@journey-link/shared";
 
 interface RidesListProps {
   rides?: Ride[];

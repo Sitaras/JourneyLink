@@ -39,3 +39,7 @@ Thumbs.db
 .turbo
 
 tsconfig.tsbuildinfo
+
+# Agents
+.agent/
+.agents/

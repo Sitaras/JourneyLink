@@ -1,8 +1,9 @@
-import { Response } from "express";
+import { Request, Response } from "express";
 import {
   ICreateRidePayload,
   IGetRideQueryPayload,
   IDeleteRidePayload,
+  IPopularRidesPayload,
 } from "@journey-link/shared";
 import { AuthRequest } from "../middleware/auth.middleware";
 import { StatusCodes } from "http-status-codes";
@@ -13,7 +14,7 @@ export class RideController {
   constructor(private rideService: RideService) {}
 
   getRides = async (
-    req: AuthRequest<unknown, unknown, unknown, IGetRideQueryPayload>,
+    req: Request<unknown, unknown, unknown, IGetRideQueryPayload>,
     res: Response,
     next: any
   ) => {
@@ -83,6 +84,19 @@ export class RideController {
       const userId = req.user?.userId;
       const result = await this.rideService.updateRide(id, userId!, req.body);
       return res.success(result, "Ride Updated Successfully", StatusCodes.OK);
+    } catch (error) {
+      next(error);
+    }
+  };
+  getPopularTrips = async (
+    req: Request<unknown, unknown, unknown, IPopularRidesPayload>,
+    res: Response,
+    next: any
+  ) => {
+    try {
+      const limit = req.query.limit;
+      const result = await this.rideService.getPopularTrips(limit);
+      return res.success(result, "", StatusCodes.OK);
     } catch (error) {
       next(error);
     }

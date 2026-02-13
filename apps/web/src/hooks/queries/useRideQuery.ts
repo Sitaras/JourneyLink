@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { getRide } from "@/api-actions/ride";
+import { getRide, getPopularTrips } from "@/api-actions/ride";
 import { getRideBookings } from "@/api-actions/booking";
 import { BookingStatus, IBooking } from "@journey-link/shared";
 
@@ -29,4 +29,11 @@ export const useRidePassengers = (rideId: string) => {
   });
 
   return { passengers: bookings, ...rest };
+};
+
+export const usePopularTrips = (limit = 3) => {
+  return useQuery({
+    queryKey: ["popular-trips", limit],
+    queryFn: () => getPopularTrips(limit),
+  });
 };

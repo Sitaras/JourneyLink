@@ -1,5 +1,5 @@
-import { DateFormats } from "@/utils/dateFormats";
-import { formatDate } from "@/utils/dateUtils";
+import { DateFormats } from "@journey-link/shared";
+import { formatDate } from "@journey-link/shared";
 import { CustomInput, CustomInputProps } from "./CustomInput";
 import { Trans } from "@lingui/react/macro";
 

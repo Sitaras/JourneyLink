@@ -26,7 +26,7 @@ class NotificationController {
   async markAsRead(req: Request, res: Response) {
     const { id } = req.params;
     const notification = await notificationService.markAsRead(
-      id,
+      id as string,
       (req as any).user.userId
     );
     res.status(StatusCodes.OK).json({ data: notification });

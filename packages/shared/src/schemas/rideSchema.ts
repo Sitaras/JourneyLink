@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { isoDateSchema } from "./isoDateSchema";
-import { RideStatus } from "../types/ride.types";
+import { RideStatus, RideSortBy, SortOrder } from "../types/ride.types";
 
 const coordinatesSchema = z
   .array(z.number())
@@ -171,9 +171,11 @@ export const getRideQuerySchema = z
       .optional(),
 
     // Date and time filters
-    departureDate: isoDateSchema.refine((date) => new Date(date) > new Date(), {
-      error: "Departure time must be in the future",
-    }),
+    departureDate: isoDateSchema
+      .refine((date) => new Date(date) > new Date(), {
+        error: "Departure time must be in the future",
+      })
+      .optional(),
 
     // Seat and price filters
     minSeats: z
@@ -220,11 +222,8 @@ export const getRideQuerySchema = z
       .optional(),
 
     // Sorting
-    sortBy: z
-      .enum(["price", "departureTime", "distance"])
-      .prefault("departureTime")
-      .optional(),
-    sortOrder: z.enum(["asc", "desc"]).prefault("asc").optional(),
+    sortBy: z.enum(RideSortBy).prefault(RideSortBy.DEPARTURE_TIME).optional(),
+    sortOrder: z.enum(SortOrder).prefault(SortOrder.ASC).optional(),
   })
   .refine(
     (data) => {
@@ -280,9 +279,19 @@ export const deleteRideSchema = z
   })
   .optional();
 
+export const popularRidesSchema = z.object({
+  limit: z
+    .string()
+    .prefault("3")
+    .transform((val) => (val ? parseInt(val) : undefined))
+    .pipe(z.int().min(1).max(100).prefault(3))
+    .optional(),
+});
+
 export type ICreateRidePayload = z.infer<typeof createRideSchema>;
 export type UpdateRideInput = z.infer<typeof updateRideSchema>;
 export type IGetRideQueryPayload = z.infer<typeof getRideQuerySchema>;
 export type IGetRideQueryInput = z.input<typeof getRideQuerySchema>;
 export type BookRideInput = z.infer<typeof bookRideSchema>;
 export type IDeleteRidePayload = z.infer<typeof deleteRideSchema>;
+export type IPopularRidesPayload = z.infer<typeof popularRidesSchema>;

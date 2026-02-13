@@ -21,7 +21,7 @@ import { Trans } from "@lingui/react/macro";
 import { useCancelBookingMutation } from "@/hooks/mutations/useBookingMutations";
 import { useRide, useRideRequests } from "@/hooks/queries/useRideQuery";
 import { useAuth } from "@/context/AuthClient";
-import { isPast } from "@/utils/dateUtils";
+import { isPast } from "@journey-link/shared";
 import { routes } from "@/configs/routes";
 import { BookingStatus, IBooking, RideStatus } from "@journey-link/shared";
 

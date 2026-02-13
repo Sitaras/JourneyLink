@@ -1,5 +1,6 @@
 import wretch, { WretchError, WretchResponse } from "wretch";
 import { authStorage } from "../lib/authStorage";
+import { getQueryClient } from "@/lib/queryClient";
 
 export const api = wretch(process.env.NEXT_PUBLIC_BASE_URL)
   .customError(async (error, response) => {
@@ -118,6 +119,8 @@ export const getAuthApi = async () => {
           } finally {
             state.queuedRequests.clear();
             state.isRefreshingToken = false;
+            const queryClient = getQueryClient();
+            queryClient.invalidateQueries();
           }
         })
         .fetchError((err) => {
