@@ -41,36 +41,36 @@ export const onError = (
   errors: FieldErrors
 ) => {
   const findFirstError = (
-    obj: any,
+    errorNode: any,
     path: string = ""
   ): { path: string; message: string } | null => {
-    if (!obj || typeof obj !== "object") {
+    if (!errorNode || typeof errorNode !== "object") {
       return null;
     }
 
     // If this object has a message, return it
-    if ("message" in obj && typeof obj.message === "string") {
-      return { path, message: obj.message };
+    if ("message" in errorNode && typeof errorNode.message === "string") {
+      return { path, message: errorNode.message };
     }
 
     // Otherwise, search nested objects
-    const keys = Object.keys(obj);
+    const keys = Object.keys(errorNode);
     for (const key of keys) {
       const newPath = path ? `${path}.${key}` : key;
-      const result = findFirstError(obj[key], newPath);
-      if (result) {
-        return result;
+      const nestedError = findFirstError(errorNode[key], newPath);
+      if (nestedError) {
+        return nestedError;
       }
     }
 
     return null;
   };
 
-  const result = findFirstError(errors);
+  const firstValidationError = findFirstError(errors);
 
-  if (result) {
-    const fieldLabel = fieldLabels[result.path] || result.path;
-    toast.error(`${fieldLabel}: ${getValidationMessage(result.message)}`);
+  if (firstValidationError) {
+    const fieldLabel = fieldLabels[firstValidationError.path] || firstValidationError.path;
+    toast.error(`${fieldLabel}: ${getValidationMessage(firstValidationError.message)}`);
   } else {
     toast.error(t`Please check the form for errors`);
   }

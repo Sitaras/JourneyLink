@@ -55,8 +55,8 @@ export default function PaginationBar({
     const maxVisible = 5;
 
     if (totalPages <= maxVisible) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
+      for (let pageNumber = 1; pageNumber <= totalPages; pageNumber++) {
+        pages.push(pageNumber);
       }
     } else {
       pages.push(1);
@@ -68,8 +68,8 @@ export default function PaginationBar({
       const start = Math.max(2, currentPage - 1);
       const end = Math.min(totalPages - 1, currentPage + 1);
 
-      for (let i = start; i <= end; i++) {
-        pages.push(i);
+      for (let pageNumber = start; pageNumber <= end; pageNumber++) {
+        pages.push(pageNumber);
       }
 
       if (currentPage < totalPages - 2) {

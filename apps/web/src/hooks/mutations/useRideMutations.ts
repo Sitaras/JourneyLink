@@ -12,9 +12,9 @@ export const useCreateRideMutation = () => {
         description: t`Your ride is now available for passengers to book.`,
       });
     },
-    onError: (err: string) => {
+    onError: (errorMessage: string) => {
       toast.error(t`Failed to create ride`, {
-        description: parseActionError(err),
+        description: parseActionError(errorMessage),
       });
     },
   });
@@ -25,7 +25,7 @@ export const useUpdateRideMutation = (
   onSuccess?: () => void
 ) => {
   return useMutation({
-    mutationFn: async (data: any) => updateRide(rideId, data),
+    mutationFn: async (rideUpdatePayload: any) => updateRide(rideId, rideUpdatePayload),
     onSuccess: () => {
       toast.success(t`Ride updated successfully`, {
         description: t`Your changes have been saved.`,

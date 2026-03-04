@@ -20,8 +20,8 @@ export const createCreateRideSchema = () =>
         })
         .refine(
           (val) => {
-            const num = Number(val);
-            return !isNaN(num) && Number.isInteger(num) && num >= 1 && num <= 8;
+            const parsedSeatCount = Number(val);
+            return !isNaN(parsedSeatCount) && Number.isInteger(parsedSeatCount) && parsedSeatCount >= 1 && parsedSeatCount <= 8;
           },
           {
             message: t`Must be between 1 and 8`,
@@ -34,8 +34,8 @@ export const createCreateRideSchema = () =>
         })
         .refine(
           (val) => {
-            const num = parsePrice(val);
-            return num !== null && num >= 0 && num <= 1000;
+            const parsedPrice = parsePrice(val);
+            return parsedPrice !== null && parsedPrice >= 0 && parsedPrice <= 1000;
           },
           {
             message: t`Price must be between 0 and 1000`,
@@ -43,9 +43,9 @@ export const createCreateRideSchema = () =>
         )
         .refine(
           (val) => {
-            const num = parsePrice(val);
-            if (num === null) return false;
-            const decimals = num.toString().split(".")[1];
+            const parsedPrice = parsePrice(val);
+            if (parsedPrice === null) return false;
+            const decimals = parsedPrice.toString().split(".")[1];
             return !decimals || decimals.length <= 2;
           },
           {

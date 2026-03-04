@@ -18,8 +18,8 @@ export const useLoginMutation = () => {
       await queryClient.invalidateQueries({ queryKey: ["/me/profile"] });
       toast.success(t`Welcome back!`);
     },
-    onError: (err: string) => {
-      toast.error(parseActionError(err));
+    onError: (errorMessage: string) => {
+      toast.error(parseActionError(errorMessage));
     },
   });
 };
@@ -35,8 +35,8 @@ export const useRegisterMutation = () => {
       await queryClient.invalidateQueries({ queryKey: ["/me/profile"] });
       toast.success(t`Registered successfully`);
     },
-    onError: (err: string) => {
-      toast.error(parseActionError(err));
+    onError: (errorMessage: string) => {
+      toast.error(parseActionError(errorMessage));
     },
   });
 };

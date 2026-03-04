@@ -29,9 +29,9 @@ export const useBookSeatMutation = (rideId: string) => {
 
       router.refresh();
     },
-    onError: (err: string) => {
+    onError: (errorMessage: string) => {
       toast.error(
-        parseActionError(err) || "Failed to book seat. Please try again."
+        parseActionError(errorMessage) || "Failed to book seat. Please try again."
       );
     },
   });
