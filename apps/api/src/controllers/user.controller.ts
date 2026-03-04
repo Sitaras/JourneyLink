@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Response, NextFunction } from "express";
 import { AuthRequest } from "../middleware/auth.middleware";
 import { IGetUserRidesQueryPayload } from "../schemas/user/userRideSchema";
 import { MongoIdParam } from "../schemas/idSchema";
@@ -8,21 +8,21 @@ import { UpdateProfilePayload } from "@journey-link/shared";
 export class UserController {
   constructor(private userService: UserService) {}
 
-  getUserInfo = async (req: AuthRequest, res: Response, next: any) => {
+  getUserInfo = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const userId = req.user?.userId;
-      const result = await this.userService.getUserInfo(userId!);
-      return res.success(result, "User info fetched successfully");
+      const userInfo = await this.userService.getUserInfo(userId!);
+      return res.success(userInfo, "User info fetched successfully");
     } catch (error) {
       next(error);
     }
   };
 
-  getProfile = async (req: AuthRequest, res: Response, next: any) => {
+  getProfile = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const userId = req.user?.userId;
-      const result = await this.userService.getProfile(userId!);
-      return res.success(result, "Profile fetched successfully");
+      const userProfile = await this.userService.getProfile(userId!);
+      return res.success(userProfile, "Profile fetched successfully");
     } catch (error) {
       next(error);
     }
@@ -31,16 +31,16 @@ export class UserController {
   getUserProfile = async (
     req: AuthRequest<MongoIdParam>,
     res: Response,
-    next: any
+    next: NextFunction
   ) => {
     try {
       const requesterId = req.user?.userId;
       const targetUserId = req.params.id;
-      const result = await this.userService.getUserProfile(
+      const targetUserProfile = await this.userService.getUserProfile(
         requesterId!,
         targetUserId
       );
-      return res.success(result, "Profile fetched successfully");
+      return res.success(targetUserProfile, "Profile fetched successfully");
     } catch (error) {
       next(error);
     }
@@ -49,12 +49,12 @@ export class UserController {
   updateProfile = async (
     req: AuthRequest<unknown, unknown, UpdateProfilePayload>,
     res: Response,
-    next: any
+    next: NextFunction
   ) => {
     try {
       const userId = req.user?.userId;
-      const result = await this.userService.updateProfile(userId!, req.body);
-      return res.success(result, "Profile updated successfully");
+      const updatedProfile = await this.userService.updateProfile(userId!, req.body);
+      return res.success(updatedProfile, "Profile updated successfully");
     } catch (error) {
       next(error);
     }
@@ -63,12 +63,12 @@ export class UserController {
   getRides = async (
     req: AuthRequest<unknown, unknown, unknown, IGetUserRidesQueryPayload>,
     res: Response,
-    next: any
+    next: NextFunction
   ) => {
     try {
       const userId = req.user?.userId;
-      const result = await this.userService.getRides(userId!, req.query);
-      return res.success(result, "User rides fetched successfully");
+      const userRides = await this.userService.getRides(userId!, req.query);
+      return res.success(userRides, "User rides fetched successfully");
     } catch (error) {
       next(error);
     }

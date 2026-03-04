@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { IUserRegistration, IUserLogin } from "@journey-link/shared";
 import { AuthRequest } from "../middleware/auth.middleware";
 import { StatusCodes } from "http-status-codes";
@@ -11,11 +11,11 @@ export class AuthController {
   register = async (
     req: Request<unknown, unknown, IUserRegistration>,
     res: Response,
-    next: any
+    next: NextFunction
   ) => {
     try {
-      const result = await this.authService.register(req.body);
-      res.success(result, "User registered successfully");
+      const registeredUser = await this.authService.register(req.body);
+      res.success(registeredUser, "User registered successfully");
     } catch (error) {
       next(error);
     }
@@ -24,11 +24,11 @@ export class AuthController {
   login = async (
     req: Request<unknown, unknown, IUserLogin>,
     res: Response,
-    next: any
+    next: NextFunction
   ) => {
     try {
-      const result = await this.authService.login(req.body);
-      res.success(result, "Successfully logged in");
+      const authTokens = await this.authService.login(req.body);
+      res.success(authTokens, "Successfully logged in");
     } catch (error) {
       next(error);
     }
@@ -37,11 +37,11 @@ export class AuthController {
   refreshToken = async (
     req: Request<unknown, unknown, IRefreshTokenPayload>,
     res: Response,
-    next: any
+    next: NextFunction
   ) => {
     try {
-      const result = await this.authService.refreshToken(req.body);
-      res.success(result, "Tokens refreshed successfully");
+      const refreshedTokens = await this.authService.refreshToken(req.body);
+      res.success(refreshedTokens, "Tokens refreshed successfully");
     } catch (error) {
       next(error);
     }
@@ -50,7 +50,7 @@ export class AuthController {
   logout = async (
     req: AuthRequest<unknown, unknown, IRefreshTokenPayload>,
     res: Response,
-    next: any
+    next: NextFunction
   ) => {
     try {
       await this.authService.logout(req.body);
@@ -64,7 +64,7 @@ export class AuthController {
     }
   };
 
-  logoutAll = async (req: AuthRequest, res: Response, next: any) => {
+  logoutAll = async (req: AuthRequest, res: Response, next: NextFunction) => {
     try {
       const userId = req.user?.userId;
       await this.authService.logoutAll(userId!);

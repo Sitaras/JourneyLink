@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import {
   ICreateRidePayload,
   IGetRideQueryPayload,
@@ -16,11 +16,11 @@ export class RideController {
   getRides = async (
     req: Request<unknown, unknown, unknown, IGetRideQueryPayload>,
     res: Response,
-    next: any
+    next: NextFunction
   ) => {
     try {
-      const result = await this.rideService.getRides(req.query);
-      return res.success(result, "", StatusCodes.OK);
+      const rides = await this.rideService.getRides(req.query);
+      return res.success(rides, "", StatusCodes.OK);
     } catch (error) {
       next(error);
     }
@@ -29,13 +29,13 @@ export class RideController {
   createRide = async (
     req: AuthRequest<unknown, unknown, ICreateRidePayload>,
     res: Response,
-    next: any
+    next: NextFunction
   ) => {
     try {
       const userId = req.user?.userId;
-      const result = await this.rideService.createRide(userId!, req.body);
+      const createdRide = await this.rideService.createRide(userId!, req.body);
       return res.success(
-        result,
+        createdRide,
         "Ride Created Successfully",
         StatusCodes.CREATED
       );
@@ -47,13 +47,13 @@ export class RideController {
   getRideById = async (
     req: AuthRequest<MongoIdParam>,
     res: Response,
-    next: any
+    next: NextFunction
   ) => {
     try {
       const { id } = req.params;
       const userId = req.user?.userId;
-      const result = await this.rideService.getRideById(id, userId!);
-      return res.success(result, "", StatusCodes.OK);
+      const rideDetails = await this.rideService.getRideById(id, userId!);
+      return res.success(rideDetails, "", StatusCodes.OK);
     } catch (error) {
       next(error);
     }
@@ -62,13 +62,13 @@ export class RideController {
   deleteRide = async (
     req: AuthRequest<MongoIdParam, unknown, IDeleteRidePayload>,
     res: Response,
-    next: any
+    next: NextFunction
   ) => {
     try {
       const { id } = req.params;
       const userId = req.user?.userId;
-      const result = await this.rideService.deleteRide(id, userId!, req.body);
-      return res.success(result, "Ride Cancelled Successfully", StatusCodes.OK);
+      const deletedRide = await this.rideService.deleteRide(id, userId!, req.body);
+      return res.success(deletedRide, "Ride Cancelled Successfully", StatusCodes.OK);
     } catch (error) {
       next(error);
     }
@@ -77,13 +77,13 @@ export class RideController {
   updateRide = async (
     req: AuthRequest<MongoIdParam, unknown, ICreateRidePayload>,
     res: Response,
-    next: any
+    next: NextFunction
   ) => {
     try {
       const { id } = req.params;
       const userId = req.user?.userId;
-      const result = await this.rideService.updateRide(id, userId!, req.body);
-      return res.success(result, "Ride Updated Successfully", StatusCodes.OK);
+      const updatedRide = await this.rideService.updateRide(id, userId!, req.body);
+      return res.success(updatedRide, "Ride Updated Successfully", StatusCodes.OK);
     } catch (error) {
       next(error);
     }
@@ -91,12 +91,12 @@ export class RideController {
   getPopularTrips = async (
     req: Request<unknown, unknown, unknown, IPopularRidesPayload>,
     res: Response,
-    next: any
+    next: NextFunction
   ) => {
     try {
       const limit = req.query.limit;
-      const result = await this.rideService.getPopularTrips(limit);
-      return res.success(result, "", StatusCodes.OK);
+      const popularTrips = await this.rideService.getPopularTrips(limit);
+      return res.success(popularTrips, "", StatusCodes.OK);
     } catch (error) {
       next(error);
     }

@@ -13,9 +13,9 @@ export const useUpdateProfileMutation = (onSuccess?: () => void) => {
       });
       onSuccess?.();
     },
-    onError: (err: string) => {
+    onError: (errorMessage: string) => {
       toast.error(t`Failed to update profile`, {
-        description: parseActionError(err) || t`Please try again later.`,
+        description: parseActionError(errorMessage) || t`Please try again later.`,
       });
     },
   });

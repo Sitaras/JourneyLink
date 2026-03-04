@@ -11,14 +11,14 @@ const { locales } = linguiConfig;
 import * as enCatalog from "../locales/en/messages";
 import * as elCatalog from "../locales/el/messages";
 
-const catalogs: Record<string, any> = {
+const localeCatalogs: Record<string, any> = {
   en: enCatalog,
   el: elCatalog,
 };
 
 export const allMessages: Record<string, Messages> = {
-  en: catalogs.en.messages,
-  el: catalogs.el.messages,
+  en: localeCatalogs.en.messages,
+  el: localeCatalogs.el.messages,
 };
 
 type SupportedLocales = string;

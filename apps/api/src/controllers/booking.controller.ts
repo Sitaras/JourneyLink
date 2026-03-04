@@ -1,4 +1,4 @@
-import { Response } from "express";
+import { Response, NextFunction } from "express";
 import { AuthRequest } from "../middleware/auth.middleware";
 import { StatusCodes } from "http-status-codes";
 import { ICreateBookingPayload } from "@journey-link/shared";
@@ -11,17 +11,17 @@ export class BookingController {
   createBooking = async (
     req: AuthRequest<unknown, unknown, ICreateBookingPayload>,
     res: Response,
-    next: any
+    next: NextFunction
   ) => {
     try {
       const passengerId = req.user?.userId;
-      const result = await this.bookingService.createBooking(
+      const createdBooking = await this.bookingService.createBooking(
         passengerId!,
         req.body
       );
 
       return res.success(
-        result,
+        createdBooking,
         "Booking created successfully.",
         StatusCodes.CREATED
       );
@@ -33,15 +33,15 @@ export class BookingController {
   acceptBooking = async (
     req: AuthRequest<MongoIdParam>,
     res: Response,
-    next: any
+    next: NextFunction
   ) => {
     try {
       const { id } = req.params;
       const userId = req.user?.userId;
-      const result = await this.bookingService.acceptBooking(id, userId!);
+      const acceptedBooking = await this.bookingService.acceptBooking(id, userId!);
 
       return res.success(
-        result,
+        acceptedBooking,
         "Booking accepted successfully.",
         StatusCodes.OK
       );
@@ -53,15 +53,15 @@ export class BookingController {
   declineBooking = async (
     req: AuthRequest<MongoIdParam>,
     res: Response,
-    next: any
+    next: NextFunction
   ) => {
     try {
       const { id } = req.params;
       const userId = req.user?.userId;
-      const result = await this.bookingService.declineBooking(id, userId!);
+      const declinedBooking = await this.bookingService.declineBooking(id, userId!);
 
       return res.success(
-        result,
+        declinedBooking,
         "Booking declined successfully.",
         StatusCodes.OK
       );
@@ -73,17 +73,17 @@ export class BookingController {
   getRideBookings = async (
     req: AuthRequest<MongoIdParam>,
     res: Response,
-    next: any
+    next: NextFunction
   ): Promise<void> => {
     try {
       const rideId = req.params?.id;
       const driverId = req.user?.userId;
-      const result = await this.bookingService.getRideBookings(
+      const rideBookings = await this.bookingService.getRideBookings(
         rideId,
         driverId!
       );
 
-      res.success(result, "Bookings fetched successfully", StatusCodes.OK);
+      res.success(rideBookings, "Bookings fetched successfully", StatusCodes.OK);
     } catch (error) {
       next(error);
     }
@@ -92,18 +92,18 @@ export class BookingController {
   getPendingBookings = async (
     req: AuthRequest<MongoIdParam>,
     res: Response,
-    next: any
+    next: NextFunction
   ): Promise<void> => {
     try {
       const rideId = req.params?.id;
       const driverId = req.user?.userId;
-      const result = await this.bookingService.getPendingBookings(
+      const pendingBookings = await this.bookingService.getPendingBookings(
         rideId,
         driverId!
       );
 
       res.success(
-        result,
+        pendingBookings,
         "Pending bookings fetched successfully",
         StatusCodes.OK
       );
@@ -114,15 +114,15 @@ export class BookingController {
   cancelBooking = async (
     req: AuthRequest<MongoIdParam>,
     res: Response,
-    next: any
+    next: NextFunction
   ) => {
     try {
       const { id } = req.params;
       const userId = req.user?.userId;
-      const result = await this.bookingService.cancelBooking(id, userId!);
+      const cancelledBooking = await this.bookingService.cancelBooking(id, userId!);
 
       return res.success(
-        result,
+        cancelledBooking,
         "Booking cancelled successfully.",
         StatusCodes.OK
       );
