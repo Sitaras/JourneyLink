@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useCallback, useMemo } from "react";
 
 import useIntersectionObserver from "@/hooks/useIntersectionObserver";
 import { MapPin, AlertCircle } from "lucide-react";
@@ -36,9 +36,12 @@ const UserRidesList = ({ type, className }: RidesListProps) => {
     }
   });
 
-  const handleEdit = (ride: UserRide) => {
-    router.push(`${routes.myRides}/${ride._id}/edit`);
-  };
+  const handleEdit = useCallback(
+    (ride: UserRide) => {
+      router.push(`${routes.myRides}/${ride._id}/edit`);
+    },
+    [router]
+  );
 
   if (isLoading) {
     return <LoadingState />;
@@ -62,8 +65,10 @@ const UserRidesList = ({ type, className }: RidesListProps) => {
     );
   }
 
-  const totalRides =
-    data?.pages.reduce((acc, page) => acc + page.data.length, 0) ?? 0;
+  const totalRides = useMemo(
+    () => data?.pages.reduce((acc, page) => acc + page.data.length, 0) ?? 0,
+    [data?.pages]
+  );
 
   if (totalRides === 0) {
     return (

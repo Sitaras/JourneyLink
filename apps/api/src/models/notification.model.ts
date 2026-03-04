@@ -10,7 +10,6 @@ const notificationSchema = new Schema<INotificationDocument>(
       type: Schema.Types.ObjectId as any,
       ref: "User",
       required: true,
-      index: true,
     },
     type: {
       type: String,
@@ -38,6 +37,8 @@ const notificationSchema = new Schema<INotificationDocument>(
     timestamps: true,
   }
 );
+
+notificationSchema.index({ user: 1, createdAt: -1 });
 
 export const Notification = model<INotificationDocument>(
   "Notification",

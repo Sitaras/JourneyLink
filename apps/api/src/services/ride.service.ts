@@ -33,20 +33,17 @@ export class RideService {
       const ridesToComplete = await Ride.find(query);
 
       if (ridesToComplete.length > 0) {
-        for (const ride of ridesToComplete) {
-          ride.status = RideStatus.COMPLETED;
-          await ride.save();
+        const rideIds = ridesToComplete.map((r) => r._id);
 
-          await Booking.updateMany(
-            {
-              ride: ride._id,
-              status: BookingStatus.PENDING,
-            },
-            {
-              status: BookingStatus.DECLINED,
-            }
-          );
-        }
+        await Ride.updateMany(
+          { _id: { $in: rideIds } },
+          { status: RideStatus.COMPLETED }
+        );
+
+        await Booking.updateMany(
+          { ride: { $in: rideIds }, status: BookingStatus.PENDING },
+          { status: BookingStatus.DECLINED }
+        );
       }
     } catch (error) {
       logger.error({ err: error }, "RideService: Error updating ride statuses");
@@ -397,17 +394,20 @@ export class RideService {
       [BookingStatus.PENDING, BookingStatus.CONFIRMED].includes(p.status as any)
     );
 
-    for (const passenger of affectedPassengers) {
-      if (passenger.user) {
-        await notificationService.createNotification(
-          passenger.user.toString(),
-          NotificationType.RIDE_UPDATED,
-          "Ride Updated",
-          `The ride from ${ride.origin.city} to ${ride.destination.city} has been updated by the driver.`,
-          { rideId: ride._id }
-        );
-      }
-    }
+    await Promise.all(
+      affectedPassengers
+        .map((passenger) => passenger.user?.toString())
+        .filter((userId): userId is string => userId !== undefined)
+        .map((userId) =>
+          notificationService.createNotification(
+            userId,
+            NotificationType.RIDE_UPDATED,
+            "Ride Updated",
+            `The ride from ${ride.origin.city} to ${ride.destination.city} has been updated by the driver.`,
+            { rideId: ride._id }
+          )
+        )
+    );
 
     const pipeline: any[] = [
       { $match: { _id: new mongoose.Types.ObjectId(rideId) } },

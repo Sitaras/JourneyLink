@@ -157,42 +157,45 @@ export class UserService {
         },
       };
 
-      const totalCountResult = await Ride.aggregate([
-        matchStage,
-        { $count: "total" },
-      ]);
-
-      totalCount = totalCountResult[0]?.total || 0;
-
-      data = await Ride.aggregate([
+      const [result] = await Ride.aggregate([
         matchStage,
         {
-          $addFields: {
-            confirmedPassengers: {
-              $filter: {
-                input: "$passengers",
-                as: "p",
-                cond: { $eq: ["$$p.status", BookingStatus.CONFIRMED] },
+          $facet: {
+            total: [{ $count: "count" }],
+            data: [
+              {
+                $addFields: {
+                  confirmedPassengers: {
+                    $filter: {
+                      input: "$passengers",
+                      as: "p",
+                      cond: { $eq: ["$$p.status", BookingStatus.CONFIRMED] },
+                    },
+                  },
+                },
               },
-            },
+              {
+                $project: {
+                  _id: 1,
+                  origin: 1,
+                  destination: 1,
+                  departureTime: 1,
+                  pricePerSeat: 1,
+                  availableSeats: 1,
+                  totalPassengersBooked: { $size: "$confirmedPassengers" },
+                  status: 1,
+                },
+              },
+              { $sort: { departureTime: sortDirection } },
+              { $skip: skip },
+              { $limit: limit },
+            ],
           },
         },
-        {
-          $project: {
-            _id: 1,
-            origin: 1,
-            destination: 1,
-            departureTime: 1,
-            pricePerSeat: 1,
-            availableSeats: 1,
-            totalPassengersBooked: { $size: "$confirmedPassengers" },
-            status: 1,
-          },
-        },
-        { $sort: { departureTime: sortDirection } },
-        { $skip: skip },
-        { $limit: limit },
       ]);
+
+      totalCount = result.total[0]?.count || 0;
+      data = result.data;
     } else {
       totalCount = await Booking.countDocuments({
         passenger: userId,
