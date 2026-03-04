@@ -37,8 +37,7 @@ import {
 } from "@/components/ui/tooltip";
 import { isPast } from "@journey-link/shared";
 import { i18n } from "@lingui/core";
-import { UserRideRole } from "@/types/user.types";
-import { RideStatus, UserRide } from "@journey-link/shared";
+import { RideStatus, UserRide, UserRideRole } from "@journey-link/shared";
 
 interface RideCardProps {
   ride: UserRide;

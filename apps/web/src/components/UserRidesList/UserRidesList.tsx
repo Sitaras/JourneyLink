@@ -7,8 +7,7 @@ import { cn } from "@/lib/utils";
 import { Card, CardContent } from "@/components/ui/card";
 import LoadingState from "@/components/LoadingState/LoadingState";
 import RideCard from "@/components/RideCard/RideCard";
-import { UserRideRole } from "@/types/user.types";
-import { UserRide } from "@journey-link/shared";
+import { UserRide, UserRideRole } from "@journey-link/shared";
 import { useRouter } from "next/navigation";
 import { routes } from "@/configs/routes";
 import { useUserRidesInfinite } from "@/hooks/queries/useUserQuery";
@@ -43,6 +42,11 @@ const UserRidesList = ({ type, className }: RidesListProps) => {
     [router]
   );
 
+  const totalRides = useMemo(
+    () => data?.pages.reduce((acc, page) => acc + page.data.length, 0) ?? 0,
+    [data?.pages]
+  );
+
   if (isLoading) {
     return <LoadingState />;
   }
@@ -64,11 +68,6 @@ const UserRidesList = ({ type, className }: RidesListProps) => {
       </Card>
     );
   }
-
-  const totalRides = useMemo(
-    () => data?.pages.reduce((acc, page) => acc + page.data.length, 0) ?? 0,
-    [data?.pages]
-  );
 
   if (totalRides === 0) {
     return (

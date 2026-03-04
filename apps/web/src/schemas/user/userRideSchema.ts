@@ -1,4 +1,4 @@
-import { UserRideRole } from "../../types/user.types";
+import { UserRideRole } from "@journey-link/shared";
 import { z } from "zod";
 
 export const getUserRidesQuerySchema = z.object({
