@@ -14,7 +14,7 @@ JourneyLink is a comprehensive ride-sharing platform designed to connect drivers
 ### Prerequisites
 
 - Node.js (v18+ recommended)
-- Yarn (v1.22+)
+- Yarn (v4.x+)
 - MongoDB (Local or Atlas URI)
 
 ### Installation

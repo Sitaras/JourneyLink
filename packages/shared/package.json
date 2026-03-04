@@ -13,7 +13,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@lingui/macro": "^5.7.0",
+    "@lingui/macro": "^5.9.2",
     "typescript": "^5.7.2"
   }
 }
