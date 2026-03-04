@@ -32,4 +32,9 @@ const bookingSchema = new Schema<IBookingDocument>(
   }
 );
 
+bookingSchema.index({ ride: 1 });
+bookingSchema.index({ passenger: 1 });
+bookingSchema.index({ passenger: 1, ride: 1 });
+bookingSchema.index({ driver: 1, passenger: 1, status: 1 });
+
 export const Booking = model<IBookingDocument>("Booking", bookingSchema);

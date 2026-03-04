@@ -136,9 +136,10 @@ export class AuthService {
         };
       }
 
+      const sevenDaysMs = 7 * 24 * 60 * 60 * 1000;
       user.refreshTokens = user.refreshTokens.filter((token) => {
         const tokenAge = Date.now() - token.createdAt.getTime();
-        return tokenAge < 7 * 24 * 60 * 60 * 1000; // 7 days
+        return tokenAge < sevenDaysMs && token.token !== refreshToken;
       });
 
       const tokenPayload = {
@@ -149,9 +150,6 @@ export class AuthService {
       const newAccessToken = tokenUtils.generateAccessToken(tokenPayload);
       const newRefreshToken = tokenUtils.generateRefreshToken(tokenPayload);
 
-      user.refreshTokens = user.refreshTokens.filter(
-        (token) => token.token !== refreshToken
-      );
       user.refreshTokens.push({
         token: newRefreshToken,
         createdAt: new Date(),

@@ -22,7 +22,7 @@ import {
 import { INotification } from "@journey-link/shared";
 import { i18n } from "@lingui/core";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { cn } from "@/lib/utils";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { Trans } from "@lingui/react/macro";
@@ -36,8 +36,14 @@ export const Notifications = () => {
   const { mutate: markRead } = useMarkNotificationAsRead();
   const { mutate: markAllRead } = useMarkAllNotificationsAsRead();
 
-  const notifications = data?.pages.flatMap((page) => page.data) || [];
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
+  const notifications = useMemo(
+    () => data?.pages.flatMap((page) => page.data) ?? [],
+    [data?.pages]
+  );
+  const unreadCount = useMemo(
+    () => notifications.filter((n) => !n.isRead).length,
+    [notifications]
+  );
 
   const handleNotificationClick = (notification: INotification) => {
     if (!notification.isRead) {
